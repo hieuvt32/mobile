@@ -1,4 +1,6 @@
 import 'package:flutter/foundation.dart';
+import 'package:frappe_app/model/change_password_request.dart';
+import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
@@ -12,6 +14,10 @@ import '../../model/login_response.dart';
 abstract class Api {
   Future<LoginResponse> login(
     LoginRequest loginRequest,
+  );
+
+  Future<ChangePasswordResponse> changePassword(
+    ChangePasswordRequest changePasswordRequest,
   );
 
   Future<DeskSidebarItemsResponse> getDeskSideBarItems();

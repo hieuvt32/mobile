@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/utils/helpers.dart';
 
 import '../config/palette.dart';
 import '../utils/enums.dart';
@@ -43,7 +44,9 @@ class FrappeFlatButton extends StatelessWidget {
       _textStyle =
           TextStyle(color: Colors.white, fontSize: fullWidth ? 18 : null);
     } else if (buttonType == ButtonType.primary) {
-      _buttonColor = Palette.primaryButtonColor;
+      _buttonColor = hexToColor('#FF0F00');
+
+      // Palette.primaryButtonColor;
       _textStyle =
           TextStyle(color: Colors.white, fontSize: fullWidth ? 18 : null);
     } else {

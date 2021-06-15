@@ -4,6 +4,7 @@
 // InjectableConfigGenerator
 // **************************************************************************
 
+import 'package:frappe_app/views/change_password_viewmodel.dart';
 import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
@@ -66,5 +67,6 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
       () => _i18.ViewAttachmenetsBottomSheetViewModel());
   gh.lazySingleton<_i19.ViewReviewsBottomSheetViewModel>(
       () => _i19.ViewReviewsBottomSheetViewModel());
+  gh.lazySingleton<ChangePasswordViewModel>(() => ChangePasswordViewModel());
   return get;
 }

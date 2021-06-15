@@ -7,6 +7,7 @@ import 'package:frappe_app/form/controls/control.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/http.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
 import 'package:frappe_app/views/home_view.dart';
@@ -32,7 +33,7 @@ class Login extends StatelessWidget {
         model.init();
       },
       builder: (context, model, child) => Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: hexToColor('#007BFF'),
         body: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -55,23 +56,25 @@ class Login extends StatelessWidget {
                       key: _fbKey,
                       child: Column(
                         children: <Widget>[
-                          buildDecoratedControl(
-                            control: FormBuilderTextField(
-                              name: 'serverURL',
-                              initialValue: model.savedCreds.serverURL,
-                              validator: FormBuilderValidators.compose([
-                                FormBuilderValidators.required(context),
-                                FormBuilderValidators.url(context),
-                              ]),
-                              decoration: Palette.formFieldDecoration(
-                                label: "Server URL",
-                              ),
-                            ),
-                            field: DoctypeField(
-                              fieldname: 'serverUrl',
-                              label: "Server URL",
-                            ),
-                          ),
+                          // buildDecoratedControl(
+                          //   control: FormBuilderTextField(
+                          //     name: 'serverURL',
+                          //     initialValue: model.savedCreds.serverURL,
+                          //     validator: FormBuilderValidators.compose([
+                          //       FormBuilderValidators.required(context),
+                          //       FormBuilderValidators.url(context),
+                          //     ]),
+                          //     decoration: Palette.formFieldDecoration(
+                          //       label: "Server URL",
+                          //     ),
+
+                          //   ),
+                          //   field: DoctypeField(
+                          //     fieldname: 'serverUrl',
+                          //     label: "Server URL",
+                          //   ),
+
+                          // ),
                           buildDecoratedControl(
                             control: FormBuilderTextField(
                               name: 'usr',
@@ -84,7 +87,9 @@ class Login extends StatelessWidget {
                               ),
                             ),
                             field: DoctypeField(
-                                fieldname: "email", label: "Email Address"),
+                              fieldname: "email",
+                              label: "Email Address",
+                            ),
                           ),
                           PasswordField(),
                           FrappeFlatButton(
@@ -102,10 +107,11 @@ class Login extends StatelessWidget {
                                   var formValue = _fbKey.currentState?.value;
 
                                   try {
-                                    await setBaseUrl(formValue!["serverURL"]);
+                                    // formValue!["serverURL"] ??
+                                    await setBaseUrl('https://dpotech.vn');
 
                                     var loginRequest = LoginRequest(
-                                      usr: formValue["usr"].trimRight(),
+                                      usr: formValue!["usr"].trimRight(),
                                       pwd: formValue["pwd"],
                                     );
 
@@ -286,10 +292,11 @@ class Title extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Login to Frappe',
+      'Đăng nhập',
       style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
+        color: Colors.white,
       ),
     );
   }
@@ -298,10 +305,24 @@ class Title extends StatelessWidget {
 class FrappeLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Image(
-      image: AssetImage('assets/frappe_icon.jpg'),
-      width: 60,
-      height: 60,
+    return Container(
+      height: 100,
+      width: 200,
+      // child: Image(
+      //   image: AssetImage('assets/gas_icon.jpg'),
+      //   width: 100,
+      //   height: 50,
+      // ),
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        border: Border.all(
+          color: Colors.black,
+          width: 0.0,
+        ),
+        borderRadius: new BorderRadius.all(Radius.elliptical(200, 100)),
+        image: DecorationImage(
+            image: AssetImage('assets/gas_icon.jpg'), fit: BoxFit.fill),
+      ),
     );
   }
 }

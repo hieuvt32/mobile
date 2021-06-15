@@ -5,6 +5,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:frappe_app/model/change_password_request.dart';
+import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
@@ -966,6 +968,54 @@ class DioApi implements Api {
         }
       } else {
         throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<ChangePasswordResponse> changePassword(
+      ChangePasswordRequest changePasswordRequest) async {
+    try {
+      var usr = changePasswordRequest.usr;
+      final response = await DioHelper.dio.put(
+        "/resource/User/$usr",
+        data: changePasswordRequest.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        if (response.headers.map["set-cookie"] != null &&
+            response.headers.map["set-cookie"][3] != null) {
+          response.data["user_id"] =
+              response.headers.map["set-cookie"][3].split(';')[0].split('=')[1];
+        }
+
+        return ChangePasswordResponse.fromJson(response.data);
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
       }
     }
   }

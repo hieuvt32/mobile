@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
+import 'package:frappe_app/views/change_password_view.dart';
 import 'package:frappe_app/views/login/login_view.dart';
 import 'package:frappe_app/views/queue.dart';
 import 'package:frappe_app/widgets/padded_card_list_tile.dart';
@@ -12,23 +13,23 @@ class ProfileView extends StatelessWidget {
       appBar: AppBar(
         elevation: 0.8,
         title: Text(
-          'Profile',
+          'Hồ sơ',
         ),
       ),
       body: Padding(
         padding: const EdgeInsets.only(top: 4.0),
         child: Column(
           children: [
-            // PaddedCardListTile(
-            //   onTap: () {
-            //     Navigator.of(context).push(
-            //       MaterialPageRoute(
-            //         builder: (context) => QueueList(),
-            //       ),
-            //     );
-            //   },
-            //   title: "Queue",
-            // ),
+            PaddedCardListTile(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => ChangePasswordView(),
+                  ),
+                );
+              },
+              title: "Đổi mật khẩu",
+            ),
             PaddedCardListTile(
               onTap: () async {
                 await clearLoginInfo();
@@ -37,7 +38,7 @@ class ProfileView extends StatelessWidget {
                   page: Login(),
                 );
               },
-              title: "Logout",
+              title: "Đăng xuất",
             ),
           ],
         ),
