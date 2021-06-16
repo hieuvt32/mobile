@@ -2,9 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:frappe_app/config/frappe_palette.dart';
 import 'package:frappe_app/config/palette.dart';
+import 'package:frappe_app/form/controls/control.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/doctype_response.dart';
 import 'package:frappe_app/model/offline_storage.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
@@ -13,7 +16,6 @@ import 'package:frappe_app/widgets/frappe_button.dart';
 
 import 'base_view.dart';
 import 'change_password_viewmodel.dart';
-import 'login/login_view.dart';
 
 class ChangePasswordView extends StatefulWidget {
   const ChangePasswordView({Key? key}) : super(key: key);
@@ -66,7 +68,14 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                           //   ),
 
                           // ),
-                          PasswordField(),
+                          PasswordField(
+                            name: 'pwd',
+                            label: 'Mật khẩu mới',
+                          ),
+                          PasswordField(
+                            name: 're_pwd',
+                            label: 'Nhập lại mật khẩu',
+                          ),
                           FrappeFlatButton(
                             title: model.loginButtonLabel,
                             fullWidth: true,
@@ -85,17 +94,38 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                                     // formValue!["serverURL"] ??
                                     // await setBaseUrl('https://dpotech.vn');
 
+                                    if (formValue!["pwd"] !=
+                                        formValue["re_pwd"]) {
+                                      FrappeAlert.warnAlert(
+                                        title: "Thông báo",
+                                        subtitle: "Nhập lại mật khẩu chưa đúng",
+                                        context: context,
+                                      );
+                                      return;
+                                    }
+
                                     var usr =
                                         OfflineStorage.getItem('usr')["data"];
                                     var changePasswordRequest =
                                         ChangePasswordRequest(
-                                            newPassword: formValue!["pwd"],
+                                            newPassword: formValue["pwd"],
                                             usr: usr);
 
                                     var changePasswordResponse =
                                         await model.changePassword(
                                       changePasswordRequest,
                                     );
+
+                                    if (changePasswordResponse
+                                            .doctypeDoc.name ==
+                                        usr) {
+                                      FrappeAlert.successAlert(
+                                        title: "Thông báo",
+                                        subtitle:
+                                            "Thay đổi mật khẩu thành công",
+                                        context: context,
+                                      );
+                                    }
 
                                     // if (loginResponse.verification != null &&
                                     //     loginResponse.tmpId != null) {
@@ -149,6 +179,60 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class PasswordField extends StatefulWidget {
+  PasswordField({this.name, this.label});
+
+  final String? name;
+  final String? label;
+  @override
+  _PasswordFieldState createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool _hidePassword = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return buildDecoratedControl(
+      control: Stack(
+        alignment: Alignment.centerRight,
+        children: [
+          FormBuilderTextField(
+            maxLines: 1,
+            name: widget.name!,
+            validator: FormBuilderValidators.compose([
+              FormBuilderValidators.required(context),
+            ]),
+            obscureText: _hidePassword,
+            decoration: Palette.formFieldDecoration(label: widget.label),
+          ),
+          TextButton(
+            style: ButtonStyle(
+              overlayColor: MaterialStateProperty.all(
+                Colors.transparent,
+              ),
+            ),
+            child: Text(
+              _hidePassword ? "Hiện" : "Ẩn",
+              style: TextStyle(
+                color: FrappePalette.grey[600],
+              ),
+            ),
+            onPressed: () {
+              setState(
+                () {
+                  _hidePassword = !_hidePassword;
+                },
+              );
+            },
+          )
+        ],
+      ),
+      field: DoctypeField(fieldname: "password", label: widget.label),
     );
   }
 }

@@ -1,5 +1,11 @@
-class ChangePasswordResponse {
-  ChangePasswordResponse();
+import 'package:frappe_app/model/doctype_response.dart';
 
-  ChangePasswordResponse.fromJson(Map<String, dynamic> json);
+class ChangePasswordResponse {
+  ChangePasswordResponse({required this.doctypeDoc});
+
+  late DoctypeDoc doctypeDoc;
+
+  ChangePasswordResponse.fromJson(Map<String, dynamic> json) {
+    doctypeDoc = DoctypeDoc.fromJson(json['data'] as Map<String, dynamic>);
+  }
 }

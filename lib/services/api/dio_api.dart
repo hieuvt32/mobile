@@ -987,12 +987,6 @@ class DioApi implements Api {
         ),
       );
       if (response.statusCode == 200) {
-        if (response.headers.map["set-cookie"] != null &&
-            response.headers.map["set-cookie"][3] != null) {
-          response.data["user_id"] =
-              response.headers.map["set-cookie"][3].split(';')[0].split('=')[1];
-        }
-
         return ChangePasswordResponse.fromJson(response.data);
       } else {
         throw ErrorResponse(
