@@ -34,4 +34,7 @@ class FrappeIcons {
   static const arrow_right = '$_basePath/arrow_right.svg';
   static const email = '$_basePath/email.svg';
   static const unlock = '$_basePath/unlock.svg';
+  static const card_collection = '$_basePath/cart_collection.svg';
+  static const vector = '$_basePath/vector.svg';
+  static const home_custom = '$_basePath/home_custom.svg';
 }

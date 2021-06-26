@@ -35,6 +35,7 @@ class Login extends StatelessWidget {
       builder: (context, model, child) => Scaffold(
         backgroundColor: hexToColor('#007BFF'),
         body: SingleChildScrollView(
+            child: SafeArea(
           child: Column(
             children: <Widget>[
               SizedBox(
@@ -169,7 +170,7 @@ class Login extends StatelessWidget {
               ),
             ],
           ),
-        ),
+        )),
       ),
     );
   }

@@ -3,8 +3,11 @@ import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/config/frappe_palette.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/awesome_bar/awesome_bar_view.dart';
+import 'package:frappe_app/views/custom_navbar_widget.dart';
 import 'package:frappe_app/views/desk/desk_view.dart';
+import 'package:frappe_app/views/home/home_child_view.dart';
 import 'package:frappe_app/views/profile_view.dart';
 import 'package:frappe_app/widgets/user_avatar.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
@@ -37,19 +40,44 @@ class _HomeViewState extends State<HomeView> {
     //     selectedIndex: _controller.index,
     //   ),
     // );
-    return PersistentTabView(
+    var view = CustomPersistentTabView.custom(
       context,
       controller: _controller,
-      decoration: NavBarDecoration(boxShadow: [BoxShadow()]),
+      itemCount: _navBarsItems()
+          .length, // This is required in case of custom style! Pass the number of items for the nav bar.
       screens: _buildScreens(),
-      items: _navBarsItems(),
-      navBarStyle: NavBarStyle.style5,
+      confineInSafeArea: true,
+      handleAndroidBackButtonPress: true,
+      customWidget: CustomNavBarWidget(
+        // Your custom widget goes here
+        items: _navBarsItems(),
+        selectedIndex: 1,
+        onItemSelected: (index) {
+          setState(() {
+            _controller.index =
+                index; // NOTE: THIS IS CRITICAL!! Don't miss it!
+          });
+        },
+      ),
+      resizeToAvoidBottomInset: true,
+      navBarHeight: 86,
     );
+    return view;
+
+    // PersistentTabView(
+    //   context,
+    //   controller: _controller,
+    //   decoration: NavBarDecoration(boxShadow: [BoxShadow()]),
+    //   screens: _buildScreens(),
+    //   items: _navBarsItems(),
+    //   navBarStyle: NavBarStyle.style13,
+    //   backgroundColor: hexToColor('#007BFF'),
+    //   navBarHeight: 75,
+    // );
   }
 
   List<Widget> _buildScreens() {
     return [
-      DeskView(module),
       Awesombar(
         (String selectedModule) {
           setState(
@@ -60,6 +88,7 @@ class _HomeViewState extends State<HomeView> {
           );
         },
       ),
+      HomeChildView(),
       ProfileView(),
     ];
   }
@@ -67,35 +96,38 @@ class _HomeViewState extends State<HomeView> {
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        title: 'Home',
+        title: '',
         inactiveIcon: FrappeIcon(
-          FrappeIcons.home_outlined,
+          FrappeIcons.card_collection,
           color: FrappePalette.grey[500],
         ),
         icon: FrappeIcon(
-          FrappeIcons.home_filled,
+          FrappeIcons.card_collection,
+          size: 15,
+        ),
+        activeColorPrimary: FrappePalette.grey[800]!,
+        inactiveColorPrimary: FrappePalette.grey[500],
+        activeColorSecondary: FrappePalette.grey[800]!,
+      ),
+      PersistentBottomNavBarItem(
+        title: '',
+        icon: FrappeIcon(
+          FrappeIcons.home_custom,
+          size: 15,
+        ),
+        inactiveIcon: FrappeIcon(
+          FrappeIcons.home_custom,
+          size: 15,
+          color: Colors.white,
         ),
         activeColorPrimary: FrappePalette.grey[800]!,
         inactiveColorPrimary: FrappePalette.grey[500],
       ),
       PersistentBottomNavBarItem(
-        title: 'Search',
+        title: '',
         icon: FrappeIcon(
-          FrappeIcons.search,
-          color: FrappePalette.grey[800],
-        ),
-        inactiveIcon: FrappeIcon(
-          FrappeIcons.search,
-          color: FrappePalette.grey[500],
-        ),
-        activeColorPrimary: FrappePalette.grey[800]!,
-        inactiveColorPrimary: FrappePalette.grey[500],
-      ),
-      PersistentBottomNavBarItem(
-        title: 'Profile',
-        icon: UserAvatar(
-          uid: Config().userId!,
-          size: 12,
+          FrappeIcons.vector,
+          size: 15,
         ),
         activeColorPrimary: FrappePalette.grey[800]!,
         inactiveColorPrimary: FrappePalette.grey[500],

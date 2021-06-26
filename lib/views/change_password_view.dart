@@ -36,6 +36,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
       builder: (context, model, child) => Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
+            child: SafeArea(
           child: Column(
             children: <Widget>[
               SizedBox(
@@ -177,7 +178,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
               ),
             ],
           ),
-        ),
+        )),
       ),
     );
   }
