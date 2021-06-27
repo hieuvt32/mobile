@@ -4,6 +4,9 @@ import 'package:flutter_page_indicator/flutter_page_indicator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/home/Item.dart';
+import 'package:frappe_app/views/production_report/production_report_view.dart';
+import 'package:frappe_app/views/search/search_view.dart';
 
 class HomeChildView extends StatefulWidget {
   const HomeChildView({Key? key}) : super(key: key);
@@ -13,17 +16,18 @@ class HomeChildView extends StatefulWidget {
 }
 
 class _HomeChildViewState extends State<HomeChildView> {
-  final menuList = [
-    FrappeIcons.card_collection,
-    FrappeIcons.add_user,
-    FrappeIcons.arrow_right,
-    FrappeIcons.assign,
-    FrappeIcons.attachment,
-    FrappeIcons.browse
+  final items = [
+    Item(icon: FrappeIcons.card_collection, view: ProductionReportView()),
+    Item(icon: FrappeIcons.add_user, view: SearchView()),
+    Item(icon: FrappeIcons.arrow_right, view: ProductionReportView()),
+    Item(icon: FrappeIcons.assign, view: ProductionReportView()),
+    Item(icon: FrappeIcons.attachment, view: ProductionReportView()),
+    Item(icon: FrappeIcons.browse, view: ProductionReportView()),
   ];
   @override
   Widget build(BuildContext context) {
-    var maxIndex = menuList.length - 1;
+    var maxIndex = items.length - 1;
+
     return Scaffold(
       body: SafeArea(
         child: Column(children: [
@@ -48,50 +52,62 @@ class _HomeChildViewState extends State<HomeChildView> {
           ),
           Wrap(
             children: [
-              ...menuList
+              ...items
                   .asMap()
-                  .map((i, e) {
+                  .map((i, item) {
                     return MapEntry(
                         i,
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width / 3,
-                          child: new Column(
-                            // mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              SizedBox(
-                                height: 40,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return item.view;
+                                },
                               ),
-                              SizedBox(
-                                child: new Container(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(30.0),
-                                    child: FrappeIcon(
-                                      e,
-                                      color: hexToColor('#FF0F00'),
-                                      size: 48,
-                                    ),
-                                  ),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: hexToColor('#FF0F00'), width: 1),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(15)),
-                                  ),
-                                  // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                            );
+                          },
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width / 3,
+                            child: new Column(
+                              // mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 40,
                                 ),
-                                height: 112,
-                                width: 112,
-                              ),
-                              new Padding(
-                                padding: new EdgeInsets.only(top: 6.0),
-                                child: new Text("Giao vận"),
-                              ),
-                              i > (maxIndex - 3)
-                                  ? SizedBox(
-                                      height: 60,
-                                    )
-                                  : SizedBox.shrink()
-                            ],
+                                SizedBox(
+                                  child: new Container(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(30.0),
+                                      child: FrappeIcon(
+                                        item.icon,
+                                        color: hexToColor('#FF0F00'),
+                                        size: 48,
+                                      ),
+                                    ),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: hexToColor('#FF0F00'),
+                                          width: 1),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(15)),
+                                    ),
+                                    // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                  ),
+                                  height: 112,
+                                  width: 112,
+                                ),
+                                new Padding(
+                                  padding: new EdgeInsets.only(top: 6.0),
+                                  child: new Text("Giao vận"),
+                                ),
+                                i > (maxIndex - 3)
+                                    ? SizedBox(
+                                        height: 60,
+                                      )
+                                    : SizedBox.shrink()
+                              ],
+                            ),
                           ),
                         ));
                   })

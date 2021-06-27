@@ -19,7 +19,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   final PersistentTabController _controller =
-      PersistentTabController(initialIndex: 0);
+      PersistentTabController(initialIndex: 1);
   String? module;
 
   @override
@@ -40,6 +40,7 @@ class _HomeViewState extends State<HomeView> {
     //     selectedIndex: _controller.index,
     //   ),
     // );
+
     var view = CustomPersistentTabView.custom(
       context,
       controller: _controller,
@@ -51,7 +52,7 @@ class _HomeViewState extends State<HomeView> {
       customWidget: CustomNavBarWidget(
         // Your custom widget goes here
         items: _navBarsItems(),
-        selectedIndex: 1,
+        selectedIndex: _controller.index,
         onItemSelected: (index) {
           setState(() {
             _controller.index =
@@ -78,6 +79,8 @@ class _HomeViewState extends State<HomeView> {
 
   List<Widget> _buildScreens() {
     return [
+      ProfileView(),
+      HomeChildView(),
       Awesombar(
         (String selectedModule) {
           setState(
@@ -88,8 +91,6 @@ class _HomeViewState extends State<HomeView> {
           );
         },
       ),
-      HomeChildView(),
-      ProfileView(),
     ];
   }
 
