@@ -4,7 +4,9 @@ import 'package:flutter_page_indicator/flutter_page_indicator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
 import 'package:frappe_app/views/home/Item.dart';
+import 'package:frappe_app/views/inventory/inventory_view.dart';
 import 'package:frappe_app/views/production_report/production_report_view.dart';
 import 'package:frappe_app/views/search/search_view.dart';
 
@@ -19,8 +21,8 @@ class _HomeChildViewState extends State<HomeChildView> {
   final items = [
     Item(icon: FrappeIcons.card_collection, view: ProductionReportView()),
     Item(icon: FrappeIcons.add_user, view: SearchView()),
-    Item(icon: FrappeIcons.arrow_right, view: ProductionReportView()),
-    Item(icon: FrappeIcons.assign, view: ProductionReportView()),
+    Item(icon: FrappeIcons.arrow_right, view: BarcodeScannerView()),
+    Item(icon: FrappeIcons.assign, view: InventoryView()),
     Item(icon: FrappeIcons.attachment, view: ProductionReportView()),
     Item(icon: FrappeIcons.browse, view: ProductionReportView()),
   ];

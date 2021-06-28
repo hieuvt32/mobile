@@ -216,6 +216,26 @@ class _SearchViewState extends State<SearchView> {
                     )
                   ],
                 ),
+              ),
+              SizedBox(
+                height: 80,
+              ),
+              ElevatedButton(
+                child: Text('Cập nhật'),
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                    primary: hexToColor('#FF0F00'),
+                    side: BorderSide(
+                      width: 1.0,
+                    ),
+                    minimumSize: Size(120, 40),
+                    padding: EdgeInsets.fromLTRB(118, 13, 118, 13),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        side: BorderSide(color: hexToColor('#FF0F00')))),
+              ),
+              SizedBox(
+                height: 164,
               )
             ],
           ),
