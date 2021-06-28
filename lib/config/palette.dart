@@ -69,7 +69,7 @@ class Palette {
           const Radius.circular(6.0),
         ),
       ),
-      // hintText: label,
+      hintText: label,
       filled: filled,
       fillColor: Palette.fieldBgColor,
     );

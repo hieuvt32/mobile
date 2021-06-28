@@ -68,12 +68,19 @@ class _InventoryViewState extends State<InventoryView>
     });
   }
 
-  _buildTabContext(int lineCount) => Container(
+  _buildTabContext() => Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            const Divider(
+              color: Color.fromRGBO(0, 0, 0, 0.3),
+              height: 1,
+              thickness: 1,
+              indent: 1,
+              endIndent: 1,
+            ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(28, 16, 28, 16),
+              padding: const EdgeInsets.fromLTRB(28, 0, 28, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -111,7 +118,7 @@ class _InventoryViewState extends State<InventoryView>
               child: ListView.builder(
                 itemBuilder: (ctx, index) {
                   return Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
                     child: Container(
                       decoration: BoxDecoration(
                           border:
@@ -250,7 +257,7 @@ class _InventoryViewState extends State<InventoryView>
               body: Container(
                   child: TabBarView(
                 controller: _tabController,
-                children: [_buildTabContext(200), _buildTabContext(2)],
+                children: [_buildTabContext(), _buildTabContext()],
               )),
             ),
           ),

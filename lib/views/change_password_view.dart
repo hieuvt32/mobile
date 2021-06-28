@@ -44,136 +44,157 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
               ),
               Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: <Widget>[
-                    FormBuilder(
-                      key: _fbKey,
-                      child: Column(
-                        children: <Widget>[
-                          // buildDecoratedControl(
-                          //   control: FormBuilderTextField(
-                          //     name: 'serverURL',
-                          //     initialValue: model.savedCreds.serverURL,
-                          //     validator: FormBuilderValidators.compose([
-                          //       FormBuilderValidators.required(context),
-                          //       FormBuilderValidators.url(context),
-                          //     ]),
-                          //     decoration: Palette.formFieldDecoration(
-                          //       label: "Server URL",
-                          //     ),
+                child: Center(
+                  child: Column(
+                    children: <Widget>[
+                      FormBuilder(
+                        key: _fbKey,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              // buildDecoratedControl(
+                              //   control: FormBuilderTextField(
+                              //     name: 'serverURL',
+                              //     initialValue: model.savedCreds.serverURL,
+                              //     validator: FormBuilderValidators.compose([
+                              //       FormBuilderValidators.required(context),
+                              //       FormBuilderValidators.url(context),
+                              //     ]),
+                              //     decoration: Palette.formFieldDecoration(
+                              //       label: "Server URL",
+                              //     ),
 
-                          //   ),
-                          //   field: DoctypeField(
-                          //     fieldname: 'serverUrl',
-                          //     label: "Server URL",
-                          //   ),
+                              //   ),
+                              //   field: DoctypeField(
+                              //     fieldname: 'serverUrl',
+                              //     label: "Server URL",
+                              //   ),
 
-                          // ),
-                          PasswordField(
-                            name: 'pwd',
-                            label: 'Mật khẩu mới',
-                          ),
-                          PasswordField(
-                            name: 're_pwd',
-                            label: 'Nhập lại mật khẩu',
-                          ),
-                          FrappeFlatButton(
-                            title: model.loginButtonLabel,
-                            fullWidth: true,
-                            height: 46,
-                            buttonType: ButtonType.primary,
-                            onPressed: () async {
-                              FocusScope.of(context).requestFocus(
-                                FocusNode(),
-                              );
+                              // ),,
+                              SizedBox(
+                                height: 122,
+                              ),
+                              Text(
+                                'Đổi mật khẩu',
+                                style: TextStyle(
+                                    color: hexToColor('#00478B'),
+                                    fontSize: 32,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                              SizedBox(
+                                height: 32,
+                              ),
+                              PasswordField(
+                                name: 'pwd',
+                                label: 'Mật khẩu mới',
+                              ),
+                              PasswordField(
+                                name: 're_pwd',
+                                label: 'Nhập lại mật khẩu mới',
+                              ),
+                              FrappeFlatButton(
+                                title: model.loginButtonLabel,
+                                fullWidth: true,
+                                height: 46,
+                                buttonType: ButtonType.primary,
+                                onPressed: () async {
+                                  FocusScope.of(context).requestFocus(
+                                    FocusNode(),
+                                  );
 
-                              if (_fbKey.currentState != null) {
-                                if (_fbKey.currentState!.saveAndValidate()) {
-                                  var formValue = _fbKey.currentState?.value;
+                                  if (_fbKey.currentState != null) {
+                                    if (_fbKey.currentState!
+                                        .saveAndValidate()) {
+                                      var formValue =
+                                          _fbKey.currentState?.value;
 
-                                  try {
-                                    // formValue!["serverURL"] ??
-                                    // await setBaseUrl('https://dpotech.vn');
+                                      try {
+                                        // formValue!["serverURL"] ??
+                                        // await setBaseUrl('https://dpotech.vn');
 
-                                    if (formValue!["pwd"] !=
-                                        formValue["re_pwd"]) {
-                                      FrappeAlert.warnAlert(
-                                        title: "Thông báo",
-                                        subtitle: "Nhập lại mật khẩu chưa đúng",
-                                        context: context,
-                                      );
-                                      return;
-                                    }
+                                        if (formValue!["pwd"] !=
+                                            formValue["re_pwd"]) {
+                                          FrappeAlert.warnAlert(
+                                            title: "Thông báo",
+                                            subtitle:
+                                                "Nhập lại mật khẩu chưa đúng",
+                                            context: context,
+                                          );
+                                          return;
+                                        }
 
-                                    var usr =
-                                        OfflineStorage.getItem('usr')["data"];
-                                    var changePasswordRequest =
-                                        ChangePasswordRequest(
-                                            newPassword: formValue["pwd"],
-                                            usr: usr);
+                                        var usr = OfflineStorage.getItem(
+                                            'usr')["data"];
+                                        var changePasswordRequest =
+                                            ChangePasswordRequest(
+                                                newPassword: formValue["pwd"],
+                                                usr: usr);
 
-                                    var changePasswordResponse =
-                                        await model.changePassword(
-                                      changePasswordRequest,
-                                    );
+                                        var changePasswordResponse =
+                                            await model.changePassword(
+                                          changePasswordRequest,
+                                        );
 
-                                    if (changePasswordResponse
-                                            .doctypeDoc.name ==
-                                        usr) {
-                                      FrappeAlert.successAlert(
-                                        title: "Thông báo",
-                                        subtitle:
-                                            "Thay đổi mật khẩu thành công",
-                                        context: context,
-                                      );
-                                    }
+                                        if (changePasswordResponse
+                                                .doctypeDoc.name ==
+                                            usr) {
+                                          FrappeAlert.successAlert(
+                                            title: "Thông báo",
+                                            subtitle:
+                                                "Thay đổi mật khẩu thành công",
+                                            context: context,
+                                          );
+                                        }
 
-                                    // if (loginResponse.verification != null &&
-                                    //     loginResponse.tmpId != null) {
-                                    //   showModalBottomSheet(
-                                    //     context: context,
-                                    //     useRootNavigator: true,
-                                    //     isScrollControlled: true,
-                                    //     builder: (context) =>
-                                    //         VerificationBottomSheetView(
-                                    //       loginRequest: loginRequest,
-                                    //       tmpId: loginResponse.tmpId!,
-                                    //       message: loginResponse
-                                    //           .verification!.prompt,
-                                    //     ),
-                                    //   );
-                                    // } else {
-                                    //   NavigationHelper.pushReplacement(
-                                    //     context: context,
-                                    //     page: HomeView(),
-                                    //   );
-                                    // }
-                                  } catch (e) {
-                                    var _e = e as ErrorResponse;
+                                        // if (loginResponse.verification != null &&
+                                        //     loginResponse.tmpId != null) {
+                                        //   showModalBottomSheet(
+                                        //     context: context,
+                                        //     useRootNavigator: true,
+                                        //     isScrollControlled: true,
+                                        //     builder: (context) =>
+                                        //         VerificationBottomSheetView(
+                                        //       loginRequest: loginRequest,
+                                        //       tmpId: loginResponse.tmpId!,
+                                        //       message: loginResponse
+                                        //           .verification!.prompt,
+                                        //     ),
+                                        //   );
+                                        // } else {
+                                        //   NavigationHelper.pushReplacement(
+                                        //     context: context,
+                                        //     page: HomeView(),
+                                        //   );
+                                        // }
+                                      } catch (e) {
+                                        var _e = e as ErrorResponse;
 
-                                    if (_e.statusCode ==
-                                        HttpStatus.unauthorized) {
-                                      FrappeAlert.errorAlert(
-                                        title: "Not Authorized",
-                                        subtitle: _e.statusMessage,
-                                        context: context,
-                                      );
-                                    } else {
-                                      FrappeAlert.errorAlert(
-                                        title: "Error",
-                                        subtitle: _e.statusMessage,
-                                        context: context,
-                                      );
+                                        if (_e.statusCode ==
+                                            HttpStatus.unauthorized) {
+                                          FrappeAlert.errorAlert(
+                                            title: "Not Authorized",
+                                            subtitle: _e.statusMessage,
+                                            context: context,
+                                          );
+                                        } else {
+                                          FrappeAlert.errorAlert(
+                                            title: "Error",
+                                            subtitle: _e.statusMessage,
+                                            context: context,
+                                          );
+                                        }
+                                      }
                                     }
                                   }
-                                }
-                              }
-                            },
+                                },
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -233,7 +254,7 @@ class _PasswordFieldState extends State<PasswordField> {
           )
         ],
       ),
-      field: DoctypeField(fieldname: "password", label: widget.label),
+      field: DoctypeField(fieldname: "password", label: null),
     );
   }
 }

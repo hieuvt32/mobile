@@ -19,12 +19,12 @@ class HomeChildView extends StatefulWidget {
 
 class _HomeChildViewState extends State<HomeChildView> {
   final items = [
-    Item(icon: FrappeIcons.card_collection, view: ProductionReportView()),
-    Item(icon: FrappeIcons.add_user, view: SearchView()),
-    Item(icon: FrappeIcons.arrow_right, view: BarcodeScannerView()),
-    Item(icon: FrappeIcons.assign, view: InventoryView()),
-    Item(icon: FrappeIcons.attachment, view: ProductionReportView()),
-    Item(icon: FrappeIcons.browse, view: ProductionReportView()),
+    Item(icon: FrappeIcons.giao_van, view: ProductionReportView()),
+    Item(icon: FrappeIcons.ban_hang, view: SearchView()),
+    Item(icon: FrappeIcons.kiem_kho, view: BarcodeScannerView()),
+    Item(icon: FrappeIcons.star, view: InventoryView()),
+    Item(icon: FrappeIcons.report, view: ProductionReportView()),
+    Item(icon: FrappeIcons.mua_hang, view: ProductionReportView()),
   ];
   @override
   Widget build(BuildContext context) {

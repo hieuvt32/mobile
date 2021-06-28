@@ -37,4 +37,13 @@ class FrappeIcons {
   static const card_collection = '$_basePath/cart_collection.svg';
   static const vector = '$_basePath/vector.svg';
   static const home_custom = '$_basePath/home_custom.svg';
+  static const giao_van = '$_basePath/giao_van.svg';
+  static const ban_hang = '$_basePath/ban_hang.svg';
+  static const kiem_kho = '$_basePath/kiem_kho.svg';
+  static const star = '$_basePath/star.svg';
+  static const report = '$_basePath/report.svg';
+  static const mua_hang = '$_basePath/mua_hang.svg';
+  static const barcode = '$_basePath/barcode.svg';
+  static const change_password = '$_basePath/change_password.svg';
+  static const logout = '$_basePath/logout.svg';
 }

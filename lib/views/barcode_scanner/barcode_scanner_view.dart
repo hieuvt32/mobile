@@ -124,7 +124,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                               size: 56.0,
                             ),
                             child: Container(
-                              child: FrappeIcon(FrappeIcons.attachment),
+                              child: FrappeIcon(FrappeIcons.barcode),
                               height: 150,
                               width: 120,
                             ),

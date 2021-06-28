@@ -204,14 +204,14 @@ Widget buildDecoratedControl({
       children: <Widget>[
         Row(
           children: [
-            Padding(
-              padding: Palette.labelPadding,
-              child: Text(
-                field.label ?? "",
-                style: Palette.secondaryTxtStyle,
-              ),
-            ),
-            SizedBox(width: 4),
+            // Padding(
+            //   padding: Palette.labelPadding,
+            //   child: Text(
+            //     field.label ?? "",
+            //     style: Palette.secondaryTxtStyle,
+            //   ),
+            // ),
+            // SizedBox(width: 4),
             if (field.reqd == 1)
               Padding(
                 padding: const EdgeInsets.only(bottom: 4.0),
