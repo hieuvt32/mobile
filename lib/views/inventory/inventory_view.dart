@@ -208,59 +208,60 @@ class _InventoryViewState extends State<InventoryView>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: IconButton(
-              icon: Icon(Icons.chevron_left),
-              onPressed: () {
-                // Get.back();
-              },
-            ),
-            actions: [],
-            title: Text(
-              'Kiểm kho (21/6/2021)',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            // bottom: ,
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.chevron_left),
+            onPressed: () {
+              // Get.back();
+            },
           ),
-          // body: AnswerButton(),
-          body: Padding(
-            padding: const EdgeInsets.only(top: 28),
-            child: NestedScrollView(
-              controller: _scrollController,
-              headerSliverBuilder: (context, value) {
-                return [
-                  //SliverToBoxAdapter(child: _buildCarousel()),
-                  SliverToBoxAdapter(
-                    child: TabBar(
-                      controller: _tabController,
-                      labelColor: hexToColor('#FF0F00'),
-                      // isScrollable: true,
-                      labelStyle: TextStyle(
-                        color: hexToColor('#FF0F00'),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      unselectedLabelColor: hexToColor('#00478B'),
-                      indicatorColor: Colors.transparent,
-                      tabs: myTabs,
+          actions: [],
+          title: Text(
+            'Kiểm kho (21/6/2021)',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          // bottom: ,
+        ),
+        // body: AnswerButton(),
+        body: Padding(
+          padding: const EdgeInsets.only(top: 28),
+          child: NestedScrollView(
+            controller: _scrollController,
+            headerSliverBuilder: (context, value) {
+              return [
+                //SliverToBoxAdapter(child: _buildCarousel()),
+                SliverToBoxAdapter(
+                  child: TabBar(
+                    controller: _tabController,
+                    labelColor: hexToColor('#FF0F00'),
+                    // isScrollable: true,
+                    labelStyle: TextStyle(
+                      color: hexToColor('#FF0F00'),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
                     ),
+                    unselectedLabelColor: hexToColor('#00478B'),
+                    indicatorColor: Colors.transparent,
+                    tabs: myTabs,
                   ),
-                ];
-              },
-              body: Container(
-                  child: TabBarView(
-                controller: _tabController,
-                children: [_buildTabContext(), _buildTabContext()],
-              )),
-            ),
+                ),
+              ];
+            },
+            body: Container(
+                child: TabBarView(
+              controller: _tabController,
+              children: [_buildTabContext(), _buildTabContext()],
+            )),
           ),
-        ));
+        ),
+      ),
+    );
   }
 }

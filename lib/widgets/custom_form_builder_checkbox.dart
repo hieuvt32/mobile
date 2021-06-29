@@ -116,7 +116,6 @@ class _CustomFormBuilderCheckboxState extends State<CustomFormBuilderCheckbox> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO
     return FormField(
       key: _fieldKey,
       enabled: !_readOnly,

@@ -7,6 +7,7 @@ import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
+import 'package:frappe_app/views/list_order/list_order_view.dart';
 import 'package:frappe_app/views/production_report/production_report_view.dart';
 import 'package:frappe_app/views/search/search_view.dart';
 
@@ -23,7 +24,7 @@ class _HomeChildViewState extends State<HomeChildView> {
     Item(icon: FrappeIcons.ban_hang, view: SearchView()),
     Item(icon: FrappeIcons.kiem_kho, view: BarcodeScannerView()),
     Item(icon: FrappeIcons.star, view: InventoryView()),
-    Item(icon: FrappeIcons.report, view: ProductionReportView()),
+    Item(icon: FrappeIcons.report, view: ListOrderView()),
     Item(icon: FrappeIcons.mua_hang, view: ProductionReportView()),
   ];
   @override
