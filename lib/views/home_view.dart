@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/config/frappe_palette.dart';
-import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
-import 'package:frappe_app/utils/helpers.dart';
-import 'package:frappe_app/views/awesome_bar/awesome_bar_view.dart';
 import 'package:frappe_app/views/custom_navbar_widget.dart';
-import 'package:frappe_app/views/desk/desk_view.dart';
 import 'package:frappe_app/views/home/home_child_view.dart';
 import 'package:frappe_app/views/notification/notification_view.dart';
 import 'package:frappe_app/views/profile_view.dart';
-import 'package:frappe_app/widgets/user_avatar.dart';
 import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class HomeView extends StatefulWidget {

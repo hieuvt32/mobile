@@ -13,8 +13,6 @@ class BarcodeScannerView extends StatefulWidget {
 }
 
 class _BarcodeScannerViewState extends State<BarcodeScannerView> {
-  String _scanBarcode = 'Unknown';
-
   Future<void> startBarcodeScanStream() async {
     FlutterBarcodeScanner.getBarcodeStreamReceiver(
             '#ff6666', 'Cancel', true, ScanMode.BARCODE)!
@@ -37,9 +35,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
-    setState(() {
-      _scanBarcode = barcodeScanRes;
-    });
+    setState(() {});
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -59,9 +55,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
-    setState(() {
-      _scanBarcode = barcodeScanRes;
-    });
+    setState(() {});
   }
 
   @override

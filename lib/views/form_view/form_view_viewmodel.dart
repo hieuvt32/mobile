@@ -14,7 +14,6 @@ import '../../model/offline_storage.dart';
 import '../../model/config.dart';
 import '../../utils/enums.dart';
 import '../../utils/helpers.dart';
-import '../../model/queue.dart';
 
 @lazySingleton
 class FormViewViewModel extends BaseViewModel {

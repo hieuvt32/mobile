@@ -24,7 +24,7 @@ class Check extends StatelessWidget with Control, ControlInput {
 
   @override
   Widget build(BuildContext context) {
-    List<String? Function(dynamic?)> validators = [];
+    List<String? Function(dynamic)> validators = [];
 
     var f = setMandatory(doctypeField);
 
@@ -34,7 +34,6 @@ class Check extends StatelessWidget with Control, ControlInput {
       );
     }
 
-    // TODO fix overflow
     return CustomFormBuilderCheckbox(
       key: key,
       valueTransformer: (val) {

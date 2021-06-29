@@ -6,7 +6,6 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 /// A field that takes a list of `Chip`s as input and suggests more options
 /// while typing
 class FormBuilderChipsInput<T> extends FormBuilderField<List<T>> {
-  //TODO: Add documentation
   final ChipsInputSuggestions<T> findSuggestions;
 
   // final ValueChanged<List<T>> onChanged;

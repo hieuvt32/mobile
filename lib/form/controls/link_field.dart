@@ -51,7 +51,7 @@ class LinkField extends StatefulWidget {
 class _LinkFieldState extends State<LinkField> with Control, ControlInput {
   @override
   Widget build(BuildContext context) {
-    List<String? Function(dynamic?)> validators = [];
+    List<String? Function(dynamic)> validators = [];
     var f = setMandatory(widget.doctypeField);
 
     if (f != null) {

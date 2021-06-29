@@ -5,8 +5,6 @@ import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
 import 'package:frappe_app/views/change_password_view.dart';
 import 'package:frappe_app/views/login/login_view.dart';
-import 'package:frappe_app/views/queue.dart';
-import 'package:frappe_app/widgets/padded_card_list_tile.dart';
 
 class ProfileView extends StatelessWidget {
   @override

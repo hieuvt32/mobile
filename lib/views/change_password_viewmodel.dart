@@ -1,7 +1,6 @@
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
-import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/offline_storage.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:injectable/injectable.dart';

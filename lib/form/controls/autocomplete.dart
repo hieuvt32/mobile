@@ -54,7 +54,7 @@ class _AutoCompleteState extends State<AutoComplete>
 
   @override
   Widget build(BuildContext context) {
-    List<String? Function(dynamic?)> validators = [];
+    List<String? Function(dynamic)> validators = [];
 
     var f = setMandatory(widget.doctypeField);
 

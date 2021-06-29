@@ -28,8 +28,6 @@ class Palette {
   static EdgeInsets fieldPadding = const EdgeInsets.only(bottom: 24.0);
   static EdgeInsets labelPadding = const EdgeInsets.only(bottom: 6.0);
 
-  // TODO: move
-
   static TextStyle secondaryTxtStyle = TextStyle(
     color: Palette.secondaryTxtColor,
     fontWeight: FontWeight.bold,
@@ -41,7 +39,6 @@ class Palette {
     color: Palette.secondaryTxtColor,
   );
 
-  // TODO
   static InputDecoration formFieldDecoration({
     String? label,
     Widget? suffixIcon,

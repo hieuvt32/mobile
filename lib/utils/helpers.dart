@@ -29,7 +29,6 @@ import '../utils/dio_helper.dart';
 import '../utils/enums.dart';
 
 getDownloadPath() async {
-  // TODO
   if (Platform.isAndroid) {
     return '/storage/emulated/0/Download/';
   } else if (Platform.isIOS) {

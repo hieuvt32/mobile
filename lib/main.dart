@@ -8,7 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'utils/helpers.dart';
 import 'utils/http.dart';
 
-import 'scheduler.dart';
 import 'app/locator.dart';
 import 'app.dart';
 
