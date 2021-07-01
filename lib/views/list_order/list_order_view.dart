@@ -211,7 +211,6 @@ class _ListOrderViewState extends State<ListOrderView>
         return hexToColor('#0072BC');
       case 2:
         return hexToColor('#FF0F00');
-
       default:
         return hexToColor('#1BBD5C');
     }
@@ -220,7 +219,7 @@ class _ListOrderViewState extends State<ListOrderView>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,

@@ -39,7 +39,7 @@ class _InventoryViewState extends State<InventoryView>
     _scrollController.addListener(_scrollListener);
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_smoothScrollToTop);
-
+    fixedScroll = false;
     super.initState();
   }
 
@@ -69,15 +69,22 @@ class _InventoryViewState extends State<InventoryView>
   }
 
   _buildTabContext() => Container(
+          child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
+            SizedBox(
+              height: 20,
+            ),
             const Divider(
               color: Color.fromRGBO(0, 0, 0, 0.3),
               height: 1,
               thickness: 1,
               indent: 1,
               endIndent: 1,
+            ),
+            SizedBox(
+              height: 16,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(28, 0, 28, 0),
@@ -112,6 +119,9 @@ class _InventoryViewState extends State<InventoryView>
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: 16,
             ),
             Container(
               height: 300,
@@ -152,7 +162,7 @@ class _InventoryViewState extends State<InventoryView>
                               flex: 1,
                               child: Container(
                                 // width: 64,
-                                height: 32,
+                                height: 24,
                                 child: TextField(
                                     keyboardType: TextInputType.number,
                                     decoration: InputDecoration(
@@ -187,6 +197,9 @@ class _InventoryViewState extends State<InventoryView>
                 itemCount: stores.length,
               ),
             ),
+            SizedBox(
+              height: 120,
+            ),
             ElevatedButton(
               child: Text('Xác nhận'),
               onPressed: () {},
@@ -203,7 +216,7 @@ class _InventoryViewState extends State<InventoryView>
             ),
           ],
         ),
-      );
+      ));
 
   @override
   Widget build(BuildContext context) {
