@@ -101,13 +101,13 @@ class _CreateOrderViewState extends State<CreateOrderView>
       case 1:
         return _buildReceivingShellContext();
       case 2:
-        return _buidProductContext();
+        return _buildProductContext();
       default:
-        return _buidSignatureContext();
+        return _buildSignatureContext();
     }
   }
 
-  Widget _buidSignatureContext() {
+  Widget _buildSignatureContext() {
     return Container(
       child: SingleChildScrollView(
         child: Padding(
@@ -178,61 +178,7 @@ class _CreateOrderViewState extends State<CreateOrderView>
               SizedBox(
                 height: 44,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      side: BorderSide(
-                        width: 1.0,
-                      ),
-                      // minimumSize: Size(120, 40),
-                      padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        side: BorderSide(
-                          color: hexToColor('#0072BC'),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Text(
-                      'Hủy',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: hexToColor('#00478B'),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: hexToColor('#FF0F00'),
-                      side: BorderSide(
-                        width: 1.0,
-                      ),
-                      // minimumSize: Size(120, 40),
-                      padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        side: BorderSide(
-                          color: hexToColor('#FF0F00'),
-                        ),
-                      ),
-                    ),
-                    onPressed: () {},
-                    child: Text(
-                      'Hoàn thành',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  )
-                ],
-              )
+              _buildBottomButton(),
             ],
           ),
         ),
@@ -240,7 +186,65 @@ class _CreateOrderViewState extends State<CreateOrderView>
     );
   }
 
-  Widget _buidProductContext() {
+  Widget _buildBottomButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Colors.white,
+            side: BorderSide(
+              width: 1.0,
+            ),
+            // minimumSize: Size(120, 40),
+            padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              side: BorderSide(
+                color: hexToColor('#0072BC'),
+              ),
+            ),
+          ),
+          onPressed: () {},
+          child: Text(
+            'Hủy',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: hexToColor('#00478B'),
+            ),
+          ),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: hexToColor('#FF0F00'),
+            side: BorderSide(
+              width: 1.0,
+            ),
+            // minimumSize: Size(120, 40),
+            padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              side: BorderSide(
+                color: hexToColor('#FF0F00'),
+              ),
+            ),
+          ),
+          onPressed: () {},
+          child: Text(
+            'Hoàn thành',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _buildProductContext() {
     return Container(
       child: SingleChildScrollView(
         child: Column(
@@ -463,35 +467,38 @@ class _CreateOrderViewState extends State<CreateOrderView>
                 itemCount: 5,
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: hexToColor('#0072BC'),
-                    side: BorderSide(
-                      width: 1.0,
-                    ),
-                    // minimumSize: Size(120, 40),
-                    padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: hexToColor('#0072BC'),
                       side: BorderSide(
-                        color: hexToColor('#0072BC'),
+                        width: 1.0,
+                      ),
+                      // minimumSize: Size(120, 40),
+                      padding: EdgeInsets.fromLTRB(8, 8, 8, 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        side: BorderSide(
+                          color: hexToColor('#0072BC'),
+                        ),
                       ),
                     ),
+                    child: Text('Thêm sản phẩm'),
+                    onPressed: () {
+                      // setState(() {
+                      //   cylinders.add(Cylindered(
+                      //       cylinderType: "123",
+                      //       amount: 30,
+                      //       id: cylinders.length + 1));
+                      // });
+                    },
                   ),
-                  child: Text('Thêm sản phẩm'),
-                  onPressed: () {
-                    // setState(() {
-                    //   cylinders.add(Cylindered(
-                    //       cylinderType: "123",
-                    //       amount: 30,
-                    //       id: cylinders.length + 1));
-                    // });
-                  },
-                ),
-              ],
+                ],
+              ),
             )
           ],
         ),
@@ -1032,6 +1039,416 @@ class _CreateOrderViewState extends State<CreateOrderView>
         ),
       );
 
+  Widget _buildOrderAtStore() => Padding(
+        padding: const EdgeInsets.only(top: 0),
+        child: NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (context, value) {
+            return [
+              // Text('hieutest'),
+              SliverToBoxAdapter(child: _buildHeaderContext()),
+              SliverToBoxAdapter(
+                child: TabBar(
+                  controller: _tabController,
+                  labelColor: hexToColor('#FF0F00'),
+                  // isScrollable: true,
+                  labelStyle: TextStyle(
+                    color: hexToColor('#FF0F00'),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  unselectedLabelColor: hexToColor('#00478B'),
+                  indicatorColor: Colors.transparent,
+                  tabs: myTabs,
+                ),
+              ),
+            ];
+          },
+          body: Container(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildTabContext(1),
+                _buildTabContext(2),
+                _buildTabContext(3)
+              ],
+            ),
+          ),
+        ),
+      );
+
+  Widget _buidLocationDeliveryList() => Container(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 11),
+              child: Text(
+                'Địa chỉ giao hàng',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: hexToColor('#00478B'),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12.0, 8, 12, 8),
+              child: Container(
+                decoration: BoxDecoration(border: Border.all()),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text('Tổng: '),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        Text(
+                          '20',
+                          style: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(
+                          width: 30,
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3, left: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        // mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Địa chỉ: ',
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: 28,
+                          ),
+                          Container(
+                            height: 32,
+                            width: MediaQuery.of(context).size.width - 148,
+                            child: DropdownButtonFormField(
+                              items: [],
+                              // keyboardType: this.keyboardType,
+                              decoration: InputDecoration(
+                                enabledBorder: const OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(0.0)),
+                                  borderSide: const BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              style: TextStyle(
+                                  fontSize: 11.0,
+                                  height: 1,
+                                  color: Colors.black),
+                              // controller: controller,
+                              // height: 10,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              // setState(() {
+                              //   cylinders.removeAt(index);
+                              // });
+                            },
+                            child: Column(
+                              children: [
+                                FrappeIcon(
+                                  FrappeIcons.adding,
+                                  color: hexToColor('#FF0F00'),
+                                  size: 18,
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 14,
+                    ),
+                    _buildProductByLocationContext()
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: hexToColor('#0072BC'),
+                      side: BorderSide(
+                        width: 1.0,
+                      ),
+                      // minimumSize: Size(120, 40),
+                      padding: EdgeInsets.fromLTRB(20, 8, 20, 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                        side: BorderSide(
+                          color: hexToColor('#0072BC'),
+                        ),
+                      ),
+                    ),
+                    child: Text('Thêm địa chỉ'),
+                    onPressed: () {
+                      // setState(() {
+                      //   cylinders.add(Cylindered(
+                      //       cylinderType: "123",
+                      //       amount: 30,
+                      //       id: cylinders.length + 1));
+                      // });
+                    },
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8, right: 16),
+              child: _buildBottomButton(),
+            ),
+            SizedBox(
+              height: 22,
+            )
+          ],
+        ),
+      );
+
+  Widget _buildOrderNotAtTheStore() => Container(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildHeaderContext(),
+              _buildProductContext(),
+              _buidLocationDeliveryList(),
+            ],
+          ),
+        ),
+      );
+
+  Widget _buildProductByLocationContext() {
+    return Container(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 28, 0),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 30,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        'Tên',
+                        style: TextStyle(color: hexToColor('#14142B')).copyWith(
+                            fontSize: 12, fontWeight: FontWeight.w700),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        'Vật tư',
+                        style: TextStyle(color: hexToColor('#14142B')).copyWith(
+                            fontSize: 12, fontWeight: FontWeight.w700),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Số lượng',
+                        style: TextStyle(color: hexToColor('#14142B')).copyWith(
+                            fontSize: 12, fontWeight: FontWeight.w700),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Kg',
+                        style: TextStyle(color: hexToColor('#14142B')).copyWith(
+                            fontSize: 12, fontWeight: FontWeight.w700),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Đơn vị',
+                        style: TextStyle(color: hexToColor('#14142B')).copyWith(
+                            fontSize: 12, fontWeight: FontWeight.w700),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Container(
+              height: 120,
+              child: ListView.builder(
+                itemBuilder: (ctx, index) {
+                  var isLatestRow = index == 1;
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 12),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width - 64,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(4, 8, 0, 8),
+                            child: Container(
+                              child: Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    flex: 3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: Container(
+                                        height: 28,
+                                        child: DropdownButtonFormField(
+                                          items: [],
+                                          // keyboardType: this.keyboardType,
+                                          decoration: InputDecoration(
+                                            enabledBorder:
+                                                const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(0.0)),
+                                              borderSide: const BorderSide(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                          style: TextStyle(
+                                              fontSize: 11.0,
+                                              height: 1,
+                                              color: Colors.black),
+                                          // controller: controller,
+                                          // height: 10,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: Text('Bình 175L'),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 12),
+                                      child: Container(
+                                        // width: 64,
+                                        height: 28,
+                                        child: TextField(
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            // suffixIcon: Icon(Icons.search),
+                                            enabledBorder:
+                                                const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(0.0)),
+                                              borderSide: const BorderSide(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                            height: 1,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text('180',
+                                        textAlign: TextAlign.center),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text('Bình',
+                                        textAlign: TextAlign.center),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        isLatestRow
+                            ? GestureDetector(
+                                onTap: () {
+                                  // setState(() {
+                                  //   cylinders.removeAt(index);
+                                  // });
+                                },
+                                child: Column(
+                                  children: [
+                                    FrappeIcon(
+                                      FrappeIcons.adding,
+                                      color: hexToColor('#FF0F00'),
+                                      size: 18,
+                                    )
+                                  ],
+                                ),
+                              )
+                            : Text(''),
+                      ],
+                    ),
+                  );
+                },
+                itemCount: 2,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -1057,43 +1474,7 @@ class _CreateOrderViewState extends State<CreateOrderView>
           // bottom: ,
         ),
         // body: AnswerButton(),
-        body: Padding(
-          padding: const EdgeInsets.only(top: 28),
-          child: NestedScrollView(
-            controller: _scrollController,
-            headerSliverBuilder: (context, value) {
-              return [
-                // Text('hieutest'),
-                SliverToBoxAdapter(child: _buildHeaderContext()),
-                SliverToBoxAdapter(
-                  child: TabBar(
-                    controller: _tabController,
-                    labelColor: hexToColor('#FF0F00'),
-                    // isScrollable: true,
-                    labelStyle: TextStyle(
-                      color: hexToColor('#FF0F00'),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    unselectedLabelColor: hexToColor('#00478B'),
-                    indicatorColor: Colors.transparent,
-                    tabs: myTabs,
-                  ),
-                ),
-              ];
-            },
-            body: Container(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildTabContext(1),
-                  _buildTabContext(2),
-                  _buildTabContext(3)
-                ],
-              ),
-            ),
-          ),
-        ),
+        body: isChecked ? _buildOrderAtStore() : _buildOrderNotAtTheStore(),
       ),
     );
   }

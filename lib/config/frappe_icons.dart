@@ -47,4 +47,5 @@ class FrappeIcons {
   static const change_password = '$_basePath/change_password.svg';
   static const logout = '$_basePath/logout.svg';
   static const trash = '$_basePath/trash.svg';
+  static const adding = '$_basePath/adding.svg';
 }
