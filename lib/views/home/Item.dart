@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Item {
   String icon;
-  Widget view;
-  Item({required this.icon, required this.view});
+  Widget? view;
+  List<Item>? childrens;
+  Item({required this.icon, this.childrens, this.view});
 }

@@ -24,7 +24,7 @@ class ChangePasswordViewModel extends BaseViewModel {
   late String loginButtonLabel;
 
   init() {
-    loginButtonLabel = "Thay đổi";
+    loginButtonLabel = "Đổi mật khẩu";
 
     savedChangePassword = SavedChangePassword(
       newPassword: '',
@@ -54,12 +54,12 @@ class ChangePasswordViewModel extends BaseViewModel {
       var response = await locator<Api>().changePassword(
         changePasswordRequest,
       );
-      loginButtonLabel = "Thay đổi";
+      loginButtonLabel = "Đổi mật khẩu";
       notifyListeners();
       return response;
     } catch (e) {
       // Config.set('isLoggedIn', false);
-      loginButtonLabel = "Thay đổi";
+      loginButtonLabel = "Đổi mật khẩu";
       notifyListeners();
       throw e;
     }

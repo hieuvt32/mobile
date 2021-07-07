@@ -31,7 +31,7 @@ class LoginViewModel extends BaseViewModel {
   late String loginButtonLabel;
 
   init() {
-    loginButtonLabel = "Login";
+    loginButtonLabel = "Đăng nhập";
 
     savedCreds = SavedCredentials(
       serverURL: Config().baseUrl,
@@ -53,7 +53,7 @@ class LoginViewModel extends BaseViewModel {
   }
 
   Future<LoginResponse> login(LoginRequest loginRequest) async {
-    loginButtonLabel = "Verifying...";
+    loginButtonLabel = "Đang xác thực...";
     notifyListeners();
 
     try {
@@ -62,7 +62,7 @@ class LoginViewModel extends BaseViewModel {
       );
 
       if (response.verification != null) {
-        loginButtonLabel = "Verify";
+        loginButtonLabel = "Xác thực";
         return response;
       } else {
         updateUserDetails(response);
@@ -73,7 +73,7 @@ class LoginViewModel extends BaseViewModel {
         );
 
         await cacheAllUsers();
-        await initAwesomeItems();
+        //await initAwesomeItems();
         await DioHelper.initCookies();
 
         loginButtonLabel = "Success";
@@ -83,7 +83,7 @@ class LoginViewModel extends BaseViewModel {
       }
     } catch (e) {
       Config.set('isLoggedIn', false);
-      loginButtonLabel = "Login";
+      loginButtonLabel = "Đăng nhập";
       notifyListeners();
       throw e;
     }

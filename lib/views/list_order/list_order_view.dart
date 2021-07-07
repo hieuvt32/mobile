@@ -58,7 +58,7 @@ class _ListOrderViewState extends State<ListOrderView>
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_smoothScrollToTop);
 
-    fixedScroll = true;
+    // fixedScroll = true;
 
     super.initState();
   }
@@ -71,9 +71,9 @@ class _ListOrderViewState extends State<ListOrderView>
   }
 
   _scrollListener() {
-    if (fixedScroll) {
-      _scrollController.jumpTo(0);
-    }
+    // if (fixedScroll) {
+    //   _scrollController.jumpTo(0);
+    // }
   }
 
   _smoothScrollToTop() {
@@ -84,7 +84,7 @@ class _ListOrderViewState extends State<ListOrderView>
     );
 
     setState(() {
-      fixedScroll = _tabController.index == 2;
+      //fixedScroll = _tabController.index == 2;
     });
   }
 
@@ -182,7 +182,7 @@ class _ListOrderViewState extends State<ListOrderView>
                                 Text(
                                   '34K9-1741',
                                   style: TextStyle(
-                                    fontSize: 13,
+                                    fontSize: 14,
                                     color: hexToColor('#FF0F00'),
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -228,6 +228,7 @@ class _ListOrderViewState extends State<ListOrderView>
             icon: Icon(Icons.chevron_left),
             onPressed: () {
               // Get.back();
+              Navigator.pop(context);
             },
           ),
           actions: [],
@@ -242,7 +243,7 @@ class _ListOrderViewState extends State<ListOrderView>
         ),
         // body: AnswerButton(),
         body: Padding(
-          padding: const EdgeInsets.only(top: 28),
+          padding: const EdgeInsets.only(top: 12),
           child: NestedScrollView(
             controller: _scrollController,
             headerSliverBuilder: (context, value) {

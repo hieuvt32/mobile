@@ -9,8 +9,10 @@ import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
+import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
 
 import '../../model/doctype_response.dart';
 import '../../model/desktop_page_response.dart';
@@ -1011,6 +1013,83 @@ class DioApi implements Api {
       } else {
         throw e;
       }
+    }
+  }
+
+  @override
+  Future<GetQuyChuanThongTinResponse> getQuyChuanThongTinTaiSanBySerial(
+      String barcode) async {
+    var queryParams = {
+      'barcode': barcode,
+    };
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getQuyChuanThongTinTaiSanBySerial',
+        queryParameters: queryParams,
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+        // data: reqData,
+        // options: Options(
+        //   contentType: Headers.formUrlEncodedContentType,
+        // ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetQuyChuanThongTinResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<UpdateLichSuSanXuatResponse> updateLichSuSanXuat(
+      String barcode,
+      String company,
+      String product,
+      String material,
+      String serial,
+      String status,
+      int countByKg,
+      double kg) async {
+    var queryParams = {
+      'barcode': barcode,
+      'company': company,
+      'product': product,
+      'material': material,
+      'count_by_kg': countByKg,
+      'kg': kg
+    };
+
+    final response = await DioHelper.dio.post('/method/updateLichSuSanXuat',
+        data: queryParams,
+        options: Options(contentType: Headers.formUrlEncodedContentType));
+    if (response.statusCode == 200) {
+      return UpdateLichSuSanXuatResponse.fromJson(response.data);
+    } else {
+      throw Exception('Something went wrong');
     }
   }
 }

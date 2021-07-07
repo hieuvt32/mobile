@@ -84,83 +84,89 @@ class Login extends StatelessWidget {
                                 FormBuilderValidators.required(context),
                               ]),
                               decoration: Palette.formFieldDecoration(
-                                label: "Email Address",
+                                label: "Tài khoản",
                               ),
                             ),
                             field: DoctypeField(
                               fieldname: "email",
-                              label: "Email Address",
+                              label: "Tài khoản",
                             ),
                           ),
                           PasswordField(),
-                          FrappeFlatButton(
-                            title: model.loginButtonLabel,
-                            fullWidth: true,
-                            height: 46,
-                            buttonType: ButtonType.primary,
-                            onPressed: () async {
-                              FocusScope.of(context).requestFocus(
-                                FocusNode(),
-                              );
+                          SizedBox(
+                            height: 40,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 40, right: 40),
+                            child: FrappeFlatButton(
+                              title: model.loginButtonLabel,
+                              fullWidth: true,
+                              height: 52,
+                              buttonType: ButtonType.primary,
+                              onPressed: () async {
+                                FocusScope.of(context).requestFocus(
+                                  FocusNode(),
+                                );
 
-                              if (_fbKey.currentState != null) {
-                                if (_fbKey.currentState!.saveAndValidate()) {
-                                  var formValue = _fbKey.currentState?.value;
+                                if (_fbKey.currentState != null) {
+                                  if (_fbKey.currentState!.saveAndValidate()) {
+                                    var formValue = _fbKey.currentState?.value;
 
-                                  try {
-                                    // formValue!["serverURL"] ??
-                                    await setBaseUrl('https://dpotech.vn');
+                                    try {
+                                      // formValue!["serverURL"] ??
+                                      await setBaseUrl('http://103.199.19.103');
 
-                                    var loginRequest = LoginRequest(
-                                      usr: formValue!["usr"].trimRight(),
-                                      pwd: formValue["pwd"],
-                                    );
-
-                                    var loginResponse = await model.login(
-                                      loginRequest,
-                                    );
-
-                                    if (loginResponse.verification != null &&
-                                        loginResponse.tmpId != null) {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        useRootNavigator: true,
-                                        isScrollControlled: true,
-                                        builder: (context) =>
-                                            VerificationBottomSheetView(
-                                          loginRequest: loginRequest,
-                                          tmpId: loginResponse.tmpId!,
-                                          message: loginResponse
-                                              .verification!.prompt,
-                                        ),
+                                      var loginRequest = LoginRequest(
+                                        usr: formValue!["usr"].trimRight(),
+                                        pwd: formValue["pwd"],
                                       );
-                                    } else {
-                                      NavigationHelper.pushReplacement(
-                                        context: context,
-                                        page: HomeView(),
-                                      );
-                                    }
-                                  } catch (e) {
-                                    var _e = e as ErrorResponse;
 
-                                    if (_e.statusCode ==
-                                        HttpStatus.unauthorized) {
-                                      FrappeAlert.errorAlert(
-                                        title: "Not Authorized",
-                                        subtitle: _e.statusMessage,
-                                        context: context,
+                                      var loginResponse = await model.login(
+                                        loginRequest,
                                       );
-                                    } else {
-                                      FrappeAlert.errorAlert(
-                                        title: "Error",
-                                        subtitle: _e.statusMessage,
-                                        context: context,
-                                      );
+
+                                      if (loginResponse.verification != null &&
+                                          loginResponse.tmpId != null) {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          useRootNavigator: true,
+                                          isScrollControlled: true,
+                                          builder: (context) =>
+                                              VerificationBottomSheetView(
+                                            loginRequest: loginRequest,
+                                            tmpId: loginResponse.tmpId!,
+                                            message: loginResponse
+                                                .verification!.prompt,
+                                          ),
+                                        );
+                                      } else {
+                                        NavigationHelper.pushReplacement(
+                                          context: context,
+                                          page: HomeView(),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      var _e = e as ErrorResponse;
+
+                                      if (_e.statusCode ==
+                                          HttpStatus.unauthorized) {
+                                        FrappeAlert.errorAlert(
+                                          title: "Not Authorized",
+                                          subtitle: _e.statusMessage,
+                                          context: context,
+                                        );
+                                      } else {
+                                        FrappeAlert.errorAlert(
+                                          title: "Error",
+                                          subtitle: _e.statusMessage,
+                                          context: context,
+                                        );
+                                      }
                                     }
                                   }
                                 }
-                              }
-                            },
+                              },
+                            ),
                           ),
                         ],
                       ),
@@ -295,7 +301,7 @@ class Title extends StatelessWidget {
     return Text(
       'Đăng nhập',
       style: TextStyle(
-        fontSize: 20,
+        fontSize: 32,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
@@ -350,19 +356,20 @@ class _PasswordFieldState extends State<PasswordField> {
             ]),
             obscureText: _hidePassword,
             decoration: Palette.formFieldDecoration(
-              label: "Password",
+              label: "Mật khẩu",
             ),
           ),
           TextButton(
             style: ButtonStyle(
-              overlayColor: MaterialStateProperty.all(
-                Colors.transparent,
-              ),
-            ),
+                overlayColor: MaterialStateProperty.all(
+                  Colors.transparent,
+                ),
+                padding: MaterialStateProperty.all(
+                    EdgeInsets.fromLTRB(16, 12, 16, 12))),
             child: Text(
-              _hidePassword ? "Show" : "Hide",
+              _hidePassword ? "Hiện thị" : "Ẩn",
               style: TextStyle(
-                color: FrappePalette.grey[600],
+                color: hexToColor('#0072BC'),
               ),
             ),
             onPressed: () {

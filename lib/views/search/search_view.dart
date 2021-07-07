@@ -9,6 +9,7 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
+  //TODO: Status: Bình thường, hỏng trả về, hỏng lưu kho
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,6 +20,7 @@ class _SearchViewState extends State<SearchView> {
             icon: Icon(Icons.chevron_left),
             onPressed: () {
               // Get.back();
+              Navigator.pop(context);
             },
           ),
           actions: [],
@@ -42,6 +44,7 @@ class _SearchViewState extends State<SearchView> {
 //    ...,other fields
                     decoration: InputDecoration(
                       suffixIcon: Icon(Icons.search),
+                      contentPadding: EdgeInsets.only(left: 20),
                       enabledBorder: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(0.0)),
                         borderSide: const BorderSide(
@@ -62,15 +65,12 @@ class _SearchViewState extends State<SearchView> {
                     // controller: controller,
                     ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                child: const Divider(
-                  color: Color.fromRGBO(0, 0, 0, 0.3),
-                  height: 1,
-                  thickness: 1,
-                  indent: 1,
-                  endIndent: 1,
-                ),
+              const Divider(
+                color: Color.fromRGBO(0, 0, 0, 0.3),
+                height: 1,
+                thickness: 1,
+                indent: 1,
+                endIndent: 1,
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(26, 28, 0, 0),
@@ -89,7 +89,7 @@ class _SearchViewState extends State<SearchView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
+                padding: const EdgeInsets.fromLTRB(28, 24, 28, 0),
                 child: Column(
                   children: [
                     Row(
@@ -221,13 +221,19 @@ class _SearchViewState extends State<SearchView> {
                 height: 80,
               ),
               ElevatedButton(
-                child: Text('Cập nhật'),
+                child: Text(
+                  'Cập nhật',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                     primary: hexToColor('#FF0F00'),
-                    side: BorderSide(
-                      width: 1.0,
-                    ),
+                    // side: BorderSide(
+                    //   width: 1.0,
+                    // ),
                     minimumSize: Size(120, 40),
                     padding: EdgeInsets.fromLTRB(118, 13, 118, 13),
                     shape: RoundedRectangleBorder(

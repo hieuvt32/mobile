@@ -93,101 +93,108 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                                 name: 're_pwd',
                                 label: 'Nhập lại mật khẩu mới',
                               ),
-                              FrappeFlatButton(
-                                title: model.loginButtonLabel,
-                                fullWidth: true,
-                                height: 46,
-                                buttonType: ButtonType.primary,
-                                onPressed: () async {
-                                  FocusScope.of(context).requestFocus(
-                                    FocusNode(),
-                                  );
+                              SizedBox(
+                                height: 40,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 40, right: 40),
+                                child: FrappeFlatButton(
+                                  title: model.loginButtonLabel,
+                                  fullWidth: true,
+                                  height: 52,
+                                  buttonType: ButtonType.primary,
+                                  onPressed: () async {
+                                    FocusScope.of(context).requestFocus(
+                                      FocusNode(),
+                                    );
 
-                                  if (_fbKey.currentState != null) {
-                                    if (_fbKey.currentState!
-                                        .saveAndValidate()) {
-                                      var formValue =
-                                          _fbKey.currentState?.value;
+                                    if (_fbKey.currentState != null) {
+                                      if (_fbKey.currentState!
+                                          .saveAndValidate()) {
+                                        var formValue =
+                                            _fbKey.currentState?.value;
 
-                                      try {
-                                        // formValue!["serverURL"] ??
-                                        // await setBaseUrl('https://dpotech.vn');
+                                        try {
+                                          // formValue!["serverURL"] ??
+                                          // await setBaseUrl('https://dpotech.vn');
 
-                                        if (formValue!["pwd"] !=
-                                            formValue["re_pwd"]) {
-                                          FrappeAlert.warnAlert(
-                                            title: "Thông báo",
-                                            subtitle:
-                                                "Nhập lại mật khẩu chưa đúng",
-                                            context: context,
+                                          if (formValue!["pwd"] !=
+                                              formValue["re_pwd"]) {
+                                            FrappeAlert.warnAlert(
+                                              title: "Thông báo",
+                                              subtitle:
+                                                  "Nhập lại mật khẩu chưa đúng",
+                                              context: context,
+                                            );
+                                            return;
+                                          }
+
+                                          var usr = OfflineStorage.getItem(
+                                              'usr')["data"];
+                                          var changePasswordRequest =
+                                              ChangePasswordRequest(
+                                                  newPassword: formValue["pwd"],
+                                                  usr: usr);
+
+                                          var changePasswordResponse =
+                                              await model.changePassword(
+                                            changePasswordRequest,
                                           );
-                                          return;
-                                        }
 
-                                        var usr = OfflineStorage.getItem(
-                                            'usr')["data"];
-                                        var changePasswordRequest =
-                                            ChangePasswordRequest(
-                                                newPassword: formValue["pwd"],
-                                                usr: usr);
+                                          if (changePasswordResponse
+                                                  .doctypeDoc.name ==
+                                              usr) {
+                                            FrappeAlert.successAlert(
+                                              title: "Thông báo",
+                                              subtitle:
+                                                  "Thay đổi mật khẩu thành công",
+                                              context: context,
+                                            );
+                                          }
 
-                                        var changePasswordResponse =
-                                            await model.changePassword(
-                                          changePasswordRequest,
-                                        );
+                                          // if (loginResponse.verification != null &&
+                                          //     loginResponse.tmpId != null) {
+                                          //   showModalBottomSheet(
+                                          //     context: context,
+                                          //     useRootNavigator: true,
+                                          //     isScrollControlled: true,
+                                          //     builder: (context) =>
+                                          //         VerificationBottomSheetView(
+                                          //       loginRequest: loginRequest,
+                                          //       tmpId: loginResponse.tmpId!,
+                                          //       message: loginResponse
+                                          //           .verification!.prompt,
+                                          //     ),
+                                          //   );
+                                          // } else {
+                                          //   NavigationHelper.pushReplacement(
+                                          //     context: context,
+                                          //     page: HomeView(),
+                                          //   );
+                                          // }
+                                        } catch (e) {
+                                          var _e = e as ErrorResponse;
 
-                                        if (changePasswordResponse
-                                                .doctypeDoc.name ==
-                                            usr) {
-                                          FrappeAlert.successAlert(
-                                            title: "Thông báo",
-                                            subtitle:
-                                                "Thay đổi mật khẩu thành công",
-                                            context: context,
-                                          );
-                                        }
-
-                                        // if (loginResponse.verification != null &&
-                                        //     loginResponse.tmpId != null) {
-                                        //   showModalBottomSheet(
-                                        //     context: context,
-                                        //     useRootNavigator: true,
-                                        //     isScrollControlled: true,
-                                        //     builder: (context) =>
-                                        //         VerificationBottomSheetView(
-                                        //       loginRequest: loginRequest,
-                                        //       tmpId: loginResponse.tmpId!,
-                                        //       message: loginResponse
-                                        //           .verification!.prompt,
-                                        //     ),
-                                        //   );
-                                        // } else {
-                                        //   NavigationHelper.pushReplacement(
-                                        //     context: context,
-                                        //     page: HomeView(),
-                                        //   );
-                                        // }
-                                      } catch (e) {
-                                        var _e = e as ErrorResponse;
-
-                                        if (_e.statusCode ==
-                                            HttpStatus.unauthorized) {
-                                          FrappeAlert.errorAlert(
-                                            title: "Not Authorized",
-                                            subtitle: _e.statusMessage,
-                                            context: context,
-                                          );
-                                        } else {
-                                          FrappeAlert.errorAlert(
-                                            title: "Error",
-                                            subtitle: _e.statusMessage,
-                                            context: context,
-                                          );
+                                          if (_e.statusCode ==
+                                              HttpStatus.unauthorized) {
+                                            FrappeAlert.errorAlert(
+                                              title: "Not Authorized",
+                                              subtitle: _e.statusMessage,
+                                              context: context,
+                                            );
+                                          } else {
+                                            FrappeAlert.errorAlert(
+                                              title: "Error",
+                                              subtitle: _e.statusMessage,
+                                              context: context,
+                                            );
+                                          }
                                         }
                                       }
                                     }
-                                  }
-                                },
+                                  },
+                                ),
                               ),
                             ],
                           ),
@@ -239,7 +246,7 @@ class _PasswordFieldState extends State<PasswordField> {
               ),
             ),
             child: Text(
-              _hidePassword ? "Hiện" : "Ẩn",
+              _hidePassword ? "Hiển thị" : "Ẩn",
               style: TextStyle(
                 color: FrappePalette.grey[600],
               ),

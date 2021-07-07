@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'notification.dart';
 
@@ -43,6 +45,70 @@ class _NotificationViewState extends State<NotificationView> {
         title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
         time: '30 phút trước',
         isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
+    NotificationModel(
+        title: 'Khách hàng Phạm Văn A vừa tạo 1 đơn hàng tại chi nhánh Hạ Long',
+        time: '30 phút trước',
+        isReaded: false),
   ];
   @override
   Widget build(BuildContext context) {
@@ -54,11 +120,12 @@ class _NotificationViewState extends State<NotificationView> {
           icon: Icon(Icons.chevron_left),
           onPressed: () {
             // Get.back();
+            Navigator.pop(context);
           },
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.add_to_drive),
+            icon: FrappeIcon(FrappeIcons.dot_dot_dot),
             onPressed: () {
               // Get.back();
             },
@@ -81,7 +148,7 @@ class _NotificationViewState extends State<NotificationView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: 400,
+                height: 650,
                 child: ListView.builder(
                   itemBuilder: (ctx, index) {
                     return Padding(
@@ -118,9 +185,11 @@ class _NotificationViewState extends State<NotificationView> {
                                   Text(
                                     '${notifications[index].time}',
                                     style: TextStyle(
-                                        fontSize: 6,
+                                        fontSize: 10,
                                         fontWeight: FontWeight.w400,
-                                        color: hexToColor('#00478B')),
+                                        color: !notifications[index].isReaded
+                                            ? Color.fromRGBO(0, 0, 0, 0.5)
+                                            : hexToColor('#00478B')),
                                   )
                                 ],
                                 crossAxisAlignment: CrossAxisAlignment.start,

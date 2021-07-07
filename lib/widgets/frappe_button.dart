@@ -89,7 +89,7 @@ class FrappeFlatButton extends StatelessWidget {
                 color: Colors.transparent,
               ),
               borderRadius: BorderRadius.all(
-                Radius.circular(6),
+                Radius.circular(12),
               ),
             ),
             color: _buttonColor,

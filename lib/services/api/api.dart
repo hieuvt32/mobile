@@ -3,8 +3,10 @@ import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
+import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
 
 import '../../model/doctype_response.dart';
 import '../../model/desktop_page_response.dart';
@@ -15,6 +17,20 @@ abstract class Api {
   Future<LoginResponse> login(
     LoginRequest loginRequest,
   );
+
+  Future<GetQuyChuanThongTinResponse> getQuyChuanThongTinTaiSanBySerial(
+    String barcode,
+  );
+
+  Future<UpdateLichSuSanXuatResponse> updateLichSuSanXuat(
+      String barcode,
+      String company,
+      String product,
+      String material,
+      String serial,
+      String status,
+      int countByKg,
+      double kg);
 
   Future<ChangePasswordResponse> changePassword(
     ChangePasswordRequest changePasswordRequest,

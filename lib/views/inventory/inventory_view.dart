@@ -14,14 +14,22 @@ class _InventoryViewState extends State<InventoryView>
   final bodyGlobalKey = GlobalKey();
   final List<Widget> myTabs = [
     Tab(text: 'Vật tư'),
-    Tab(text: 'Vật phẩm'),
+    Tab(text: 'Thành phẩm'),
     // Tab(text: 'fixed'),
   ];
+  //TODO: Button xác nhận không fix cứng phải scroll hết mới đến
   late TabController _tabController;
   late ScrollController _scrollController;
   late bool fixedScroll;
 
   final List<Store> stores = [
+    Store(name: 'Van A', system: 30, reality: 0),
+    Store(name: 'Van A', system: 30, reality: 0),
+    Store(name: 'Van A', system: 30, reality: 0),
+    Store(name: 'Van A', system: 30, reality: 0),
+    Store(name: 'Van A', system: 30, reality: 0),
+    Store(name: 'Van A', system: 30, reality: 0),
+    Store(name: 'Van A', system: 30, reality: 0),
     Store(name: 'Van A', system: 30, reality: 0),
     Store(name: 'Van A', system: 30, reality: 0),
     Store(name: 'Van A', system: 30, reality: 0),
@@ -74,7 +82,7 @@ class _InventoryViewState extends State<InventoryView>
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             SizedBox(
-              height: 20,
+              height: 12,
             ),
             const Divider(
               color: Color.fromRGBO(0, 0, 0, 0.3),
@@ -124,7 +132,7 @@ class _InventoryViewState extends State<InventoryView>
               height: 16,
             ),
             Container(
-              height: 300,
+              height: 432,
               child: ListView.builder(
                 itemBuilder: (ctx, index) {
                   return Padding(
@@ -144,17 +152,17 @@ class _InventoryViewState extends State<InventoryView>
                                 style: TextStyle(color: hexToColor('#14142B'))
                                     .copyWith(
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w700),
+                                        fontWeight: FontWeight.w400),
                               ),
                             ),
                             Expanded(
                               flex: 3,
                               child: Text(
-                                '${stores[index].name}',
+                                '${stores[index].system}',
                                 style: TextStyle(color: hexToColor('#14142B'))
                                     .copyWith(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400),
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700),
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -182,7 +190,7 @@ class _InventoryViewState extends State<InventoryView>
                                       //         20, 20, 43, 0.5)),
                                     ),
                                     style: TextStyle(
-                                      fontSize: 14.0,
+                                      fontSize: 13.0,
                                       height: 1,
                                       color: Colors.black,
                                     )),
@@ -197,17 +205,20 @@ class _InventoryViewState extends State<InventoryView>
                 itemCount: stores.length,
               ),
             ),
-            SizedBox(
-              height: 120,
-            ),
             ElevatedButton(
-              child: Text('Xác nhận'),
+              child: Text(
+                'Xác nhận',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               onPressed: () {},
               style: ElevatedButton.styleFrom(
                   primary: hexToColor('#FF0F00'),
-                  side: BorderSide(
-                    width: 1.0,
-                  ),
+                  // side: BorderSide(
+                  //   width: 1.0,
+                  // ),
                   minimumSize: Size(120, 40),
                   padding: EdgeInsets.fromLTRB(118, 13, 118, 13),
                   shape: RoundedRectangleBorder(
@@ -230,6 +241,7 @@ class _InventoryViewState extends State<InventoryView>
             icon: Icon(Icons.chevron_left),
             onPressed: () {
               // Get.back();
+              Navigator.pop(context);
             },
           ),
           actions: [],
@@ -244,7 +256,7 @@ class _InventoryViewState extends State<InventoryView>
         ),
         // body: AnswerButton(),
         body: Padding(
-          padding: const EdgeInsets.only(top: 28),
+          padding: const EdgeInsets.only(top: 12),
           child: NestedScrollView(
             controller: _scrollController,
             headerSliverBuilder: (context, value) {

@@ -21,6 +21,7 @@ class ProfileView extends StatelessWidget {
             icon: Icon(Icons.chevron_left),
             onPressed: () {
               // Get.back();
+              // Navigator.pop(context);
             },
           )),
       body: Padding(
@@ -50,9 +51,10 @@ class ProfileView extends StatelessWidget {
                     Text(
                       'Đổi mật khẩu',
                       style: TextStyle(
-                          color: hexToColor('#00478B'),
-                          fontSize: 32,
-                          fontWeight: FontWeight.w700),
+                        color: hexToColor('#00478B'),
+                        fontSize: 32,
+                        fontWeight: FontWeight.w700,
+                      ),
                     )
                   ],
                 ),

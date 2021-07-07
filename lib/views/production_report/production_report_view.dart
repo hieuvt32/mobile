@@ -27,6 +27,7 @@ class _ProductionReportViewState extends State<ProductionReportView> {
           icon: Icon(Icons.chevron_left),
           onPressed: () {
             // Get.back();
+            Navigator.pop(context);
           },
         ),
         actions: [],
@@ -47,7 +48,7 @@ class _ProductionReportViewState extends State<ProductionReportView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(26, 28, 60, 0),
+                padding: const EdgeInsets.fromLTRB(26, 16, 60, 0),
                 child: Row(
                   children: [
                     Text(
@@ -55,6 +56,7 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
+                        color: hexToColor('#00478B'),
                       ),
                     ),
                     Text(
@@ -79,7 +81,7 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(26, 28, 0, 0),
+                padding: const EdgeInsets.fromLTRB(26, 6, 0, 0),
                 child: Row(
                   children: [
                     Text(
@@ -96,69 +98,72 @@ class _ProductionReportViewState extends State<ProductionReportView> {
               ),
               SizedBox(height: 22),
               SizedBox(
-                height: 400,
+                height: 500,
                 child: ListView.builder(
                   itemBuilder: (ctx, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Color.fromRGBO(0, 0, 0, 0.3))),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 8, 26, 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Column(
-                              children: [
-                                Text(
-                                  'Tên sản phẩm: ${products[index].name}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(28.0, 0, 28, 12),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Color.fromRGBO(0, 0, 0, 0.3))),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 8, 26, 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Column(
+                                children: [
+                                  Text(
+                                    'Tên sản phẩm: ${products[index].name}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                Text(
-                                  'Loại vật tư: ${products[index].type}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
+                                  SizedBox(
+                                    height: 12,
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                Text(
-                                  'Khối lượng: ${products[index].mass}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
+                                  Text(
+                                    'Loại vật tư: ${products[index].type}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
                                   ),
-                                )
-                              ],
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                            ),
-                            Column(
-                              children: [
-                                Text(
-                                  'Số lượng',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
+                                  SizedBox(
+                                    height: 12,
                                   ),
-                                ),
-                                Text(
-                                  '${products[index].amount}',
-                                  style: TextStyle(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w700,
-                                      color: hexToColor('#FF0F00')),
-                                )
-                              ],
-                            )
-                          ],
+                                  Text(
+                                    'Khối lượng: ${products[index].mass}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  )
+                                ],
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    'Số lượng',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                  Text(
+                                    '${products[index].amount}',
+                                    style: TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w700,
+                                        color: hexToColor('#FF0F00')),
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     );

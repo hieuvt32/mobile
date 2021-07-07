@@ -52,9 +52,9 @@ Future<void> cacheAllUsers() async {
 }
 
 Future<void> setBaseUrl(url) async {
-  if (!url.startsWith('https://')) {
-    url = "https://$url";
-  }
+  // if (!url.startsWith('https://')) {
+  //   url = "https://$url";
+  // }
   await Config.set('baseUrl', url);
   await DioHelper.init(url);
 }

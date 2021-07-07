@@ -1,61 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
+import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 
 class BarcodeScannerView extends StatefulWidget {
-  const BarcodeScannerView({Key? key}) : super(key: key);
+  final String barcode;
+  const BarcodeScannerView({
+    Key? key,
+    required this.barcode,
+  }) : super(key: key);
 
   @override
   _BarcodeScannerViewState createState() => _BarcodeScannerViewState();
 }
 
 class _BarcodeScannerViewState extends State<BarcodeScannerView> {
-  Future<void> startBarcodeScanStream() async {
-    FlutterBarcodeScanner.getBarcodeStreamReceiver(
-            '#ff6666', 'Cancel', true, ScanMode.BARCODE)!
-        .listen((barcode) => print(barcode));
+  late GetQuyChuanThongTinResponse _response;
+  @override
+  void initState() {
+    super.initState();
+    _response = GetQuyChuanThongTinResponse();
+    onLoad();
   }
 
-  Future<void> scanQR() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
-      print(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
+  Future<void> onLoad() async {
+    var response =
+        await locator<Api>().getQuyChuanThongTinTaiSanBySerial(widget.barcode);
+    if (response.quyChuanThongTin != null &&
+        response.quyChuanThongTin?.status == 'Bình thường') {
+      await locator<Api>().updateLichSuSanXuat(
+          widget.barcode,
+          response.quyChuanThongTin!.company,
+          response.quyChuanThongTin!.productContain,
+          response.quyChuanThongTin!.materialType,
+          response.quyChuanThongTin!.serial,
+          response.quyChuanThongTin!.status,
+          response.quyChuanThongTin!.countByKG,
+          response.quyChuanThongTin!.kg);
     }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {});
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-      print(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {});
+    setState(() {
+      _response = response;
+    });
   }
 
   @override
@@ -68,6 +56,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
             icon: Icon(Icons.chevron_left),
             onPressed: () {
               // Get.back();
+              Navigator.pop(context);
             },
           ),
           actions: [],
@@ -83,7 +72,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
         height: double.infinity,
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(28, 92, 28, 156),
+            padding: const EdgeInsets.fromLTRB(28, 44, 28, 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -99,20 +88,26 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          'Để camera vào gần mã vạch của sản phẩm để quét mã',
+                          (_response.quyChuanThongTin != null &&
+                                  _response.quyChuanThongTin?.status ==
+                                      'Bình thường')
+                              ? 'Để camera vào gần mã vạch của sản phẩm để quét mã'
+                              : 'Mã vạch của sản phẩm được quét bị lỗi !',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: hexToColor('#00478B')),
+                              color: (_response.quyChuanThongTin != null &&
+                                      _response.quyChuanThongTin?.status ==
+                                          'Bình thường')
+                                  ? hexToColor('#00478B')
+                                  : hexToColor('#FF0F00')),
                         ),
                         SizedBox(
                           height: 82,
                         ),
                         GestureDetector(
-                          onTap: () {
-                            scanBarcodeNormal();
-                          },
+                          onTap: () {},
                           child: IconTheme(
                             data: IconThemeData(
                               size: 56.0,
@@ -145,43 +140,74 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                   ),
                 ),
                 SizedBox(
-                  height: 64,
+                  height: 36,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => scanBarcodeNormal(),
-                      child: Text('Xác nhận nạp'),
-                      style: ElevatedButton.styleFrom(
-                          primary: Color.fromRGBO(255, 15, 0, 1),
-                          side: BorderSide(
-                            width: 1.0,
+                Visibility(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () async {
+                          if (_response.quyChuanThongTin != null) {
+                            await locator<Api>().updateLichSuSanXuat(
+                                _response.quyChuanThongTin!.barcode,
+                                _response.quyChuanThongTin!.company,
+                                _response.quyChuanThongTin!.productContain,
+                                _response.quyChuanThongTin!.materialType,
+                                _response.quyChuanThongTin!.serial,
+                                _response.quyChuanThongTin!.status,
+                                _response.quyChuanThongTin!.countByKG,
+                                _response.quyChuanThongTin!.kg);
+                          }
+                        },
+                        child: Text(
+                          'Xác nhận nạp',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
-                          minimumSize: Size(120, 40),
-                          // padding: EdgeInsets.all(20),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Color.fromRGBO(255, 15, 0, 1),
+                          // side: BorderSide(
+                          //   width: 1.0,
+                          // ),
+                          minimumSize: Size(160, 52),
+                          padding: EdgeInsets.fromLTRB(8, 12, 8, 12),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              side: BorderSide(color: Colors.red))),
-                    ),
-                    ElevatedButton(
-                      onPressed: () => scanBarcodeNormal(),
-                      child: Text(
-                        'Hủy bỏ',
-                        style: TextStyle(color: hexToColor('#00478B')),
+                            borderRadius: BorderRadius.circular(12.0),
+                            side: BorderSide(color: Colors.red),
+                          ),
+                        ),
                       ),
-                      style: ElevatedButton.styleFrom(
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Text(
+                          'Hủy bỏ',
+                          style: TextStyle(
+                              color: hexToColor('#00478B'),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(
                           primary: Color.fromRGBO(255, 255, 255, 1),
                           side: BorderSide(
                             width: 1.0,
                           ),
-                          minimumSize: Size(120, 40),
-                          // padding: EdgeInsets.all(20),
+                          minimumSize: Size(160, 52),
+                          padding: EdgeInsets.fromLTRB(8, 12, 8, 12),
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                              side: BorderSide(color: hexToColor('#00478B')))),
-                    )
-                  ],
+                            borderRadius: BorderRadius.circular(12.0),
+                            side: BorderSide(
+                              color: hexToColor('#00478B'),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  visible: !(_response.quyChuanThongTin != null &&
+                      _response.quyChuanThongTin?.status == 'Bình thường'),
                 )
               ],
             ),
