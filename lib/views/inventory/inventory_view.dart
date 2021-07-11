@@ -232,6 +232,11 @@ class _InventoryViewState extends State<InventoryView>
                                   color: Colors.black,
                                 ),
                                 textAlign: TextAlign.center,
+                                onChanged: (text) {
+                                  setState(() {
+                                    stores[index].actualCount = int.parse(text);
+                                  });
+                                },
                                 onSubmitted: (text) {
                                   setState(() {
                                     stores[index].actualCount = int.parse(text);

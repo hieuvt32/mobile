@@ -13,6 +13,7 @@ import 'package:frappe_app/model/get_doc_response.dart';
 import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
+import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/response_data.dart';
@@ -1256,6 +1257,46 @@ class DioApi implements Api {
         }
       } else {
         throw e;
+      }
+    }
+  }
+
+  @override
+  Future<GetRolesResponse> getRoles() async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getRoles',
+        queryParameters: {},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetRolesResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
       }
     }
   }

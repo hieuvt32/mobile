@@ -4,5 +4,14 @@ class Item {
   String icon;
   Widget? view;
   List<Item>? childrens;
-  Item({required this.icon, this.childrens, this.view});
+  String? text;
+  List<String>? roles;
+  bool visible;
+  Item(
+      {required this.icon,
+      this.childrens,
+      this.view,
+      this.text,
+      this.roles,
+      required this.visible});
 }

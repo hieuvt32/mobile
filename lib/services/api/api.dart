@@ -7,6 +7,7 @@ import 'package:frappe_app/model/get_doc_response.dart';
 import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
+import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
@@ -42,6 +43,8 @@ abstract class Api {
       String status,
       int countByKg,
       double kg);
+
+  Future<GetRolesResponse> getRoles();
 
   Future<ChangePasswordResponse> changePassword(
     ChangePasswordRequest changePasswordRequest,
