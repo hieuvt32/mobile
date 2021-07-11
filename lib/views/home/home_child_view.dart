@@ -80,7 +80,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       MaterialPageRoute(
         builder: (context) {
           return BarcodeScannerView(
-            barcode: '222333444',
+            barcode: '1111111111',
           );
         },
       ),

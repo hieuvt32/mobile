@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
+import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
 
 class SearchView extends StatefulWidget {
@@ -9,9 +13,15 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
-  //TODO: Status: Bình thường, hỏng trả về, hỏng lưu kho
+  GetQuyChuanThongTinResponse? _response;
+  int? _status = 1;
   @override
   Widget build(BuildContext context) {
+    var event = (context) {
+      setState(() {
+        _status = context;
+      });
+    };
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -42,28 +52,35 @@ class _SearchViewState extends State<SearchView> {
                 padding: const EdgeInsets.all(28.0),
                 child: TextField(
 //    ...,other fields
-                    decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.search),
-                      contentPadding: EdgeInsets.only(left: 20),
-                      enabledBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                        borderSide: const BorderSide(
-                          color: Colors.grey,
-                        ),
+                  decoration: InputDecoration(
+                    suffixIcon: Icon(Icons.search),
+                    contentPadding: EdgeInsets.only(left: 20),
+                    enabledBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                      borderSide: const BorderSide(
+                        color: Colors.grey,
                       ),
-                      labelText: 'Mã vạch, Mã chế tạo',
-                      labelStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: Color.fromRGBO(20, 20, 43, 0.5)),
                     ),
-                    style: TextStyle(
-                      fontSize: 14.0,
-                      height: 0.5,
-                      color: Colors.black,
-                    )
-                    // controller: controller,
-                    ),
+                    labelText: 'Mã vạch, Mã chế tạo',
+                    labelStyle: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromRGBO(20, 20, 43, 0.5)),
+                  ),
+                  style: TextStyle(
+                    fontSize: 14.0,
+                    height: 1.5,
+                    color: Colors.black,
+                  ),
+                  onSubmitted: (text) {
+                    locator<Api>().getTraCuuSanXuat(text).then((value) {
+                      setState(() {
+                        _response = value;
+                      });
+                    });
+                  },
+                  // controller: controller,
+                ),
               ),
               const Divider(
                 color: Color.fromRGBO(0, 0, 0, 0.3),
@@ -106,7 +123,10 @@ class _SearchViewState extends State<SearchView> {
                         Expanded(
                           flex: 4,
                           child: Text(
-                            'Oxi khí',
+                            (_response != null &&
+                                    _response!.quyChuanThongTin != null
+                                ? _response!.quyChuanThongTin!.productContain
+                                : "Không có thông tin"),
                             style: TextStyle(color: hexToColor('#14142B'))
                                 .copyWith(
                                     fontSize: 14, fontWeight: FontWeight.w400),
@@ -131,7 +151,10 @@ class _SearchViewState extends State<SearchView> {
                         Expanded(
                           flex: 4,
                           child: Text(
-                            'Bình thép 10L',
+                            (_response != null &&
+                                    _response!.quyChuanThongTin != null
+                                ? _response!.quyChuanThongTin!.materialType
+                                : "Không có thông tin"),
                             style: TextStyle(color: hexToColor('#14142B'))
                                 .copyWith(
                                     fontSize: 14, fontWeight: FontWeight.w400),
@@ -142,36 +165,29 @@ class _SearchViewState extends State<SearchView> {
                     SizedBox(
                       height: 16,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
                       children: [
-                        Text(
-                          'Mã chế tạo',
-                          style: TextStyle(color: hexToColor('#14142B'))
-                              .copyWith(
-                                  fontSize: 14, fontWeight: FontWeight.w700),
-                          textAlign: TextAlign.left,
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            'Mã chế tạo',
+                            style: TextStyle(color: hexToColor('#14142B'))
+                                .copyWith(
+                                    fontSize: 14, fontWeight: FontWeight.w700),
+                          ),
                         ),
-                        SizedBox(
-                          height: 8,
+                        Expanded(
+                          flex: 4,
+                          child: Text(
+                            _response != null &&
+                                    _response!.quyChuanThongTin != null
+                                ? _response!.quyChuanThongTin!.serial
+                                : "Không có thông tin",
+                            style: TextStyle(color: hexToColor('#14142B'))
+                                .copyWith(
+                                    fontSize: 14, fontWeight: FontWeight.w400),
+                          ),
                         ),
-                        TextField(
-                            // keyboardType: this.keyboardType,
-                            decoration: InputDecoration(
-                              enabledBorder: const OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(0.0)),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ),
-                            style: TextStyle(
-                                fontSize: 14.0,
-                                height: 0.5,
-                                color: Colors.black)
-                            // controller: controller,
-                            ),
                       ],
                     ),
                     SizedBox(
@@ -192,24 +208,53 @@ class _SearchViewState extends State<SearchView> {
                         ),
                         SizedBox(
                           height: 48,
-                          child: DropdownButtonFormField(
-                            items: [],
-                            // keyboardType: this.keyboardType,
-                            decoration: InputDecoration(
-                              enabledBorder: const OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(0.0)),
-                                borderSide: const BorderSide(
-                                  color: Colors.grey,
+                          child: Container(
+                            height: 44,
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Color.fromRGBO(0, 0, 0, 0.5))),
+                            padding: EdgeInsets.all(12),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton(
+                                isExpanded: true,
+                                items: [
+                                  DropdownMenuItem<dynamic>(
+                                    child: Text('Bình thường'),
+                                    value: 0,
+                                  ),
+                                  DropdownMenuItem<dynamic>(
+                                    child: Text('Hỏng trả về'),
+                                    value: 1,
+                                  ),
+                                  DropdownMenuItem<dynamic>(
+                                    child: Text('Hỏng lưu kho'),
+                                    value: 2,
+                                  )
+                                ],
+                                value: _status,
+                                onChanged: event,
+
+                                // keyboardType: this.keyboardType,
+                                // decoration: InputDecoration(
+                                //   enabledBorder:
+                                //       const OutlineInputBorder(
+                                //     borderRadius: BorderRadius.all(
+                                //         Radius.circular(0.0)),
+                                //     borderSide: const BorderSide(
+                                //       color: Colors.grey,
+                                //     ),
+                                //   ),
+                                // ),
+
+                                style: TextStyle(
+                                  fontSize: 13.0,
+                                  height: 1,
+                                  color: Colors.black,
                                 ),
+                                // controller: controller,
+                                // height: 10,
                               ),
                             ),
-                            style: TextStyle(
-                                fontSize: 11.0,
-                                height: 0.5,
-                                color: Colors.black),
-                            // controller: controller,
-                            // height: 10,
                           ),
                         ),
                       ],
@@ -228,7 +273,28 @@ class _SearchViewState extends State<SearchView> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  if (_response != null &&
+                      _response!.quyChuanThongTin != null) {
+                    locator<Api>()
+                        .updateTrangThaiQuyChuan(
+                            _response!.quyChuanThongTin!.name, _status!)
+                        .then((value) {
+                      FrappeAlert.successAlert(
+                        title: "Cập nhật thành công",
+                        subtitle: "Quy chuẩn thông tin đã được cập nhật.",
+                        context: context,
+                      );
+                    });
+                  } else {
+                    FrappeAlert.errorAlert(
+                      title: "Cập nhật không thành công",
+                      subtitle:
+                          "Cần tìm kiếm thông tin quy chuẩn, trước khi cập nhật.",
+                      context: context,
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                     primary: hexToColor('#FF0F00'),
                     // side: BorderSide(

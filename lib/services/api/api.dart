@@ -1,12 +1,17 @@
 import 'package:flutter/foundation.dart';
+import 'package:frappe_app/model/bang_thong_ke_kho.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
+import 'package:frappe_app/model/get_kiem_kho_response.dart';
+import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
+import 'package:frappe_app/model/update_trang_thai_quy_chuan_response.dart';
 
 import '../../model/doctype_response.dart';
 import '../../model/desktop_page_response.dart';
@@ -18,9 +23,15 @@ abstract class Api {
     LoginRequest loginRequest,
   );
 
-  Future<GetQuyChuanThongTinResponse> getQuyChuanThongTinTaiSanBySerial(
+  Future<GetQuyChuanThongTinResponse> getTraCuuSanXuat(
     String barcode,
   );
+
+  Future<GetKiemKhoResponse> getKiemKho(
+    int type,
+  );
+
+  Future<GetListQuyChuanThongTinResponse> getReportSanXuat({String? company});
 
   Future<UpdateLichSuSanXuatResponse> updateLichSuSanXuat(
       String barcode,
@@ -35,6 +46,14 @@ abstract class Api {
   Future<ChangePasswordResponse> changePassword(
     ChangePasswordRequest changePasswordRequest,
   );
+
+  Future<UpdateTrangThaiQuyChuanResponse> updateTrangThaiQuyChuan(
+    String key,
+    int status,
+  );
+
+  Future<UpdateBienBanKiemKhoResponse> updateBienBanKiemKho(
+      int type, List<BangThongKeKho> bangThongKeKho);
 
   Future<DeskSidebarItemsResponse> getDeskSideBarItems();
 

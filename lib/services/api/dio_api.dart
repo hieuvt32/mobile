@@ -5,14 +5,20 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:frappe_app/model/bang_thong_ke_kho.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
+import 'package:frappe_app/model/get_kiem_kho_response.dart';
+import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/model/response_data.dart';
+import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
+import 'package:frappe_app/model/update_trang_thai_quy_chuan_response.dart';
 
 import '../../model/doctype_response.dart';
 import '../../model/desktop_page_response.dart';
@@ -1017,14 +1023,13 @@ class DioApi implements Api {
   }
 
   @override
-  Future<GetQuyChuanThongTinResponse> getQuyChuanThongTinTaiSanBySerial(
-      String barcode) async {
+  Future<GetQuyChuanThongTinResponse> getTraCuuSanXuat(String barcode) async {
     var queryParams = {
-      'barcode': barcode,
+      'key': barcode,
     };
     try {
       final response = await DioHelper.dio.get(
-        '/method/getQuyChuanThongTinTaiSanBySerial',
+        '/method/getTraCuuSanXuat',
         queryParameters: queryParams,
         options: Options(
           validateStatus: (status) {
@@ -1080,7 +1085,8 @@ class DioApi implements Api {
       'product': product,
       'material': material,
       'count_by_kg': countByKg,
-      'kg': kg
+      'kg': kg,
+      'status': status,
     };
 
     final response = await DioHelper.dio.post('/method/updateLichSuSanXuat',
@@ -1090,6 +1096,167 @@ class DioApi implements Api {
       return UpdateLichSuSanXuatResponse.fromJson(response.data);
     } else {
       throw Exception('Something went wrong');
+    }
+  }
+
+  @override
+  Future<GetListQuyChuanThongTinResponse> getReportSanXuat({company}) async {
+    var queryParams = {
+      'company': company,
+    };
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getReportSanXuat',
+        queryParameters: queryParams,
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+        // data: reqData,
+        // options: Options(
+        //   contentType: Headers.formUrlEncodedContentType,
+        // ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetListQuyChuanThongTinResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<UpdateTrangThaiQuyChuanResponse> updateTrangThaiQuyChuan(
+      String key, int status) async {
+    var queryParams = {
+      'key': key,
+      'status': status,
+    };
+    try {
+      final response = await DioHelper.dio.post(
+          '/method/updateTrangThaiQuyChuan',
+          data: queryParams,
+          options: Options(contentType: Headers.formUrlEncodedContentType));
+      if (response.statusCode == 200) {
+        return UpdateTrangThaiQuyChuanResponse.fromJson(response.data);
+      } else {
+        return new UpdateTrangThaiQuyChuanResponse(
+            responseData: ResponseData(code: response.statusCode, message: ""));
+      }
+    } catch (e) {
+      return new UpdateTrangThaiQuyChuanResponse(
+          responseData: ResponseData(code: 404, message: "Item Not found"));
+    }
+  }
+
+  @override
+  Future<GetKiemKhoResponse> getKiemKho(int type) async {
+    var queryParams = {
+      'type': type,
+    };
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getKiemKho',
+        queryParameters: queryParams,
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetKiemKhoResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<UpdateBienBanKiemKhoResponse> updateBienBanKiemKho(
+      int type, List<BangThongKeKho> bangThongKeKho) async {
+    try {
+      final Map<String, dynamic> data = new Map<String, dynamic>();
+      data['type'] = type;
+      final List<Map<String, dynamic>> lstDataBangThongKeKhos =
+          bangThongKeKho.map((e) => e.toJson()).toList();
+      data['data'] = lstDataBangThongKeKhos;
+
+      final response = await DioHelper.dio.post(
+        '/method/updateBienBanKiemKho',
+        data: data,
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return UpdateBienBanKiemKhoResponse.fromJson(response.data);
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
     }
   }
 }
