@@ -120,7 +120,7 @@ class _NotificationViewState extends State<NotificationView> {
           icon: Icon(Icons.chevron_left),
           onPressed: () {
             // Get.back();
-            Navigator.pop(context);
+            // Navigator.pop(context);
           },
         ),
         actions: [

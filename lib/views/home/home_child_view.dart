@@ -6,10 +6,11 @@ import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
-import 'package:frappe_app/views/create_order/create_order_view.dart';
+import 'package:frappe_app/views/edit_order/edit_order_view.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
 import 'package:frappe_app/views/list_order/list_order_view.dart';
@@ -24,19 +25,38 @@ class HomeChildView extends StatefulWidget {
 }
 
 class _HomeChildViewState extends State<HomeChildView> {
+  var _ischidren = false;
   final baseItems = [
     Item(
       icon: FrappeIcons.giao_van,
       childrens: [],
-      view: ProductionReportView(),
+      // view: ProductionReportView(),
       text: "Giao vận",
       roles: ["Giám Đốc", "Giao Vận"],
       visible: true,
     ),
     Item(
       icon: FrappeIcons.ban_hang,
-      childrens: [],
-      view: SearchView(),
+      childrens: [
+        Item(
+          icon: FrappeIcons.giao_van,
+          view: ListOrderView(),
+          text: "Danh sách bán hàng",
+          visible: true,
+          roles: ["Giám Đốc", "Thủ Kho"],
+        ),
+        Item(
+          icon: FrappeIcons.ban_hang,
+          text: "Tạo đơn hàng",
+          visible: true,
+          roles: ["Giám Đốc", "Thủ Kho"],
+          view: EditOrderView(
+            name: "",
+            coGiaoVanVien: false,
+          ),
+        )
+      ],
+      // view: SearchView(),
       text: "Bán hàng",
       roles: ["Giám Đốc", "Thủ Kho"],
       visible: true,
@@ -89,7 +109,7 @@ class _HomeChildViewState extends State<HomeChildView> {
     Item(
       icon: FrappeIcons.mua_hang,
       childrens: [],
-      view: CreateOrderView(),
+      // view: CreateOrderView(),
       text: "Mua hàng",
       roles: ["Giám Đốc"],
       visible: true,
@@ -125,26 +145,28 @@ class _HomeChildViewState extends State<HomeChildView> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> scanBarcodeNormal() async {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) {
-          return BarcodeScannerView(
-            barcode: '1111111111',
-          );
-        },
-      ),
-    );
-
-    // String barcodeScanRes;
-    // // Platform messages may fail, so we use a try/catch PlatformException.
-    // try {
-    //   barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-    //       '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-    //   print(barcodeScanRes);
-
-    // } on PlatformException {
-    //   barcodeScanRes = 'Failed to get platform version.';
-    // }
+    String barcodeScanRes;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return BarcodeScannerView(
+              barcode: barcodeScanRes,
+            );
+          },
+        ),
+      );
+    } on PlatformException {
+      barcodeScanRes = 'Failed to get platform version.';
+      FrappeAlert.errorAlert(
+        title: "Quét barcode không thành công",
+        subtitle: "Failed to get platform version.",
+        context: context,
+      );
+    }
 
     // // If the widget was removed from the tree while the asynchronous platform
     // // message was in flight, we want to discard the reply rather than calling
@@ -185,14 +207,30 @@ class _HomeChildViewState extends State<HomeChildView> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Visibility(
+          visible: _ischidren,
+          child: IconButton(
+            icon: Icon(Icons.chevron_left),
+            onPressed: () {
+              setState(() {
+                _ischidren = false;
+                items = baseItems;
+              });
+            },
+          ),
+        ),
+      ),
       body: _response != null
           ? SafeArea(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(
-                      height: 32,
-                    ),
+                    // SizedBox(
+                    //   height: 32,
+                    // ),
                     Container(
                       height: 254,
                       child: Swiper(
@@ -231,7 +269,10 @@ class _HomeChildViewState extends State<HomeChildView> {
                                       setState(() {
                                         if (item.childrens != null &&
                                             item.childrens!.length > 0) {
-                                          items = item.childrens!;
+                                          setState(() {
+                                            items = item.childrens!;
+                                            _ischidren = true;
+                                          });
                                         } else {
                                           if (item.icon ==
                                               FrappeIcons.barcode_red) {

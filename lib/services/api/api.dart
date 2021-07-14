@@ -3,13 +3,23 @@ import 'package:frappe_app/model/bang_thong_ke_kho.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
+import 'package:frappe_app/model/create_new_delivery_address_response.dart';
+import 'package:frappe_app/model/don_nhap_kho.dart';
+import 'package:frappe_app/model/don_nhap_kho_response.dart';
+import 'package:frappe_app/model/get_customer_by_company_response.dart';
+import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
+import 'package:frappe_app/model/get_guyen_vat_lieu_san_pham_response.dart';
 import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
+import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/model/order.dart';
+import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
 import 'package:frappe_app/model/update_trang_thai_quy_chuan_response.dart';
@@ -32,17 +42,36 @@ abstract class Api {
     int type,
   );
 
+  Future<GetCustomerByCompanyResponse> getCustomerByCompany({
+    String company,
+  });
+
+  Future<GetDeliveryAddressResponse> getDeliveryAddress({
+    String customer,
+  });
+
+  Future<GetNguyenVatLieuSanPhamResponse> getNguyenVatLieuSanPham({
+    int? type,
+  });
+
   Future<GetListQuyChuanThongTinResponse> getReportSanXuat({String? company});
 
   Future<UpdateLichSuSanXuatResponse> updateLichSuSanXuat(
-      String barcode,
-      String company,
-      String product,
-      String material,
-      String serial,
-      String status,
-      int countByKg,
-      double kg);
+    String barcode,
+    String company,
+    String product,
+    String material,
+    String serial,
+    String status,
+    int countByKg,
+    double kg,
+  );
+
+  Future<CreateNewDeliveryAddressResponse> createNewDeliveryAddress(
+    String? diaChi,
+    String? customer,
+    String? name,
+  );
 
   Future<GetRolesResponse> getRoles();
 
@@ -50,13 +79,31 @@ abstract class Api {
     ChangePasswordRequest changePasswordRequest,
   );
 
+  Future<ListOrderResponse> getListOrder(int status);
+
   Future<UpdateTrangThaiQuyChuanResponse> updateTrangThaiQuyChuan(
     String key,
     int status,
   );
 
+  Future<CreateHoaDonMuaBanRespone> createHoaDonMuaBan(Order order);
+
+  Future<UpdateHoaDonMuaBanRespone> updateHoaDonMuaBan(Order order);
+
+  Future<SingleOrderResponse> getSingleHoaDonBanHang(
+    String name,
+  );
+
+  Future<CreateDonNhapKhoResponse> createDonNhapKho(DonNhapKho donNhapKho);
+
+  Future<UpdateDonNhapKhoResponse> updateDonNhapKho(DonNhapKho donNhapKho);
+
+  Future<GetSingleDonNhapKhoResponse> getSingleDonNhapKho(String maDon);
+
   Future<UpdateBienBanKiemKhoResponse> updateBienBanKiemKho(
-      int type, List<BangThongKeKho> bangThongKeKho);
+    int type,
+    List<BangThongKeKho> bangThongKeKho,
+  );
 
   Future<DeskSidebarItemsResponse> getDeskSideBarItems();
 

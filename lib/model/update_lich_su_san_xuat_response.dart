@@ -1,13 +1,13 @@
-import 'package:frappe_app/model/lich_su_san_xuat.dart';
+import 'package:frappe_app/model/response_data.dart';
 
 class UpdateLichSuSanXuatResponse {
-  UpdateLichSuSanXuatResponse({this.lichSuSanXuat});
+  UpdateLichSuSanXuatResponse({this.responseData});
 
-  late LichSuSanXuat? lichSuSanXuat;
+  late ResponseData? responseData;
 
   UpdateLichSuSanXuatResponse.fromJson(Map<String, dynamic> json) {
-    lichSuSanXuat = json['message'] != null
-        ? LichSuSanXuat.fromJson(json['message'] as Map<String, dynamic>)
+    responseData = json['message'] != null
+        ? ResponseData.fromJson(json['message'] as Map<String, dynamic>)
         : null;
   }
 }

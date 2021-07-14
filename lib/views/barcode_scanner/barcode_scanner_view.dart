@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
+import 'package:frappe_app/model/lich_su_san_xuat.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 
@@ -152,16 +154,36 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                               onPressed: () async {
                                 if (_response != null &&
                                     _response!.quyChuanThongTin != null) {
-                                  await locator<Api>().updateLichSuSanXuat(
-                                      _response!.quyChuanThongTin!.barcode,
-                                      _response!.quyChuanThongTin!.company,
-                                      _response!
-                                          .quyChuanThongTin!.productContain,
-                                      _response!.quyChuanThongTin!.materialType,
-                                      _response!.quyChuanThongTin!.serial,
-                                      _response!.quyChuanThongTin!.status,
-                                      _response!.quyChuanThongTin!.countByKG,
-                                      _response!.quyChuanThongTin!.kg);
+                                  var response = await locator<Api>()
+                                      .updateLichSuSanXuat(
+                                          widget.barcode,
+                                          _response!.quyChuanThongTin!.company,
+                                          _response!
+                                              .quyChuanThongTin!.productContain,
+                                          _response!
+                                              .quyChuanThongTin!.materialType,
+                                          _response!.quyChuanThongTin!.serial,
+                                          _response!.quyChuanThongTin!.status,
+                                          _response!
+                                              .quyChuanThongTin!.countByKG,
+                                          _response!.quyChuanThongTin!.kg);
+
+                                  if (response.responseData != null &&
+                                      response.responseData!.code == 200) {
+                                    FrappeAlert.successAlert(
+                                      title: "Cập nhật thành công",
+                                      subtitle:
+                                          "Cập nhật lịch sử sản xuất thành công",
+                                      context: context,
+                                    );
+                                  } else {
+                                    FrappeAlert.errorAlert(
+                                      title: "Cập nhật không thành công",
+                                      subtitle:
+                                          "Cập nhật lịch sử sản xuất không thành công.",
+                                      context: context,
+                                    );
+                                  }
                                 }
                               },
                               child: Text(
@@ -185,7 +207,41 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                if (_response != null &&
+                                    _response!.quyChuanThongTin != null) {
+                                  var response = await locator<Api>()
+                                      .updateLichSuSanXuat(
+                                          widget.barcode,
+                                          _response!.quyChuanThongTin!.company,
+                                          _response!
+                                              .quyChuanThongTin!.productContain,
+                                          _response!
+                                              .quyChuanThongTin!.materialType,
+                                          _response!.quyChuanThongTin!.serial,
+                                          "Hủy",
+                                          _response!
+                                              .quyChuanThongTin!.countByKG,
+                                          _response!.quyChuanThongTin!.kg);
+
+                                  if (response.responseData != null &&
+                                      response.responseData!.code == 200) {
+                                    FrappeAlert.successAlert(
+                                      title: "Cập nhật thành công",
+                                      subtitle:
+                                          "Cập nhật lịch sử sản xuất thành công",
+                                      context: context,
+                                    );
+                                  } else {
+                                    FrappeAlert.errorAlert(
+                                      title: "Cập nhật không thành công",
+                                      subtitle:
+                                          "Cập nhật lịch sử sản xuất không thành công.",
+                                      context: context,
+                                    );
+                                  }
+                                }
+                              },
                               child: Text(
                                 'Hủy bỏ',
                                 style: TextStyle(

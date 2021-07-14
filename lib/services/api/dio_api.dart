@@ -5,17 +5,28 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:frappe_app/model/address.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
+import 'package:frappe_app/model/create_new_delivery_address_response.dart';
+import 'package:frappe_app/model/don_nhap_kho_response.dart';
+import 'package:frappe_app/model/don_nhap_kho.dart';
+import 'package:frappe_app/model/get_customer_by_company_response.dart';
+import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
+import 'package:frappe_app/model/get_guyen_vat_lieu_san_pham_response.dart';
 import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
+import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
+import 'package:frappe_app/model/order.dart';
+import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/model/response_data.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
@@ -1163,11 +1174,13 @@ class DioApi implements Api {
         return UpdateTrangThaiQuyChuanResponse.fromJson(response.data);
       } else {
         return new UpdateTrangThaiQuyChuanResponse(
-            responseData: ResponseData(code: response.statusCode, message: ""));
+            responseData: ResponseData(
+                code: response.statusCode, message: "", data: null));
       }
     } catch (e) {
       return new UpdateTrangThaiQuyChuanResponse(
-          responseData: ResponseData(code: 404, message: "Item Not found"));
+          responseData:
+              ResponseData(code: 404, message: "Item Not found", data: null));
     }
   }
 
@@ -1297,6 +1310,458 @@ class DioApi implements Api {
         }
       } else {
         throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<ListOrderResponse> getListOrder(int status) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getHoaDonMuaHang',
+        queryParameters: {"status": status},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ListOrderResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<GetCustomerByCompanyResponse> getCustomerByCompany(
+      {String company}) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getCustomerByCompany',
+        queryParameters: {},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetCustomerByCompanyResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<GetNguyenVatLieuSanPhamResponse> getNguyenVatLieuSanPham(
+      {int type}) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getNguyenVatLieuSanPham',
+        queryParameters: {'type': type},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetNguyenVatLieuSanPhamResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<GetDeliveryAddressResponse> getDeliveryAddress(
+      {String customer}) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getDeliveryAddress',
+        queryParameters: {'customer': customer},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetDeliveryAddressResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<CreateNewDeliveryAddressResponse> createNewDeliveryAddress(
+      String diaChi, String customer, String name) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/createNewDeliveryAddress',
+        data: Address(
+                name: name,
+                diaChi: diaChi,
+                customer: customer,
+                isEnable: false,
+                isEditable: false)
+            .toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return CreateNewDeliveryAddressResponse.fromJson(response.data);
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<CreateHoaDonMuaBanRespone> createHoaDonMuaBan(Order order) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/createHoaDonBanHang',
+        data: order.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return CreateHoaDonMuaBanRespone.fromJson(response.data);
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<CreateDonNhapKhoResponse> createDonNhapKho(
+      DonNhapKho donNhapKho) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/createDonNhapKho',
+        data: donNhapKho.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return CreateDonNhapKhoResponse.fromJson(response.data);
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<GetSingleDonNhapKhoResponse> getSingleDonNhapKho(String maDon) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getSingleDonNhapKho',
+        queryParameters: {'code_orders': maDon},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetSingleDonNhapKhoResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<SingleOrderResponse> getSingleHoaDonBanHang(String name) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getSingleHoaDonBanHang',
+        queryParameters: {'name': name},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return SingleOrderResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<UpdateDonNhapKhoResponse> updateDonNhapKho(
+      DonNhapKho donNhapKho) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/updateDonNhapKho',
+        data: donNhapKho.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return UpdateDonNhapKhoResponse.fromJson(response.data);
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<UpdateHoaDonMuaBanRespone> updateHoaDonMuaBan(Order order) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/updateHoaDonBanHang',
+        data: order.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        return UpdateHoaDonMuaBanRespone.fromJson(response.data);
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
       }
     }
   }
