@@ -51,4 +51,12 @@ class FrappeIcons {
   static const barcode_red = '$_basePath/barcode_red.svg';
   static const search_red = '$_basePath/search_red.svg';
   static const dot_dot_dot = '$_basePath/dot_dot_dot.svg';
+  static const customer = '$_basePath/customer.svg';
+  static const tax_code = '$_basePath/tax_code.svg';
+  static const phone = '$_basePath/phone.svg';
+  static const mail = '$_basePath/mail.svg';
+  static const address = '$_basePath/address.svg';
+  static const danh_sach_don_loi = '$_basePath/danh_sach_don_loi.svg';
+  static const bao_binh_loi = '$_basePath/bao_binh_loi.svg';
+  static const person = '$_basePath/person.svg';
 }

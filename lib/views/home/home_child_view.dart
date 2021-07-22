@@ -13,6 +13,7 @@ import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
 import 'package:frappe_app/views/edit_order/edit_order_view.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
+import 'package:frappe_app/views/liability_report/liability_report.dart';
 import 'package:frappe_app/views/list_order/list_order_view.dart';
 import 'package:frappe_app/views/production_report/production_report_view.dart';
 import 'package:frappe_app/views/search/search_view.dart';
@@ -73,13 +74,6 @@ class _HomeChildViewState extends State<HomeChildView> {
       icon: FrappeIcons.star,
       childrens: [
         Item(
-          icon: FrappeIcons.giao_van,
-          view: ProductionReportView(),
-          text: "Báo cáo sản xuất",
-          visible: true,
-          roles: ["Giám Đốc", "Quản Đốc"],
-        ),
-        Item(
           icon: FrappeIcons.barcode_red,
           text: "Quét mã vạch",
           visible: true,
@@ -108,7 +102,22 @@ class _HomeChildViewState extends State<HomeChildView> {
     ),
     Item(
       icon: FrappeIcons.mua_hang,
-      childrens: [],
+      childrens: [
+        Item(
+            icon: FrappeIcons.danh_sach_don_loi,
+            visible: true,
+            text: "Danh sách đơn lỗi",
+            view: ListOrderView()),
+        Item(
+            icon: FrappeIcons.bao_binh_loi,
+            visible: true,
+            text: "Báo bình lỗi"),
+        Item(
+            icon: FrappeIcons.danh_sach_don_loi,
+            visible: true,
+            text: "Báo cáo công nợ",
+            view: LiabilityReportView()),
+      ],
       // view: CreateOrderView(),
       text: "Mua hàng",
       roles: ["Giám Đốc"],

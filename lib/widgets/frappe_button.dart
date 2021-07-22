@@ -222,3 +222,43 @@ class FrappeIconButton extends StatelessWidget {
     );
   }
 }
+
+class FrappeOutlinedButton extends StatelessWidget {
+  final void Function() onPressed;
+  final double height;
+  final double borderRadius;
+  final String title;
+  final TextStyle? textStyle;
+  final double minWidth;
+  final bool fullWidth;
+  final String borderColor;
+
+  FrappeOutlinedButton(
+      {required this.onPressed,
+      required this.title,
+      this.textStyle,
+      this.height = 48,
+      this.borderRadius = 6,
+      this.minWidth = 88,
+      this.fullWidth = false,
+      this.borderColor = '#FF0F00'});
+
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+      onPressed: () {},
+      child: Text(
+        this.title,
+        style: textStyle,
+      ),
+      height: this.height,
+      minWidth: this.fullWidth ? double.infinity : this.minWidth,
+      shape: RoundedRectangleBorder(
+          side: BorderSide(
+              color: hexToColor(this.borderColor),
+              width: 1,
+              style: BorderStyle.solid),
+          borderRadius: BorderRadius.circular(this.borderRadius)),
+    );
+  }
+}
