@@ -59,4 +59,8 @@ class FrappeIcons {
   static const danh_sach_don_loi = '$_basePath/danh_sach_don_loi.svg';
   static const bao_binh_loi = '$_basePath/bao_binh_loi.svg';
   static const person = '$_basePath/person.svg';
+  static const delete = '$_basePath/delete.svg';
+  static const arrow_caret_forward = '$_basePath/arrow_caret_forward.svg';
+  static const check = '$_basePath/check.svg';
+  static const close_x = '$_basePath/close_x.svg';
 }

@@ -76,6 +76,18 @@ class _SearchViewState extends State<SearchView> {
                     locator<Api>().getTraCuuSanXuat(text).then((value) {
                       setState(() {
                         _response = value;
+                        if (_response != null &&
+                            _response!.quyChuanThongTin != null) {
+                          setState(() {
+                            switch (_response!.quyChuanThongTin!.status) {
+                              case "Bình thường":
+                                _status = 0;
+                                break;
+                              default:
+                                _status = 2;
+                            }
+                          });
+                        }
                       });
                     });
                   },

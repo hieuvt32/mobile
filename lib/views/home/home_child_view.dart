@@ -41,7 +41,9 @@ class _HomeChildViewState extends State<HomeChildView> {
       childrens: [
         Item(
           icon: FrappeIcons.giao_van,
-          view: ListOrderView(),
+          view: (context) {
+            return ListOrderView();
+          },
           text: "Danh sách bán hàng",
           visible: true,
           roles: ["Giám Đốc", "Thủ Kho"],
@@ -51,10 +53,9 @@ class _HomeChildViewState extends State<HomeChildView> {
           text: "Tạo đơn hàng",
           visible: true,
           roles: ["Giám Đốc", "Thủ Kho"],
-          view: EditOrderView(
-            name: "",
-            coGiaoVanVien: false,
-          ),
+          view: (context) {
+            return EditOrderView();
+          },
         )
       ],
       // view: SearchView(),
@@ -65,7 +66,9 @@ class _HomeChildViewState extends State<HomeChildView> {
     Item(
       icon: FrappeIcons.kiem_kho,
       childrens: [],
-      view: InventoryView(),
+      view: (context) {
+        return InventoryView();
+      },
       text: "Kiểm kho",
       roles: ["Giám Đốc", "Thủ Kho"],
       visible: true,
@@ -74,6 +77,15 @@ class _HomeChildViewState extends State<HomeChildView> {
       icon: FrappeIcons.star,
       childrens: [
         Item(
+          icon: FrappeIcons.giao_van,
+          view: (context) {
+            return ProductionReportView();
+          },
+          text: "Báo cáo sản xuất",
+          visible: true,
+          roles: ["Giám Đốc", "Quản Đốc"],
+        ),
+        Item(
           icon: FrappeIcons.barcode_red,
           text: "Quét mã vạch",
           visible: true,
@@ -81,13 +93,17 @@ class _HomeChildViewState extends State<HomeChildView> {
         ),
         Item(
           icon: FrappeIcons.search_red,
-          view: SearchView(),
+          view: (context) {
+            return SearchView();
+          },
           text: "Tra cứu",
           visible: true,
           roles: ["Giám Đốc", "Quản Đốc"],
         )
       ],
-      view: InventoryView(),
+      view: (context) {
+        return InventoryView();
+      },
       text: "Sản xuất",
       roles: ["Giám Đốc", "Quản Đốc"],
       visible: true,
@@ -95,7 +111,9 @@ class _HomeChildViewState extends State<HomeChildView> {
     Item(
       icon: FrappeIcons.report,
       childrens: [],
-      view: ListOrderView(),
+      view: (context) {
+        return ListOrderView();
+      },
       text: "Báo cáo",
       roles: ["Giám Đốc"],
       visible: true,
@@ -104,10 +122,13 @@ class _HomeChildViewState extends State<HomeChildView> {
       icon: FrappeIcons.mua_hang,
       childrens: [
         Item(
-            icon: FrappeIcons.danh_sach_don_loi,
-            visible: true,
-            text: "Danh sách đơn lỗi",
-            view: ListOrderView()),
+          icon: FrappeIcons.danh_sach_don_loi,
+          visible: true,
+          text: "Danh sách đơn lỗi",
+          view: (context) {
+            return ListOrderView();
+          },
+        ),
         Item(
             icon: FrappeIcons.bao_binh_loi,
             visible: true,
@@ -116,7 +137,9 @@ class _HomeChildViewState extends State<HomeChildView> {
             icon: FrappeIcons.danh_sach_don_loi,
             visible: true,
             text: "Báo cáo công nợ",
-            view: LiabilityReportView()),
+            view: (context) {
+              return LiabilityReportView();
+            }),
       ],
       // view: CreateOrderView(),
       text: "Mua hàng",
@@ -289,9 +312,7 @@ class _HomeChildViewState extends State<HomeChildView> {
                                           } else {
                                             Navigator.of(context).push(
                                               MaterialPageRoute(
-                                                builder: (context) {
-                                                  return item.view!;
-                                                },
+                                                builder: item.view!,
                                               ),
                                             );
                                           }

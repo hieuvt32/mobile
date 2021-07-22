@@ -1,5 +1,5 @@
 class Address {
-  late String name;
+  late String? name;
   late String customer;
   late String diaChi;
   late bool isEnable;

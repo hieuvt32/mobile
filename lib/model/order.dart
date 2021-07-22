@@ -23,6 +23,8 @@ class Order {
   late String vendorAddress;
   late double totalCost;
 
+  late String attachSignatureImage;
+
   Order({
     required this.vendorName,
     // required this.creation,
@@ -41,6 +43,7 @@ class Order {
     required this.email,
     required this.vendorAddress,
     required this.totalCost,
+    required this.attachSignatureImage,
   }) {
     coGiaoVanVien = false;
     creation = DateTime.now();
@@ -72,7 +75,9 @@ class Order {
     vendorAddress =
         json['vendor_address'] == null ? '' : json['vendor_address'];
     totalCost = json['total_cost'] == null ? '' : json['total_cost'];
-
+    attachSignatureImage = json['attach_signature_image'] == null
+        ? ''
+        : json['attach_signature_image'];
     coGiaoVanVien = employeeName != '' && plate != '';
   }
 
@@ -93,6 +98,7 @@ class Order {
     final List<Map<String, dynamic>> lstProduct =
         products != null ? products.map((e) => e.toJson()).toList() : [];
     data['product_list'] = lstProduct;
+    data['attach_signature_image'] = attachSignatureImage;
     // data['plate'] = this.plate;
     // data['employee_name'] = this.employeeName;
     return data;

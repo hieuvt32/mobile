@@ -11,20 +11,20 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          // elevation: 0.8,
-          // title: Text(
-          //   'Hồ sơ',
-          // ),
-          leading: IconButton(
-            icon: Icon(Icons.chevron_left),
-            onPressed: () {
-              // Get.back();
-              // Navigator.pop(context);
-            },
-          )),
+      // appBar: AppBar(
+      //     backgroundColor: Colors.transparent,
+      //     elevation: 0,
+      //     // elevation: 0.8,
+      //     // title: Text(
+      //     //   'Hồ sơ',
+      //     // ),
+      //     leading: IconButton(
+      //       icon: Icon(Icons.chevron_left),
+      //       onPressed: () {
+      //         // Get.back();
+      //         // Navigator.pop(context);
+      //       },
+      //     )),
       body: Padding(
         padding: const EdgeInsets.only(top: 4.0),
         child: Center(

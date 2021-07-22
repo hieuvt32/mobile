@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -1763,6 +1764,35 @@ class DioApi implements Api {
       } else {
         throw e;
       }
+    }
+  }
+
+  @override
+  Future<dynamic> uploadFilesForBytes(
+      {String doctype, String name, List<GasFile> files}) async {
+    for (GasFile gasFile in files) {
+      // String fileName = frappeFile.file.path.split('/').last;
+      FormData formData = FormData.fromMap({
+        "file": MultipartFile.fromBytes(
+          gasFile.file,
+          filename: 'hieuvt.png',
+        ),
+        "docname": name,
+        "doctype": doctype,
+        "is_private": gasFile.isPrivate ? 1 : 0,
+        "folder": "Home",
+        "fieldname": "attach_signature_image"
+      });
+
+      var response = await DioHelper.dio.post(
+        "/method/upload_file",
+        data: formData,
+      );
+      if (response.statusCode != 200) {
+        throw Exception('Something went wrong');
+      }
+
+      return response;
     }
   }
 }

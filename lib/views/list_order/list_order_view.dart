@@ -360,8 +360,6 @@ class _ListOrderViewState extends State<ListOrderView>
                         builder: (context) {
                           return EditOrderView(
                             name: stores[index].name,
-                            coGiaoVanVien: !(["", null, false, 0]
-                                .contains(stores[index].employeeName)),
                           );
                         },
                       ),

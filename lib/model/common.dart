@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:frappe_app/model/doctype_response.dart';
 
@@ -75,5 +77,16 @@ class FrappeFile {
   FrappeFile({
     this.isPrivate = true,
     required this.file,
+  });
+}
+
+class GasFile {
+  bool isPrivate;
+  Uint8List file;
+  String fileName;
+  GasFile({
+    this.isPrivate = false,
+    required this.file,
+    required this.fileName,
   });
 }

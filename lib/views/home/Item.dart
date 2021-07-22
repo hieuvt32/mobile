@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Item {
   String icon;
-  Widget? view;
+  WidgetBuilder? view;
   List<Item>? childrens;
   String? text;
   List<String>? roles;

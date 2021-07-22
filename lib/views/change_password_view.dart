@@ -35,6 +35,19 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
       },
       builder: (context, model, child) => Scaffold(
         backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.chevron_left),
+            onPressed: () {
+              // Get.back();
+              Navigator.of(context).pop();
+            },
+          ),
+          actions: [],
+          // bottom: ,
+        ),
         body: SingleChildScrollView(
             child: SafeArea(
           child: Column(

@@ -172,6 +172,12 @@ abstract class Api {
     @required List<FrappeFile> files,
   });
 
+  Future<dynamic> uploadFilesForBytes({
+    @required String doctype,
+    @required String name,
+    @required List<GasFile> files,
+  });
+
   Future saveDocs(String doctype, Map formValue);
 
   Future<Map> searchLink({
