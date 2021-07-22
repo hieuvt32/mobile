@@ -5,6 +5,7 @@ import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
 import 'package:frappe_app/views/change_password_view.dart';
 import 'package:frappe_app/views/login/login_view.dart';
+import 'package:frappe_app/views/personal_page/personal_page_view.dart';
 
 class ProfileView extends StatelessWidget {
   @override
@@ -34,7 +35,10 @@ class ProfileView extends StatelessWidget {
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ChangePasswordView(),
+                      builder: (context) {
+                        //  ChangePasswordView();
+                        return PersonalPageView();
+                      },
                     ),
                   );
                 },

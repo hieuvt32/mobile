@@ -19,11 +19,13 @@ class _ListOrderViewState extends State<ListOrderView>
   final bodyGlobalKey = GlobalKey();
   final List<Widget> myTabs = [
     Tab(
-      child: Text('Đã đặt hàng',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          )),
+      child: Text(
+        'Đã đặt hàng',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     ),
     Tab(
         child: Text('Đang giao hàng',
@@ -136,11 +138,79 @@ class _ListOrderViewState extends State<ListOrderView>
     }
   }
 
+  Widget buildLimitTextLength(String content) {
+    return RichText(
+      overflow: TextOverflow.ellipsis,
+      strutStyle: StrutStyle(fontSize: 10.0),
+      text: TextSpan(
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          text: content),
+    );
+  }
+
+  Widget buildCardContent(String type, Order order) {
+    if (type == "customer") {
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(4),
+                bottomRight: Radius.circular(4))),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text("Địa chỉ"),
+                  flex: 1,
+                ),
+                Flexible(
+                    flex: 1,
+                    child: buildLimitTextLength(
+                        "A very long text A very long textA very long textA very long textA very long text")),
+                Text(
+                  "5.200.000",
+                  style: TextStyle(
+                      color: hexToColor("#FF0F00"),
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text("Địa chỉ"),
+                  flex: 1,
+                ),
+                Flexible(
+                    flex: 1, child: buildLimitTextLength("Ngõ 59 Láng Hạ")),
+                Text(
+                  "5.200.000",
+                  style: TextStyle(
+                      color: hexToColor("#FF0F00"),
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+          ],
+        ),
+      );
+    } else {
+      // TODO: Viết content view của card với role khác customer
+      return SizedBox();
+    }
+  }
+
   Widget _buildContentTab(ListOrderResponse? response, int type) {
     List<Order>? stores =
         response != null && response.orders != null ? response.orders! : [];
 
     return Container(
+      padding: const EdgeInsets.only(left: 24, right: 24),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -151,115 +221,138 @@ class _ListOrderViewState extends State<ListOrderView>
             indent: 1,
             endIndent: 1,
           ),
-          SizedBox(
-            height: 24,
-          ),
-          Container(
-            height: 500,
+          Expanded(
             child: ListView.builder(
               itemBuilder: (ctx, index) {
                 return GestureDetector(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 12),
+                  child: Container(
+                    color: hexToColor("#B3D5EB"),
+                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
                     child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Color.fromRGBO(0, 0, 0, 0.3),
-                        ),
-                      ),
-                      padding: EdgeInsets.fromLTRB(12, 12, 12, 12),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 3,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  'Tên khách hàng: ${stores[index].vendorName}',
-                                  style: TextStyle(fontSize: 13),
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                Text(
-                                  'Ngày tạo đơn: ${DateFormat('dd/MM/yyyy').format(stores[index].creation)}',
-                                  style: TextStyle(fontSize: 13),
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                Visibility(
-                                    visible: !(["", null, false, 0]
-                                        .contains(stores[index].employeeName)),
-                                    child: Text(
-                                      'Giao vận viên: ${stores[index].employeeName}',
-                                      style: TextStyle(fontSize: 13),
-                                    )),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(12)),
-                                    color: getColorByType(type),
-                                  ),
-                                  child: Text(
-                                    getTextByType(type),
-                                    style: TextStyle(
-                                        fontSize: 12, color: Colors.white),
-                                  ),
-                                  padding: EdgeInsets.fromLTRB(20, 6, 20, 6),
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                Text(
-                                  'Mã đơn: ${stores[index].name}',
-                                  style: TextStyle(fontSize: 13),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(
-                                  height: 12,
-                                ),
-                                Visibility(
-                                  child: Text(
-                                    stores[index].plate,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: hexToColor('#FF0F00'),
+                        child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(4),
+                                  topRight: Radius.circular(4)),
+                              color: getColorByType(type)),
+                          padding: const EdgeInsets.only(left: 12, right: 12),
+                          height: 32,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(stores[index].name,
+                                  style: TextStyle(
+                                      color: hexToColor("#14142B"),
                                       fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  visible: !(["", null, false, 0]
-                                      .contains(stores[index].plate)),
-                                ),
-                                Visibility(
-                                    child: SizedBox(
-                                      height: 12,
-                                    ),
-                                    visible: !(["", null, false, 0]
-                                        .contains(stores[index].plate))),
-                              ],
-                            ),
+                                      fontSize: 10)),
+                              Text(
+                                  DateFormat('dd/MM/yyyy')
+                                      .format(stores[index].creation),
+                                  style: TextStyle(
+                                      color: hexToColor("#14142B"),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10))
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                        buildCardContent("customer", stores[index])
+                      ],
+                    )
+
+                        //  Row(
+                        //   children: [
+                        //     Expanded(
+                        //       flex: 3,
+                        //       child: Column(
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: [
+                        //           SizedBox(
+                        //             height: 10,
+                        //           ),
+                        //           Text(
+                        //             'Tên khách hàng: ${stores[index].vendorName}',
+                        //             style: TextStyle(fontSize: 13),
+                        //           ),
+                        //           SizedBox(
+                        //             height: 12,
+                        //           ),
+                        //           Text(
+                        //             'Ngày tạo đơn: ${DateFormat('dd/MM/yyyy').format(stores[index].creation)}',
+                        //             style: TextStyle(fontSize: 13),
+                        //           ),
+                        //           SizedBox(
+                        //             height: 12,
+                        //           ),
+                        //           Visibility(
+                        //               visible: !(["", null, false, 0]
+                        //                   .contains(stores[index].employeeName)),
+                        //               child: Text(
+                        //                 'Giao vận viên: ${stores[index].employeeName}',
+                        //                 style: TextStyle(fontSize: 13),
+                        //               )),
+                        //           SizedBox(
+                        //             height: 12,
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //     SizedBox(
+                        //       width: 10,
+                        //     ),
+                        //     Expanded(
+                        //       flex: 2,
+                        //       child: Column(
+                        //         children: [
+                        //           Container(
+                        //             decoration: BoxDecoration(
+                        //               borderRadius:
+                        //                   BorderRadius.all(Radius.circular(12)),
+                        //               color: getColorByType(type),
+                        //             ),
+                        //             child: Text(
+                        //               getTextByType(type),
+                        //               style: TextStyle(
+                        //                   fontSize: 12, color: Colors.white),
+                        //             ),
+                        //             padding: EdgeInsets.fromLTRB(20, 6, 20, 6),
+                        //           ),
+                        //           SizedBox(
+                        //             height: 12,
+                        //           ),
+                        //           Text(
+                        //             'Mã đơn: ${stores[index].name}',
+                        //             style: TextStyle(fontSize: 13),
+                        //             textAlign: TextAlign.center,
+                        //           ),
+                        //           SizedBox(
+                        //             height: 12,
+                        //           ),
+                        //           Visibility(
+                        //             child: Text(
+                        //               stores[index].plate,
+                        //               style: TextStyle(
+                        //                 fontSize: 14,
+                        //                 color: hexToColor('#FF0F00'),
+                        //                 fontWeight: FontWeight.bold,
+                        //               ),
+                        //             ),
+                        //             visible: !(["", null, false, 0]
+                        //                 .contains(stores[index].plate)),
+                        //           ),
+                        //           Visibility(
+                        //               child: SizedBox(
+                        //                 height: 12,
+                        //               ),
+                        //               visible: !(["", null, false, 0]
+                        //                   .contains(stores[index].plate))),
+                        //         ],
+                        //       ),
+                        //     ),
+                        //   ],
+                        // ),
+                        ),
                   ),
                   onTap: () {
                     Navigator.of(context).push(
@@ -278,6 +371,9 @@ class _ListOrderViewState extends State<ListOrderView>
               },
               itemCount: stores.length,
             ),
+          ),
+          SizedBox(
+            height: 16,
           )
         ],
       ),
@@ -344,6 +440,7 @@ class _ListOrderViewState extends State<ListOrderView>
                       //SliverToBoxAdapter(child: _buildCarousel()),
                       SliverToBoxAdapter(
                         child: TabBar(
+                          automaticIndicatorColorAdjustment: true,
                           controller: _tabController,
                           labelColor: hexToColor('#FF0F00'),
                           // isScrollable: true,
@@ -353,7 +450,7 @@ class _ListOrderViewState extends State<ListOrderView>
                             fontWeight: FontWeight.w700,
                           ),
                           unselectedLabelColor: hexToColor('#00478B'),
-                          indicatorColor: Colors.transparent,
+                          indicatorColor: hexToColor("#FF2D1F"),
                           tabs: myTabs,
                         ),
                       ),
