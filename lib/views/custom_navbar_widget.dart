@@ -22,7 +22,7 @@ class CustomNavBarWidget extends StatelessWidget {
     return Container(
       alignment: Alignment.center,
       //margin: const EdgeInsets.all(20),
-      height: 56.0,
+      height: 48.0,
       decoration: isSelected
           ? ShapeDecoration(
               color: const Color.fromRGBO(255, 255, 255, 0.5),
@@ -37,7 +37,7 @@ class CustomNavBarWidget extends StatelessWidget {
           Flexible(
             child: IconTheme(
               data: IconThemeData(
-                  size: 56.0,
+                  size: 48.0,
                   color: isSelected
                       ? (item.activeColorSecondary == null
                           ? item.activeColorPrimary

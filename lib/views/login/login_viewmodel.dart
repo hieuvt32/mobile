@@ -76,7 +76,7 @@ class LoginViewModel extends BaseViewModel {
         //await initAwesomeItems();
         await DioHelper.initCookies();
 
-        loginButtonLabel = "Success";
+        loginButtonLabel = "Thành công";
         notifyListeners();
 
         return response;

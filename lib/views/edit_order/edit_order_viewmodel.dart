@@ -9,6 +9,7 @@ import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_guyen_vat_lieu_san_pham_response.dart';
+import 'package:frappe_app/model/nguyen_vat_lieu_san_pham.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/services/api/api.dart';
@@ -25,7 +26,7 @@ class EditOrderViewModel extends BaseViewModel {
 
   GetCustomerByCompanyResponse? _responseGetCustomers;
 
-  GetNguyenVatLieuSanPhamResponse? _responseGetNguyenVatLieuSanPham;
+  GetNguyenVatLieuSanPhamResponse? _responseGetSanPhams;
 
   GetNguyenVatLieuSanPhamResponse? _responseGetVatTus;
 
@@ -36,8 +37,8 @@ class EditOrderViewModel extends BaseViewModel {
   late List<Map<String, TextEditingController>> _productEditControllers;
   late List<Map<String, TextEditingController>>
       _productForLocationEditControllers;
-  late List<Map<String, TextEditingController>> donNhapKhoEditControllers;
-  late List<Map<String, TextEditingController>> donTraVeEditControllers;
+  late List<Map<String, TextEditingController>> _donNhapKhoEditControllers;
+  late List<Map<String, TextEditingController>> _donTraVeEditControllers;
 
   late List<Product> _products;
 
@@ -52,6 +53,9 @@ class EditOrderViewModel extends BaseViewModel {
   late List<Address> _addresses;
 
   late List<Customer> _customers;
+  late List<NguyenVatLieuSanPham> _nguyenVatLieuVatTus;
+
+  late List<NguyenVatLieuSanPham> _nguyenVatLieuSanPhams;
 
   // Object? _diaChiSelect;
 
@@ -73,7 +77,18 @@ class EditOrderViewModel extends BaseViewModel {
   List<Map<String, TextEditingController>> get productEditControllers =>
       _productEditControllers;
 
-  List<Product> get products => _products;
+  List<Map<String, TextEditingController>>
+      get productForLocationEditControllers =>
+          _productForLocationEditControllers;
+  List<Map<String, TextEditingController>> get donNhapKhoEditControllers =>
+      _donNhapKhoEditControllers;
+
+  List<Map<String, TextEditingController>> get donTraVeEditControllers =>
+      _donTraVeEditControllers;
+
+  List<DanhSachNhapKho> get nhapKhos => _nhapKhos;
+
+  List<DanhSachNhapKho> get traVes => _traVes;
 
   String? get customerValue => _customerValue;
 
@@ -84,6 +99,13 @@ class EditOrderViewModel extends BaseViewModel {
   Config? get config => _config;
 
   List<Customer> get customers => _customers;
+
+  List<Product> get products => _products;
+
+  List<NguyenVatLieuSanPham> get nguyenVatLieuVatTus => _nguyenVatLieuVatTus;
+
+  List<NguyenVatLieuSanPham> get nguyenVatLieuSanPhams =>
+      _nguyenVatLieuSanPhams;
 
   SignatureController get signatureCustomerController =>
       _signatureCustomerController;
@@ -103,8 +125,8 @@ class EditOrderViewModel extends BaseViewModel {
     _productEditControllers = [];
     _productForLocationEditControllers = [];
 
-    donNhapKhoEditControllers = [];
-    donTraVeEditControllers = [];
+    _donNhapKhoEditControllers = [];
+    _donTraVeEditControllers = [];
 
     _config = Config();
 
@@ -120,6 +142,8 @@ class EditOrderViewModel extends BaseViewModel {
 
     _responseGetCustomers = null;
     _customerValue = null;
+    _nguyenVatLieuVatTus = [];
+    _nguyenVatLieuSanPhams = [];
     // _diaChiSelect = null;
 
     _order = Order(
@@ -179,13 +203,22 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   Future getNguyenVatLieuSanPham() async {
-    _responseGetNguyenVatLieuSanPham =
+    _responseGetSanPhams =
         await locator<Api>().getNguyenVatLieuSanPham(type: 0);
+
+    _nguyenVatLieuSanPhams = _responseGetSanPhams != null &&
+            _responseGetSanPhams!.nguyenVatLieuSanPhams != null
+        ? _responseGetSanPhams!.nguyenVatLieuSanPhams!
+        : [];
     notifyListeners();
   }
 
   Future getVatTuSanPham() async {
     _responseGetVatTus = await locator<Api>().getNguyenVatLieuSanPham(type: 1);
+    _nguyenVatLieuVatTus = _responseGetVatTus != null &&
+            _responseGetVatTus!.nguyenVatLieuSanPhams != null
+        ? _responseGetVatTus!.nguyenVatLieuSanPhams!
+        : [];
     notifyListeners();
   }
 
@@ -261,13 +294,13 @@ class EditOrderViewModel extends BaseViewModel {
             for (var shell in _donNhapKho!.listShell) {
               if (shell.type == "Nhập kho") {
                 _nhapKhos.add(shell);
-                donNhapKhoEditControllers.add({
+                _donNhapKhoEditControllers.add({
                   "quantityController":
                       TextEditingController(text: "${shell.amount}")
                 });
               } else {
                 _traVes.add(shell);
-                donTraVeEditControllers.add({
+                _donTraVeEditControllers.add({
                   "quantityController":
                       TextEditingController(text: "${shell.amount}")
                 });
@@ -304,11 +337,11 @@ class EditOrderViewModel extends BaseViewModel {
       productForLocationEditController["quantityController"]!.dispose();
     }
 
-    for (var donNhapKhoEditController in donNhapKhoEditControllers) {
+    for (var donNhapKhoEditController in _donNhapKhoEditControllers) {
       donNhapKhoEditController["quantityController"]!.dispose();
     }
 
-    for (var donTraVeEditController in donTraVeEditControllers) {
+    for (var donTraVeEditController in _donTraVeEditControllers) {
       donTraVeEditController["quantityController"]!.dispose();
     }
   }
@@ -356,6 +389,42 @@ class EditOrderViewModel extends BaseViewModel {
       "kgController": TextEditingController(),
       "quantityController": TextEditingController()
     });
+    notifyListeners();
+  }
+
+  addNhapKho() {
+    _nhapKhos.add(
+      DanhSachNhapKho(
+        type: "Nhập kho",
+        realName: null,
+        amount: 0,
+        title: '',
+      ),
+    );
+
+    _donNhapKhoEditControllers
+        .add({"quantityController": TextEditingController()});
+
+    notifyListeners();
+  }
+
+  addTraVe() {
+    _traVes.add(
+      DanhSachNhapKho(
+        type: "Trả về",
+        realName: null,
+        amount: 0,
+        title: '',
+      ),
+    );
+
+    _donTraVeEditControllers
+        .add({"quantityController": TextEditingController()});
+
+    notifyListeners();
+  }
+
+  changeState() {
     notifyListeners();
   }
 }

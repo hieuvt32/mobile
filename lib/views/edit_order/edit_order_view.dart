@@ -6,8 +6,8 @@ import 'package:frappe_app/views/edit_order/edit_order_sell_in_warehouse.dart';
 import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
 
 class EditOrderView extends StatefulWidget {
-  final String? name;
-  EditOrderView({Key? key, this.name}) : super(key: key);
+  final String name;
+  EditOrderView({Key? key, this.name = ''}) : super(key: key);
 
   @override
   _EditOrderViewState createState() => _EditOrderViewState();
@@ -2124,7 +2124,9 @@ class _EditOrderViewState extends State<EditOrderView>
   Widget build(BuildContext context) {
     return BaseView<EditOrderViewModel>(
       onModelReady: (model) {
+        model.setName(widget.name);
         model.init();
+        model.initPreData();
         // this.initTab();
       },
       onModelClose: (model) {
@@ -2151,7 +2153,7 @@ class _EditOrderViewState extends State<EditOrderView>
   Widget _buidMainView(EditOrderViewModel model) {
     //TODO: nho sua o day khong an lon do
     if (!model.sellInWarehouse) {
-      return EditOrderSellInWareHouse(model);
+      return EditOrderSellInWareHouse();
     }
     return EditOrderSellNotInWareHouse();
   }

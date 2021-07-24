@@ -57,7 +57,7 @@ class _HomeViewState extends State<HomeView> {
         },
       ),
       resizeToAvoidBottomInset: true,
-      navBarHeight: 86,
+      navBarHeight: 60,
     );
     return view;
 

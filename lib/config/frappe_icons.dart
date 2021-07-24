@@ -63,4 +63,5 @@ class FrappeIcons {
   static const arrow_caret_forward = '$_basePath/arrow_caret_forward.svg';
   static const check = '$_basePath/check.svg';
   static const close_x = '$_basePath/close_x.svg';
+  static const refresh = '$_basePath/refresh.svg';
 }

@@ -30,8 +30,8 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
         key: (v) => v.name, value: (v) => v.realName);
 
     return Container(
-      padding: EdgeInsets.fromLTRB(28, 12, 28, 8),
-      color: hexToColor('#FFE4E4'),
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
+      // color: hexToColor('#FFE4E4'),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -48,7 +48,8 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                       'Tên khách hàng',
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromRGBO(0, 0, 0, 0.75),
                       ),
                     ),
                     SizedBox(
@@ -59,8 +60,8 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                             height: 36,
                             padding: EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                            ),
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(4)),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
@@ -99,17 +100,26 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                             customerMap[widget.customerValue],
                             style: TextStyle(fontSize: 14),
                           ),
+                    SizedBox(
+                      height: 20,
+                    ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         // SizedBox(
                         //   height: 10,
                         // ),
-                        Expanded(
-                          flex: 1,
+                        SizedBox(
+                          width: 24,
+                          height: 24,
                           child: Checkbox(
                             checkColor: Colors.white,
-                            splashRadius: 4,
+                            splashRadius: 1,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(4),
+                              ),
+                            ),
                             fillColor:
                                 MaterialStateProperty.resolveWith(getColor),
                             value: widget.sellInWareHouse,
@@ -117,20 +127,21 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                           ),
                         ),
 
-                        Expanded(
-                          child: Text('Bán Hàng Tại Kho',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold)),
-                          flex: 5,
+                        Text(
+                          'Bán Hàng Tại Kho',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color.fromRGBO(0, 0, 0, 0.75),
+                          ),
                         ),
                       ],
                     )
                   ],
                 ),
               ),
-              Expanded(
-                flex: 1,
-                child: Text(''),
+              SizedBox(
+                width: 20,
               ),
               Expanded(
                 flex: 2,
@@ -139,16 +150,24 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mã khách hàng',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                      'Mã',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color.fromRGBO(0, 0, 0, 0.75),
+                      ),
                     ),
                     SizedBox(
                       height: 16,
                     ),
-                    Text(widget.customerValue != null
-                        ? widget.customerValue!
-                        : ''),
+                    Text(
+                      widget.customerValue != null ? widget.customerValue! : '',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color.fromRGBO(0, 0, 0, 0.75),
+                      ),
+                    ),
                   ],
                 ),
               )
@@ -168,6 +187,6 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
     if (states.any(interactiveStates.contains)) {
       return Colors.blue;
     }
-    return Colors.black;
+    return Color.fromRGBO(0, 0, 0, 0.5);
   }
 }

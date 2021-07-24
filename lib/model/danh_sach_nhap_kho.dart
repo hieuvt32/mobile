@@ -3,12 +3,14 @@ class DanhSachNhapKho {
   late String? realName;
   late int amount;
   late String title;
+  late String unit;
 
   DanhSachNhapKho({
     required this.type,
     required this.realName,
     required this.amount,
     required this.title,
+    this.unit = 'Bình',
   });
 
   DanhSachNhapKho.fromJson(Map<String, dynamic> json) {
