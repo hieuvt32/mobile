@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/address.dart';
+import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/customer.dart';
 import 'package:frappe_app/model/danh_sach_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
+import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_guyen_vat_lieu_san_pham_response.dart';
@@ -13,9 +15,11 @@ import 'package:frappe_app/model/nguyen_vat_lieu_san_pham.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/views/base_viewmodel.dart';
 import 'package:injectable/injectable.dart';
 import 'package:signature/signature.dart';
+import 'package:uuid/uuid.dart';
 
 @lazySingleton
 class EditOrderViewModel extends BaseViewModel {
@@ -51,6 +55,8 @@ class EditOrderViewModel extends BaseViewModel {
   DonNhapKho? _donNhapKho;
 
   late List<Address> _addresses;
+
+  late List<Address> _editAddresses;
 
   late List<Customer> _customers;
   late List<NguyenVatLieuSanPham> _nguyenVatLieuVatTus;
@@ -100,7 +106,12 @@ class EditOrderViewModel extends BaseViewModel {
 
   List<Customer> get customers => _customers;
 
+  List<Address> get addresses => _addresses;
+
+  List<Address> get editAddresses => _editAddresses;
+
   List<Product> get products => _products;
+  List<Product> get productForLocations => _productForLocations;
 
   List<NguyenVatLieuSanPham> get nguyenVatLieuVatTus => _nguyenVatLieuVatTus;
 
@@ -137,6 +148,7 @@ class EditOrderViewModel extends BaseViewModel {
     _nhapKhos = [];
     _traVes = [];
     _addresses = [];
+    _editAddresses = [];
 
     _customers = [];
 
@@ -265,7 +277,7 @@ class EditOrderViewModel extends BaseViewModel {
                     .toList();
 
                 if (elements != null && elements.length > 0) {
-                  _addresses.add(elements[0]);
+                  _editAddresses.add(elements[0]);
                   _readOnlyView = true;
                 }
               }
@@ -313,8 +325,14 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
-  customerSelect(dynamic value) {
+  customerSelect(dynamic value) async {
     _customerValue = value;
+    var response = await locator<Api>().getDeliveryAddress(customer: value);
+    _responseGetDeliveryAddress = response;
+    _addresses = _responseGetDeliveryAddress != null &&
+            _responseGetDeliveryAddress!.addresses != null
+        ? _responseGetDeliveryAddress!.addresses!
+        : [];
     notifyListeners();
   }
 
@@ -424,7 +442,199 @@ class EditOrderViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  addAddress() {
+    _editAddresses.add(
+      Address(
+        name: null,
+        diaChi: '',
+        customer: _customerValue as String,
+        isEnable: true,
+        isEditable: true,
+      ),
+    );
+  }
+
   changeState() {
     notifyListeners();
+  }
+
+  Future createOrder(context) async {
+    var imgId = Uuid().v1().toString();
+    Attachments? attachments;
+    var bytes = await _signatureCustomerController.toPngBytes();
+    if (bytes != null) {
+      var response = await locator<Api>().uploadFileForBytes(
+        doctype: 'HLGas_HoaDonMuaBan',
+        name: 'new-hlgas_hoadonmuaban-1', //
+        file: GasFile(
+          file: bytes,
+          fileName: 'hlgas_hoadonmuaba-$imgId.png',
+        ),
+      );
+
+      if (response != null && response.attachments != null) {
+        attachments = response.attachments;
+      } else {
+        attachments = null;
+      }
+    }
+    // if (!_sellInWarehouse) {
+    //   for
+    // }
+
+    List<Customer>? customers = _responseGetCustomers != null &&
+            _responseGetCustomers!.customers != null
+        ? _responseGetCustomers!.customers
+        : [];
+
+    var elements =
+        customers!.where((element) => element.name == _customerValue).toList();
+
+    if (elements != null && elements.length > 0) {
+      _order!.email = elements[0].email;
+      _order!.paymentStatus = 'Chưa thanh toán';
+      _order!.phone = elements[0].phone;
+      _order!.products = _sellInWarehouse ? _products : _productForLocations;
+      _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
+      _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
+      _order!.taxId = elements[0].taxId;
+      _order!.totalCost = 0;
+      _order!.vendor = elements[0].name;
+
+      _order!.vendorAddress = '';
+
+      _order!.vendorName = elements[0].realName;
+      _order!.attachSignatureImage =
+          attachments != null ? attachments.fileUrl : '';
+
+      var createOrderResponse =
+          await locator<Api>().createHoaDonMuaBan(_order!);
+
+      if (createOrderResponse != null &&
+          createOrderResponse.responseData != null) {
+        _donNhapKho!.codeOrders = createOrderResponse.responseData.data;
+        _donNhapKho!.status = _order!.status;
+        _donNhapKho!.listShell = [...nhapKhos, ...traVes];
+        _name = createOrderResponse.responseData.data;
+        _title = createOrderResponse.responseData.data;
+
+        var createDonNhapKhoResponse =
+            await locator<Api>().createDonNhapKho(_donNhapKho!);
+
+        if (createDonNhapKhoResponse != null &&
+            createDonNhapKhoResponse.responseData != null) {
+          FrappeAlert.successAlert(
+              title: 'Tạo đơn thành công',
+              context: context,
+              subtitle: 'Tạo đơn hàng thành công.');
+        }
+
+        if (_sellInWarehouse) {
+          _readOnlyView = true;
+        }
+
+        var donBanHangResponse =
+            await locator<Api>().getSingleHoaDonBanHang(_name!);
+
+        if (donBanHangResponse != null && donBanHangResponse.order != null) {
+          _order = donBanHangResponse.order;
+        }
+
+        var donNhapKhoResponse =
+            await locator<Api>().getSingleDonNhapKho(_name!);
+        if (donNhapKhoResponse != null &&
+            donNhapKhoResponse.donNhapKho != null) {
+          _donNhapKho = donNhapKhoResponse.donNhapKho;
+        }
+      } else {
+        FrappeAlert.errorAlert(
+            title: 'Lỗi xảy ra',
+            context: context,
+            subtitle:
+                'Tạo đơn hàng không thành công, có lỗi khi tạo đơn hàng!');
+      }
+    } else {
+      FrappeAlert.errorAlert(
+          title: 'Lỗi xảy ra',
+          context: context,
+          subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!');
+    }
+  }
+
+  Future updateOrder(context) async {
+    var imgId = Uuid().v1().toString();
+    Attachments? attachments;
+    var bytes = await _signatureCustomerController.toPngBytes();
+    if (bytes != null) {
+      var response = await locator<Api>().uploadFileForBytes(
+        doctype: 'HLGas_HoaDonMuaBan',
+        name: _name!, //
+        file: GasFile(
+          file: bytes,
+          fileName: 'hlgas_hoadonmuaba-$imgId.png',
+        ),
+      );
+
+      if (response != null && response.attachments != null) {
+        attachments = response.attachments;
+      } else {
+        attachments = null;
+      }
+    }
+
+    List<Customer>? customers = _responseGetCustomers != null &&
+            _responseGetCustomers!.customers != null
+        ? _responseGetCustomers!.customers
+        : [];
+
+    var elements =
+        customers!.where((element) => element.name == _order!.vendor).toList();
+
+    if (elements != null && elements.length > 0) {
+      _order!.email = elements[0].email;
+      _order!.paymentStatus = 'Chưa thanh toán';
+      _order!.phone = elements[0].phone;
+      _order!.products = _sellInWarehouse ? _products : _productForLocations;
+      _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
+      // _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
+      _order!.taxId = elements[0].taxId;
+      _order!.totalCost = 0;
+      _order!.vendor = elements[0].name;
+
+      _order!.vendorAddress = '';
+
+      _order!.vendorName = elements[0].realName;
+      _order!.attachSignatureImage =
+          attachments != null ? attachments.fileUrl : '';
+
+      var uploadHoaDonMuaBan = await locator<Api>().updateHoaDonMuaBan(_order!);
+
+      if (uploadHoaDonMuaBan != null &&
+          uploadHoaDonMuaBan.responseData != null) {
+        _donNhapKho!.codeOrders = _name!;
+        _donNhapKho!.status = _order!.status;
+        _donNhapKho!.listShell = [...nhapKhos, ...traVes];
+        var updateDonNhapKhoResponse =
+            await locator<Api>().updateDonNhapKho(_donNhapKho!);
+        if (updateDonNhapKhoResponse != null &&
+            updateDonNhapKhoResponse.responseData != null) {
+          FrappeAlert.successAlert(
+              title: 'Cập nhật thành công',
+              context: context,
+              subtitle: 'Cập nhật đơn hàng thành công.');
+        }
+      } else {
+        FrappeAlert.errorAlert(
+            title: 'Lỗi xảy ra',
+            context: context,
+            subtitle: 'Không cập nhật được đơn hàng!');
+      }
+    } else {
+      FrappeAlert.errorAlert(
+        title: 'Lỗi xảy ra',
+        context: context,
+        subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
+      );
+    }
   }
 }

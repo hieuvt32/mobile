@@ -64,4 +64,5 @@ class FrappeIcons {
   static const check = '$_basePath/check.svg';
   static const close_x = '$_basePath/close_x.svg';
   static const refresh = '$_basePath/refresh.svg';
+  static const add_no_border = '$_basePath/add_no_border.svg';
 }

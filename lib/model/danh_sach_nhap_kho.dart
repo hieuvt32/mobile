@@ -4,6 +4,7 @@ class DanhSachNhapKho {
   late int amount;
   late String title;
   late String unit;
+  late bool isExpanded;
 
   DanhSachNhapKho({
     required this.type,
@@ -11,6 +12,7 @@ class DanhSachNhapKho {
     required this.amount,
     required this.title,
     this.unit = 'Bình',
+    this.isExpanded = false,
   });
 
   DanhSachNhapKho.fromJson(Map<String, dynamic> json) {

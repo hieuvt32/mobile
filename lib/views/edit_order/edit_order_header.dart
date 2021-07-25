@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:frappe_app/model/customer.dart';
-import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
 
 class EditOrderHeader extends StatefulWidget {
-  final List<Customer> customers;
-  final bool readOnlyView;
-  final String? customerValue;
-  final bool sellInWareHouse;
-  final Function(dynamic) customerSelection;
-  final Function(bool?) sellInWarehouseSelection;
-  const EditOrderHeader(
-    this.customerValue,
-    this.sellInWareHouse,
-    this.customerSelection,
-    this.sellInWarehouseSelection, {
+  final EditOrderViewModel model = locator<EditOrderViewModel>();
+  // final List<Customer> customers;
+  // final bool readOnlyView;
+  // final String? customerValue;
+  // final bool sellInWareHouse;
+  // final Function(dynamic) customerSelection;
+  // final Function(bool?) sellInWarehouseSelection;
+  EditOrderHeader(
+      // this.customerValue,
+      // this.sellInWareHouse,
+      // this.customerSelection,
+      // this.sellInWarehouseSelection,
+      {
     Key? key,
-    required this.customers,
-    required this.readOnlyView,
+    // required this.customers,
+    // required this.readOnlyView,
   }) : super(key: key);
 
   @override
@@ -26,7 +28,7 @@ class EditOrderHeader extends StatefulWidget {
 class _EditOrderHeaderState extends State<EditOrderHeader> {
   @override
   Widget build(BuildContext context) {
-    var customerMap = Map.fromIterable(widget.customers,
+    var customerMap = Map.fromIterable(widget.model.customers,
         key: (v) => v.name, value: (v) => v.realName);
 
     return Container(
@@ -55,7 +57,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                     SizedBox(
                       height: 8,
                     ),
-                    !widget.readOnlyView
+                    !widget.model.readOnlyView
                         ? Container(
                             height: 36,
                             padding: EdgeInsets.all(6),
@@ -65,14 +67,14 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
-                                items: widget.customers.map((e) {
+                                items: widget.model.customers.map((e) {
                                   return DropdownMenuItem<dynamic>(
                                     child: Text(e.realName),
                                     value: e.name,
                                   );
                                 }).toList(),
-                                value: widget.customerValue,
-                                onChanged: widget.customerSelection,
+                                value: widget.model.customerValue,
+                                onChanged: widget.model.customerSelect,
 
                                 // keyboardType: this.keyboardType,
                                 // decoration: InputDecoration(
@@ -97,7 +99,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                             ),
                           )
                         : Text(
-                            customerMap[widget.customerValue],
+                            customerMap[widget.model.customerValue],
                             style: TextStyle(fontSize: 14),
                           ),
                     SizedBox(
@@ -122,8 +124,8 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                             ),
                             fillColor:
                                 MaterialStateProperty.resolveWith(getColor),
-                            value: widget.sellInWareHouse,
-                            onChanged: widget.sellInWarehouseSelection,
+                            value: widget.model.sellInWarehouse,
+                            onChanged: widget.model.sellInWarehouseSelection,
                           ),
                         ),
 
@@ -161,7 +163,9 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                       height: 16,
                     ),
                     Text(
-                      widget.customerValue != null ? widget.customerValue! : '',
+                      widget.model.customerValue != null
+                          ? widget.model.customerValue!
+                          : '',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,

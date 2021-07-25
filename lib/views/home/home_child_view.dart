@@ -42,7 +42,9 @@ class _HomeChildViewState extends State<HomeChildView> {
         Item(
           icon: FrappeIcons.giao_van,
           view: (context) {
-            return ListOrderView();
+            return ListOrderView(
+              type: 'stocker',
+            );
           },
           text: "Danh sách bán hàng",
           visible: true,

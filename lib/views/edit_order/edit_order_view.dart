@@ -2139,20 +2139,17 @@ class _EditOrderViewState extends State<EditOrderView>
         backgroundColor: Colors.white,
         appBar: CustomizeAppBar(
           model.title,
-          leftAction: () {},
+          leftAction: () {
+            Navigator.pop(context);
+          },
         ),
         body: _buidMainView(model),
-
-        // model.sellInWarehouse
-        //     ? _buildOrderAtStore(model)
-        //     : _buildOrderNotAtTheStore(model),
       ),
     );
   }
 
   Widget _buidMainView(EditOrderViewModel model) {
-    //TODO: nho sua o day khong an lon do
-    if (!model.sellInWarehouse) {
+    if (model.sellInWarehouse) {
       return EditOrderSellInWareHouse();
     }
     return EditOrderSellNotInWareHouse();

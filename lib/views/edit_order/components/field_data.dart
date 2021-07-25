@@ -6,6 +6,8 @@ class FieldData extends StatefulWidget {
   final List<FieldValue> values;
   final TextEditingController? controller;
   final Function(dynamic)? selectionHandler;
+  final bool haveTextChange;
+  final TextInputType keyboardType;
   const FieldData({
     Key? key,
     this.fieldType = 0,
@@ -13,6 +15,8 @@ class FieldData extends StatefulWidget {
     this.values = const [],
     this.controller,
     this.selectionHandler,
+    this.haveTextChange = true,
+    this.keyboardType = TextInputType.number,
   }) : super(key: key);
 
   @override
@@ -83,7 +87,7 @@ class _FieldDataState extends State<FieldData> {
         return Container(
           height: 32,
           child: TextField(
-            keyboardType: TextInputType.number,
+            keyboardType: widget.keyboardType,
             decoration: InputDecoration(
               // suffixIcon: Icon(Icons.search),
               enabledBorder: const OutlineInputBorder(
@@ -99,8 +103,8 @@ class _FieldDataState extends State<FieldData> {
               color: Colors.black,
             ),
             controller: widget.controller,
-            onChanged: widget.selectionHandler,
-
+            onChanged: widget.haveTextChange ? widget.selectionHandler : null,
+            // onSubmitted: widget.selectionHandler,
             //(text) {
             // if (["", null, false, 0].contains(
             //     controllers[index]['quantityController']!

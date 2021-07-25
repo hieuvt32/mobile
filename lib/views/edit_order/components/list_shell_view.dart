@@ -21,26 +21,30 @@ class ListShellView extends StatefulWidget {
 }
 
 class _ListShellViewState extends State<ListShellView> {
+  bool isParentExpanded = false;
   @override
   Widget build(BuildContext context) {
     List<ExpansionItem> headers = <ExpansionItem>[
       ExpansionItem(
-        false, // isExpanded ?
-        (isExpanded) => Container(
-          padding: EdgeInsets.zero,
-          child: Center(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  widget.title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.left,
-                ),
-              ],
+        isParentExpanded, // isExpanded ?
+        (isExpanded) {
+          isParentExpanded = isExpanded;
+          return Container(
+            padding: EdgeInsets.zero,
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.title,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
         [
           ListShellItem(
             type: widget.type,
@@ -144,127 +148,126 @@ class _ListShellItemState extends State<ListShellItem> {
           (i, e) {
             return MapEntry(
               i,
-              ExpansionItem(
-                  false, // isExpanded ?
-                  (isExpanded) => Container(
-                        padding: EdgeInsets.only(right: 12),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${values[i].realName != null ? values[i].realName : 'Chọn vỏ bình'}, SL: ${values[i].amount}',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                              !isExpanded
-                                  ? GestureDetector(
-                                      child: FrappeIcon(
-                                        FrappeIcons.delete,
-                                        size: 16,
-                                      ),
-                                      onTap: () {},
-                                    )
-                                  : Row(
-                                      children: [
-                                        GestureDetector(
-                                          child: FrappeIcon(
-                                            FrappeIcons.check,
-                                            size: 16,
-                                          ),
-                                          onTap: () {},
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        GestureDetector(
-                                          child: FrappeIcon(
-                                            FrappeIcons.close_x,
-                                            size: 16,
-                                          ),
-                                          onTap: () {},
-                                        )
-                                      ],
-                                    )
-                            ],
-                          ),
-                        ),
-                      ),
-                  [
-                    Row(
+              ExpansionItem(e.isExpanded, // isExpanded ?
+                  (isExpanded) {
+                e.isExpanded = isExpanded;
+                return Container(
+                  padding: EdgeInsets.only(right: 12),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: FieldData(
-                            value: 'Sản phẩm: ',
-                            fieldType: 3,
-                          ),
-                          flex: 2,
+                        Text(
+                          '${values[i].realName != null ? values[i].realName : 'Chọn vỏ bình'}, SL: ${values[i].amount}',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
                         ),
-                        Expanded(
-                          flex: 5,
-                          child: FieldData(
-                            // value: 'Sản phẩm: ',
-                            fieldType: 0,
-                            values: widget.model.nguyenVatLieuVatTus
-                                .map((e) =>
-                                    FieldValue(text: e.realName, value: e.name))
-                                .toList(),
-                            value: values[i].realName,
-                            selectionHandler: (value) {
-                              var firstItem = widget.model.nguyenVatLieuVatTus
-                                  .where((element) {
-                                    return element.realName == value;
-                                  })
-                                  .toList()
-                                  .first;
-                              setState(() {
-                                values[i].realName = value;
-                                values[i].unit = firstItem.unit;
-                              });
-                            },
-                          ),
-                        )
+                        !isExpanded
+                            ? GestureDetector(
+                                child: FrappeIcon(
+                                  FrappeIcons.delete,
+                                  size: 16,
+                                ),
+                                onTap: () {},
+                              )
+                            : Row(
+                                children: [
+                                  GestureDetector(
+                                    child: FrappeIcon(
+                                      FrappeIcons.check,
+                                      size: 16,
+                                    ),
+                                    onTap: () {},
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  GestureDetector(
+                                    child: FrappeIcon(
+                                      FrappeIcons.close_x,
+                                      size: 16,
+                                    ),
+                                    onTap: () {},
+                                  )
+                                ],
+                              )
                       ],
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FieldData(
-                            value: 'Số lượng: ',
-                            fieldType: 3,
-                          ),
-                          flex: 2,
-                        ),
-                        Expanded(
-                          child: FieldData(
-                              // title: 'Đơn vị tính ',
-                              controller: controllers[i]['quantityController'],
-                              fieldType: 1,
-                              selectionHandler: (text) {
-                                if (["", null, false, 0].contains(controllers[i]
-                                        ['quantityController']!
-                                    .text)) {
-                                  // do sth
-                                  values[i].amount = 0;
-                                } else {
-                                  values[i].amount = int.parse(controllers[i]
-                                          ['quantityController']!
-                                      .text);
-                                }
-                                widget.model.changeState();
-                              }),
-                          flex: 2,
-                        ),
-                        Expanded(
-                          child: FieldData(
-                            value: 'Đơn vị tính: ${values[i].unit}',
-                            fieldType: 3,
-                          ),
-                          flex: 3,
-                        ),
-                      ],
+                  ),
+                );
+              }, [
+                Row(
+                  children: [
+                    Expanded(
+                      child: FieldData(
+                        value: 'Sản phẩm: ',
+                        fieldType: 3,
+                      ),
+                      flex: 2,
+                    ),
+                    Expanded(
+                      flex: 5,
+                      child: FieldData(
+                        // value: 'Sản phẩm: ',
+                        fieldType: 0,
+                        values: widget.model.nguyenVatLieuVatTus
+                            .map((e) =>
+                                FieldValue(text: e.realName, value: e.name))
+                            .toList(),
+                        value: values[i].realName,
+                        selectionHandler: (value) {
+                          var firstItem = widget.model.nguyenVatLieuVatTus
+                              .where((element) {
+                                return element.realName == value;
+                              })
+                              .toList()
+                              .first;
+                          setState(() {
+                            values[i].realName = value;
+                            values[i].unit = firstItem.unit;
+                          });
+                        },
+                      ),
                     )
-                  ]
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FieldData(
+                        value: 'Số lượng: ',
+                        fieldType: 3,
+                      ),
+                      flex: 2,
+                    ),
+                    Expanded(
+                      child: FieldData(
+                          // title: 'Đơn vị tính ',
+                          controller: controllers[i]['quantityController'],
+                          fieldType: 1,
+                          selectionHandler: (text) {
+                            if (["", null, false, 0].contains(
+                                controllers[i]['quantityController']!.text)) {
+                              // do sth
+                              values[i].amount = 0;
+                            } else {
+                              values[i].amount = int.parse(
+                                  controllers[i]['quantityController']!.text);
+                            }
+                            widget.model.changeState();
+                          }),
+                      flex: 2,
+                    ),
+                    Expanded(
+                      child: FieldData(
+                        value: 'Đơn vị tính: ${values[i].unit}',
+                        fieldType: 3,
+                      ),
+                      flex: 3,
+                    ),
+                  ],
+                )
+              ]
                   // Icon(Icons.image) // iconPic
                   ),
             );

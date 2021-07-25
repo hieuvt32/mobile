@@ -8,7 +8,8 @@ import 'package:frappe_app/views/edit_order/edit_order_view.dart';
 import 'package:intl/intl.dart';
 
 class ListOrderView extends StatefulWidget {
-  const ListOrderView({Key? key}) : super(key: key);
+  String type;
+  ListOrderView({Key? key, this.type = 'customer'}) : super(key: key);
 
   @override
   _ListOrderViewState createState() => _ListOrderViewState();
@@ -200,8 +201,71 @@ class _ListOrderViewState extends State<ListOrderView>
         ),
       );
     } else {
-      // TODO: Viết content view của card với role khác customer
-      return SizedBox();
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(4),
+                bottomRight: Radius.circular(4))),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text("Khách hàng:"),
+                  flex: 1,
+                ),
+                Flexible(
+                  flex: 1,
+                  child: buildLimitTextLength(order.vendorName),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: buildLimitTextLength('-'),
+                ),
+                Text(
+                  order.vendor,
+                  style: TextStyle(
+                      color: hexToColor("#FF0F00"),
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            Visibility(
+              child: SizedBox(height: 16),
+              visible: !["", null, false, 0].contains(order.employeeName),
+            ),
+            Visibility(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Text("Giao vận viên:"),
+                    flex: 1,
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: buildLimitTextLength(order.employeeName),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: buildLimitTextLength('-'),
+                  ),
+                  Text(
+                    order.plate,
+                    style: TextStyle(
+                        color: hexToColor("#FF0F00"),
+                        fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+              visible: !["", null, false, 0].contains(order.employeeName),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -257,7 +321,7 @@ class _ListOrderViewState extends State<ListOrderView>
                             ],
                           ),
                         ),
-                        buildCardContent("customer", stores[index])
+                        buildCardContent(widget.type, stores[index])
                       ],
                     )
 
@@ -430,7 +494,7 @@ class _ListOrderViewState extends State<ListOrderView>
                 _responseDangGiaoHang != null &&
                 _responseDaDatHang != null
             ? Padding(
-                padding: const EdgeInsets.only(top: 12),
+                padding: const EdgeInsets.only(top: 12, bottom: 12),
                 child: NestedScrollView(
                   controller: _scrollController,
                   headerSliverBuilder: (context, value) {

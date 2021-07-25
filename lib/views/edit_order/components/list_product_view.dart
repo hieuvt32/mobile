@@ -11,8 +11,8 @@ import 'package:frappe_app/views/expansion_custom_panel.dart';
 
 class ListProductView extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
-  final int type;
-  ListProductView({Key? key, this.type = 0}) : super(key: key);
+  // final int type;
+  ListProductView({Key? key}) : super(key: key);
 
   @override
   _ListProductViewState createState() => _ListProductViewState();
@@ -111,187 +111,189 @@ class _ListProductItemState extends State<ListProductItem> {
           (i, e) {
             return MapEntry(
               i,
-              ExpansionItem(
-                  false, // isExpanded ?
-                  (isExpanded) => Container(
-                        padding: EdgeInsets.only(right: 12),
-                        child: Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '${values[i].product != null ? values[i].product : 'Chọn sản phẩm'}, SL: ${values[i].quantity}',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w600),
-                              ),
-                              !isExpanded
-                                  ? GestureDetector(
-                                      child: FrappeIcon(
-                                        FrappeIcons.delete,
-                                        size: 16,
-                                      ),
-                                      onTap: () {},
-                                    )
-                                  : Row(
-                                      children: [
-                                        GestureDetector(
-                                          child: FrappeIcon(
-                                            FrappeIcons.check,
-                                            size: 16,
-                                          ),
-                                          onTap: () {},
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        GestureDetector(
-                                          child: FrappeIcon(
-                                            FrappeIcons.close_x,
-                                            size: 16,
-                                          ),
-                                          onTap: () {},
-                                        )
-                                      ],
+              ExpansionItem(e.isExpanded, (isExpanded) {
+                e.isExpanded = isExpanded;
+                return Container(
+                  padding: EdgeInsets.only(right: 12),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '${values[i].product != null ? values[i].product : 'Chọn sản phẩm'}, SL: ${values[i].quantity}',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        !isExpanded
+                            ? GestureDetector(
+                                child: FrappeIcon(
+                                  FrappeIcons.delete,
+                                  size: 16,
+                                ),
+                                onTap: () {},
+                              )
+                            : Row(
+                                children: [
+                                  GestureDetector(
+                                    child: FrappeIcon(
+                                      FrappeIcons.check,
+                                      size: 16,
                                     ),
-                            ],
-                          ),
-                        ),
+                                    onTap: () {},
+                                  ),
+                                  SizedBox(
+                                    width: 20,
+                                  ),
+                                  GestureDetector(
+                                    child: FrappeIcon(
+                                      FrappeIcons.close_x,
+                                      size: 16,
+                                    ),
+                                    onTap: () {},
+                                  )
+                                ],
+                              ),
+                      ],
+                    ),
+                  ),
+                );
+              }, [
+                Row(
+                  children: [
+                    Expanded(
+                      child: FieldData(
+                        value: 'Sản phẩm: ',
+                        fieldType: 3,
                       ),
-                  [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FieldData(
-                            value: 'Sản phẩm: ',
-                            fieldType: 3,
-                          ),
-                          flex: 2,
-                        ),
-                        Expanded(
-                          flex: 5,
-                          child: FieldData(
-                            // value: 'Sản phẩm: ',
-                            fieldType: 0,
-                            values: widget.model.nguyenVatLieuSanPhams
-                                .map((e) =>
-                                    FieldValue(text: e.realName, value: e.name))
-                                .toList(),
-                            value: values[i].product,
-                            selectionHandler: (value) {
-                              var firstItem = widget.model.nguyenVatLieuSanPhams
-                                  .where((element) {
-                                    return element.realName == value;
-                                  })
-                                  .toList()
-                                  .first;
-                              setState(() {
-                                values[i].product = value;
-                                values[i].unit = firstItem.unit;
-                              });
-                            },
-                          ),
-                        )
-                      ],
+                      flex: 2,
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FieldData(
-                            value: 'Vật tư: ',
-                            fieldType: 3,
-                          ),
-                          flex: 2,
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: FieldData(
-                            // value: 'Sản phẩm: ',
-                            fieldType: 0,
-                            values: widget.model.nguyenVatLieuVatTus
-                                .map((e) =>
-                                    FieldValue(text: e.realName, value: e.name))
-                                .toList(),
-                            value: values[i].material,
-                            selectionHandler: (value) {
-                              var firstItem = widget.model.nguyenVatLieuVatTus
-                                  .where((element) {
-                                    return element.realName == value;
-                                  })
-                                  .toList()
-                                  .first;
-                              setState(() {
-                                values[i].material = value;
-                                values[i].unit = firstItem.unit;
-                              });
-                            },
-                          ),
-                        ),
-                        Expanded(
-                          child: FieldData(
-                            value: 'Kg:',
-                            fieldType: 3,
-                          ),
-                          flex: 1,
-                        ),
-                        Expanded(
-                          child: FieldData(
-                              // title: 'Đơn vị tính ',
-                              controller: controllers[i]['kgController'],
-                              fieldType: 1,
-                              selectionHandler: (text) {
-                                if (["", null, false, 0].contains(
-                                    controllers[i]['kgController']!.text)) {
-                                  // do sth
-                                  values[i].kg = 0;
-                                } else {
-                                  values[i].kg = double.parse(
-                                      controllers[i]['kgController']!.text);
-                                }
-                                widget.model.changeState();
-                              }),
-                          flex: 2,
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: FieldData(
-                            value: 'Số lượng: ',
-                            fieldType: 3,
-                          ),
-                          flex: 2,
-                        ),
-                        Expanded(
-                          child: FieldData(
-                              // title: 'Đơn vị tính ',
-                              controller: controllers[i]['quantityController'],
-                              fieldType: 1,
-                              selectionHandler: (text) {
-                                if (["", null, false, 0].contains(controllers[i]
-                                        ['quantityController']!
-                                    .text)) {
-                                  // do sth
-                                  values[i].quantity = 0;
-                                } else {
-                                  values[i].quantity = int.parse(controllers[i]
-                                          ['quantityController']!
-                                      .text);
-                                }
-                                widget.model.changeState();
-                              }),
-                          flex: 2,
-                        ),
-                        Expanded(
-                          child: FieldData(
-                            value: 'Đơn vị tính: ${values[i].unit}',
-                            fieldType: 3,
-                          ),
-                          flex: 3,
-                        ),
-                      ],
+                    Expanded(
+                      flex: 5,
+                      child: FieldData(
+                        // value: 'Sản phẩm: ',
+                        fieldType: 0,
+                        values: widget.model.nguyenVatLieuSanPhams
+                            .map((e) =>
+                                FieldValue(text: e.realName, value: e.name))
+                            .toList(),
+                        value: values[i].product,
+                        selectionHandler: (value) {
+                          var firstItem = widget.model.nguyenVatLieuSanPhams
+                              .where((element) {
+                                return element.realName == value;
+                              })
+                              .toList()
+                              .first;
+                          setState(() {
+                            values[i].product = value;
+                            values[i].unit = firstItem.unit;
+                          });
+                        },
+                      ),
                     )
-                  ]
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FieldData(
+                        value: 'Vật tư: ',
+                        fieldType: 3,
+                      ),
+                      flex: 2,
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: FieldData(
+                        // value: 'Sản phẩm: ',
+                        fieldType: 0,
+                        values: widget.model.nguyenVatLieuVatTus
+                            .map((e) =>
+                                FieldValue(text: e.realName, value: e.name))
+                            .toList(),
+                        value: values[i].material,
+                        selectionHandler: (value) {
+                          var firstItem = widget.model.nguyenVatLieuVatTus
+                              .where((element) {
+                                return element.realName == value;
+                              })
+                              .toList()
+                              .first;
+                          setState(() {
+                            values[i].material = value;
+                            values[i].unit = firstItem.unit;
+                          });
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: FieldData(
+                        value: 'Kg:',
+                        fieldType: 3,
+                      ),
+                      flex: 1,
+                    ),
+                    Expanded(
+                      child: FieldData(
+                          // title: 'Đơn vị tính ',
+                          controller: controllers[i]['kgController'],
+                          fieldType: 1,
+                          selectionHandler: (text) {
+                            if ([
+                              "",
+                              null,
+                              false,
+                              0
+                            ].contains(controllers[i]['kgController']!.text)) {
+                              // do sth
+                              values[i].kg = 0;
+                            } else {
+                              values[i].kg = double.parse(
+                                  controllers[i]['kgController']!.text);
+                            }
+                            widget.model.changeState();
+                          }),
+                      flex: 2,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FieldData(
+                        value: 'Số lượng: ',
+                        fieldType: 3,
+                      ),
+                      flex: 2,
+                    ),
+                    Expanded(
+                      child: FieldData(
+                          // title: 'Đơn vị tính ',
+                          controller: controllers[i]['quantityController'],
+                          fieldType: 1,
+                          selectionHandler: (text) {
+                            if (["", null, false, 0].contains(
+                                controllers[i]['quantityController']!.text)) {
+                              // do sth
+                              values[i].quantity = 0;
+                            } else {
+                              values[i].quantity = int.parse(
+                                  controllers[i]['quantityController']!.text);
+                            }
+                            widget.model.changeState();
+                          }),
+                      flex: 2,
+                    ),
+                    Expanded(
+                      child: FieldData(
+                        value: 'Đơn vị tính: ${values[i].unit}',
+                        fieldType: 3,
+                      ),
+                      flex: 3,
+                    ),
+                  ],
+                )
+              ]
                   // Icon(Icons.image) // iconPic
                   ),
             );
