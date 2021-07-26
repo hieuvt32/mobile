@@ -293,130 +293,38 @@ class _ListOrderViewState extends State<ListOrderView>
                     color: hexToColor("#B3D5EB"),
                     padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
                     child: Container(
-                        child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4)),
-                              color: getColorByType(type)),
-                          padding: const EdgeInsets.only(left: 12, right: 12),
-                          height: 32,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(stores[index].name,
-                                  style: TextStyle(
-                                      color: hexToColor("#14142B"),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10)),
-                              Text(
-                                  DateFormat('dd/MM/yyyy')
-                                      .format(stores[index].creation),
-                                  style: TextStyle(
-                                      color: hexToColor("#14142B"),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10))
-                            ],
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    topRight: Radius.circular(4)),
+                                color: getColorByType(type)),
+                            padding: const EdgeInsets.only(left: 12, right: 12),
+                            height: 32,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(stores[index].name,
+                                    style: TextStyle(
+                                        color: hexToColor("#14142B"),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10)),
+                                Text(
+                                    DateFormat('dd/MM/yyyy')
+                                        .format(stores[index].creation),
+                                    style: TextStyle(
+                                        color: hexToColor("#14142B"),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10))
+                              ],
+                            ),
                           ),
-                        ),
-                        buildCardContent(widget.type, stores[index])
-                      ],
-                    )
-
-                        //  Row(
-                        //   children: [
-                        //     Expanded(
-                        //       flex: 3,
-                        //       child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           SizedBox(
-                        //             height: 10,
-                        //           ),
-                        //           Text(
-                        //             'Tên khách hàng: ${stores[index].vendorName}',
-                        //             style: TextStyle(fontSize: 13),
-                        //           ),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //           Text(
-                        //             'Ngày tạo đơn: ${DateFormat('dd/MM/yyyy').format(stores[index].creation)}',
-                        //             style: TextStyle(fontSize: 13),
-                        //           ),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //           Visibility(
-                        //               visible: !(["", null, false, 0]
-                        //                   .contains(stores[index].employeeName)),
-                        //               child: Text(
-                        //                 'Giao vận viên: ${stores[index].employeeName}',
-                        //                 style: TextStyle(fontSize: 13),
-                        //               )),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //     SizedBox(
-                        //       width: 10,
-                        //     ),
-                        //     Expanded(
-                        //       flex: 2,
-                        //       child: Column(
-                        //         children: [
-                        //           Container(
-                        //             decoration: BoxDecoration(
-                        //               borderRadius:
-                        //                   BorderRadius.all(Radius.circular(12)),
-                        //               color: getColorByType(type),
-                        //             ),
-                        //             child: Text(
-                        //               getTextByType(type),
-                        //               style: TextStyle(
-                        //                   fontSize: 12, color: Colors.white),
-                        //             ),
-                        //             padding: EdgeInsets.fromLTRB(20, 6, 20, 6),
-                        //           ),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //           Text(
-                        //             'Mã đơn: ${stores[index].name}',
-                        //             style: TextStyle(fontSize: 13),
-                        //             textAlign: TextAlign.center,
-                        //           ),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //           Visibility(
-                        //             child: Text(
-                        //               stores[index].plate,
-                        //               style: TextStyle(
-                        //                 fontSize: 14,
-                        //                 color: hexToColor('#FF0F00'),
-                        //                 fontWeight: FontWeight.bold,
-                        //               ),
-                        //             ),
-                        //             visible: !(["", null, false, 0]
-                        //                 .contains(stores[index].plate)),
-                        //           ),
-                        //           Visibility(
-                        //               child: SizedBox(
-                        //                 height: 12,
-                        //               ),
-                        //               visible: !(["", null, false, 0]
-                        //                   .contains(stores[index].plate))),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        ),
+                          buildCardContent(widget.type, stores[index])
+                        ],
+                      ),
+                    ),
                   ),
                   onTap: () {
                     Navigator.of(context).push(
@@ -424,6 +332,8 @@ class _ListOrderViewState extends State<ListOrderView>
                         builder: (context) {
                           return EditOrderView(
                             name: stores[index].name,
+                            haveDelivery: !["", null, false, 0]
+                                .contains(stores[index].employeeName),
                           );
                         },
                       ),

@@ -44,6 +44,7 @@ class Product {
     unit = json['unit'] ?? 'Bình';
     hiddenKG = ["", null, false, 0].contains(json['kg']);
     hiddenVatTu = ["", null, false, 0].contains(json['material']);
+    isExpanded = false;
   }
 
   Map<String, dynamic> toJson() {

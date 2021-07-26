@@ -61,7 +61,7 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
     return DefaultTabController(
       length: 3,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 25, 24, 0),
+        padding: const EdgeInsets.fromLTRB(24, 25, 24, 16),
         child: NestedScrollView(
           controller: _scrollController,
           headerSliverBuilder: (context, value) {

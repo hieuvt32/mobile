@@ -10,13 +10,15 @@ class Address {
     required this.diaChi,
     required this.customer,
     required this.isEnable,
-    required this.isEditable,
+    this.isEditable = false,
   });
 
   Address.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     diaChi = json['dia_chi'] != null ? json['dia_chi'] : '';
     customer = json['parent'] != null ? json['parent'] : '';
+    isEnable = false;
+    isEditable = false;
   }
 
   Map<String, dynamic> toJson() {

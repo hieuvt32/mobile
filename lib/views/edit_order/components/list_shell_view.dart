@@ -200,7 +200,7 @@ class _ListShellItemState extends State<ListShellItem> {
                   children: [
                     Expanded(
                       child: FieldData(
-                        value: 'Sản phẩm: ',
+                        value: 'Vật tư: ',
                         fieldType: 3,
                       ),
                       flex: 2,

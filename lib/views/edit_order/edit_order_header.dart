@@ -1,24 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
 
 class EditOrderHeader extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
-  // final List<Customer> customers;
-  // final bool readOnlyView;
-  // final String? customerValue;
-  // final bool sellInWareHouse;
-  // final Function(dynamic) customerSelection;
-  // final Function(bool?) sellInWarehouseSelection;
-  EditOrderHeader(
-      // this.customerValue,
-      // this.sellInWareHouse,
-      // this.customerSelection,
-      // this.sellInWarehouseSelection,
-      {
+  EditOrderHeader({
     Key? key,
-    // required this.customers,
-    // required this.readOnlyView,
   }) : super(key: key);
 
   @override
@@ -75,19 +63,6 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                                 }).toList(),
                                 value: widget.model.customerValue,
                                 onChanged: widget.model.customerSelect,
-
-                                // keyboardType: this.keyboardType,
-                                // decoration: InputDecoration(
-                                //   enabledBorder:
-                                //       const OutlineInputBorder(
-                                //     borderRadius: BorderRadius.all(
-                                //         Radius.circular(0.0)),
-                                //     borderSide: const BorderSide(
-                                //       color: Colors.grey,
-                                //     ),
-                                //   ),
-                                // ),
-
                                 style: TextStyle(
                                   fontSize: 13.0,
                                   height: 1,
@@ -98,9 +73,22 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                               ),
                             ),
                           )
-                        : Text(
-                            customerMap[widget.model.customerValue],
-                            style: TextStyle(fontSize: 14),
+                        : Column(
+                            children: [
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                customerMap[widget.model.customerValue] != null
+                                    ? customerMap[widget.model.customerValue]!
+                                    : '',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color.fromRGBO(0, 0, 0, 0.75),
+                                ),
+                              ),
+                            ],
                           ),
                     SizedBox(
                       height: 20,
@@ -125,7 +113,10 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                             fillColor:
                                 MaterialStateProperty.resolveWith(getColor),
                             value: widget.model.sellInWarehouse,
-                            onChanged: widget.model.sellInWarehouseSelection,
+                            onChanged: widget.model.orderState !=
+                                    OrderState.PreNewOrder
+                                ? null
+                                : widget.model.sellInWarehouseSelection,
                           ),
                         ),
 
@@ -134,7 +125,10 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color.fromRGBO(0, 0, 0, 0.75),
+                            color: widget.model.orderState !=
+                                    OrderState.PreNewOrder
+                                ? hexToColor('#AAAAAA')
+                                : Color.fromRGBO(0, 0, 0, 0.75),
                           ),
                         ),
                       ],

@@ -73,7 +73,7 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
               : "";
 
       widget.model.editAddresses[i].diaChi = text;
-      widget.model.editAddresses[i].isEnable = true;
+      // widget.model.editAddresses[i].isEnable = true;
       widget.model.changeState();
     } else {
       var response = await locator<Api>().updateDeliveryAddress(
@@ -86,12 +86,14 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
               ? response.address.name
               : "";
       widget.model.editAddresses[i].diaChi = text;
-      widget.model.editAddresses[i].isEnable = true;
+      // widget.model.editAddresses[i].isEnable = true;
       widget.model.changeState();
     }
   }
 
   List<ExpansionItem> _buildExpansionItems() {
+    var total = widget.model.productForLocations
+        .fold<int>(0, (sum, item) => sum + item.quantity);
     var values = widget.model.editAddresses;
     var expansionItems = values.asMap().map(
           (i, e) => MapEntry(
@@ -101,25 +103,11 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
               (isExpanded) {
                 isParentExpanded = isExpanded;
                 return Container(
-                  // padding: EdgeInsets.zero,
-                  // child: Center(
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.start,
-                  //     children: [
-                  //       Text(
-                  //         widget.title,
-                  //         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                  //         textAlign: TextAlign.left,
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
-                    child: isExpanded
+                    child: isExpanded && !widget.model.readOnlyView
                         ? Row(
                             mainAxisAlignment: MainAxisAlignment.start,
-                            // mainAxisSize: MainAxisSize.min,
                             children: [
                               Expanded(
                                 child: Text(
@@ -134,7 +122,7 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                               //   width: 28,
                               // ),
                               Expanded(
-                                child: values[i].isEditable
+                                child: !values[i].isEditable
                                     ? FieldData(
                                         // value: 'Sản phẩm: ',
                                         fieldType: 0,
@@ -176,7 +164,7 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                                   onTap: () {
                                     setState(() {
                                       widget.model.editAddresses[i].isEditable =
-                                          false;
+                                          true;
                                     });
                                   },
                                   child: Column(
@@ -199,7 +187,34 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                               )
                             ],
                           )
-                        : Text('${widget.model.editAddresses[i].diaChi}'),
+                        : Row(
+                            children: [
+                              Text('SL: ',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    // fontWeight: FontWeight.w700,
+                                    color: Color.fromRGBO(0, 0, 0, 0.75),
+                                  )),
+                              Text(
+                                '$total,',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color.fromRGBO(0, 0, 0, 0.75),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 12,
+                              ),
+                              Text(
+                                '${widget.model.editAddresses[i].diaChi}',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromRGBO(0, 0, 0, 0.75)),
+                              ),
+                            ],
+                          ),
                   ),
                 );
               },
@@ -208,69 +223,72 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                 SizedBox(
                   height: 10,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: hexToColor('#0072BC'),
-                        // side: BorderSide(
-                        //   width: 1.0,
-                        // ),
+                Visibility(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: hexToColor('#0072BC'),
+                          // side: BorderSide(
+                          //   width: 1.0,
+                          // ),
 
-                        minimumSize: Size(120, 32),
-                        // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0),
+                          minimumSize: Size(120, 32),
+                          // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                            // side: BorderSide(
+                            //   color: hexToColor('#FF0F00'),
+                            // ),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (!["", null, false, 0]
+                              .contains(widget.model.editAddresses[i].name))
+                            widget.model.addSanPhamByLocation(
+                                widget.model.editAddresses[i].name!);
+                        },
+                        child: Text(
+                          'Thêm sản phẩm',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 23,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: hexToColor('#FF0F00'),
                           // side: BorderSide(
-                          //   color: hexToColor('#FF0F00'),
+                          //   width: 1.0,
                           // ),
+                          minimumSize: Size(120, 32),
+                          // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                            // side: BorderSide(
+                            //   color: hexToColor('#0072BC'),
+                            // ),
+                          ),
+                        ),
+                        onPressed: () {},
+                        child: Text(
+                          'Xóa địa chỉ',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                      onPressed: () {
-                        if (!["", null, false, 0]
-                            .contains(widget.model.editAddresses[i].name))
-                          widget.model.addSanPhamByLocation(
-                              widget.model.editAddresses[i].name!);
-                      },
-                      child: Text(
-                        'Thêm sản phẩm',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 23,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: hexToColor('#FF0F00'),
-                        // side: BorderSide(
-                        //   width: 1.0,
-                        // ),
-                        minimumSize: Size(120, 32),
-                        // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(4.0),
-                          // side: BorderSide(
-                          //   color: hexToColor('#0072BC'),
-                          // ),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text(
-                        'Xóa địa chỉ',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  visible: !widget.model.readOnlyView,
                 )
               ],
               // Icon(Icons.image) // iconPic
@@ -383,27 +401,33 @@ class _ListProductLocationItemViewState
                     ),
                     Expanded(
                       flex: 5,
-                      child: FieldData(
-                        // value: 'Sản phẩm: ',
-                        fieldType: 0,
-                        values: widget.model.nguyenVatLieuSanPhams
-                            .map((e) =>
-                                FieldValue(text: e.realName, value: e.name))
-                            .toList(),
-                        value: values[i].product,
-                        selectionHandler: (value) {
-                          var firstItem = widget.model.nguyenVatLieuSanPhams
-                              .where((element) {
-                                return element.realName == value;
-                              })
-                              .toList()
-                              .first;
-                          setState(() {
-                            values[i].product = value;
-                            values[i].unit = firstItem.unit;
-                          });
-                        },
-                      ),
+                      child: !widget.model.readOnlyView
+                          ? FieldData(
+                              // value: 'Sản phẩm: ',
+                              fieldType: 0,
+                              values: widget.model.nguyenVatLieuSanPhams
+                                  .map((e) => FieldValue(
+                                      text: e.realName, value: e.name))
+                                  .toList(),
+                              value: values[i].product,
+                              selectionHandler: (value) {
+                                var firstItem =
+                                    widget.model.nguyenVatLieuSanPhams
+                                        .where((element) {
+                                          return element.realName == value;
+                                        })
+                                        .toList()
+                                        .first;
+                                setState(() {
+                                  values[i].product = value;
+                                  values[i].unit = firstItem.unit;
+                                });
+                              },
+                            )
+                          : FieldData(
+                              fieldType: 3,
+                              value: '${values[i].product}',
+                            ),
                     )
                   ],
                 ),
@@ -418,27 +442,32 @@ class _ListProductLocationItemViewState
                     ),
                     Expanded(
                       flex: 2,
-                      child: FieldData(
-                        // value: 'Sản phẩm: ',
-                        fieldType: 0,
-                        values: widget.model.nguyenVatLieuVatTus
-                            .map((e) =>
-                                FieldValue(text: e.realName, value: e.name))
-                            .toList(),
-                        value: values[i].material,
-                        selectionHandler: (value) {
-                          var firstItem = widget.model.nguyenVatLieuVatTus
-                              .where((element) {
-                                return element.realName == value;
-                              })
-                              .toList()
-                              .first;
-                          setState(() {
-                            values[i].material = value;
-                            values[i].unit = firstItem.unit;
-                          });
-                        },
-                      ),
+                      child: !widget.model.readOnlyView
+                          ? FieldData(
+                              // value: 'Sản phẩm: ',
+                              fieldType: 0,
+                              values: widget.model.nguyenVatLieuVatTus
+                                  .map((e) => FieldValue(
+                                      text: e.realName, value: e.name))
+                                  .toList(),
+                              value: values[i].material,
+                              selectionHandler: (value) {
+                                var firstItem = widget.model.nguyenVatLieuVatTus
+                                    .where((element) {
+                                      return element.realName == value;
+                                    })
+                                    .toList()
+                                    .first;
+                                setState(() {
+                                  values[i].material = value;
+                                  values[i].unit = firstItem.unit;
+                                });
+                              },
+                            )
+                          : FieldData(
+                              fieldType: 3,
+                              value: '${values[i].material}',
+                            ),
                     ),
                     Expanded(
                       child: FieldData(
@@ -448,25 +477,26 @@ class _ListProductLocationItemViewState
                       flex: 1,
                     ),
                     Expanded(
-                      child: FieldData(
-                          // title: 'Đơn vị tính ',
-                          controller: controllers[i]['kgController'],
-                          fieldType: 1,
-                          selectionHandler: (text) {
-                            if ([
-                              "",
-                              null,
-                              false,
-                              0
-                            ].contains(controllers[i]['kgController']!.text)) {
-                              // do sth
-                              values[i].kg = 0;
-                            } else {
-                              values[i].kg = double.parse(
-                                  controllers[i]['kgController']!.text);
-                            }
-                            widget.model.changeState();
-                          }),
+                      child: !widget.model.readOnlyView
+                          ? FieldData(
+                              // title: 'Đơn vị tính ',
+                              controller: controllers[i]['kgController'],
+                              fieldType: 1,
+                              selectionHandler: (text) {
+                                if (["", null, false, 0].contains(
+                                    controllers[i]['kgController']!.text)) {
+                                  // do sth
+                                  values[i].kg = 0;
+                                } else {
+                                  values[i].kg = double.parse(
+                                      controllers[i]['kgController']!.text);
+                                }
+                                widget.model.changeState();
+                              })
+                          : FieldData(
+                              fieldType: 3,
+                              value: '${values[i].kg}',
+                            ),
                       flex: 2,
                     ),
                   ],
@@ -481,21 +511,28 @@ class _ListProductLocationItemViewState
                       flex: 2,
                     ),
                     Expanded(
-                      child: FieldData(
-                          // title: 'Đơn vị tính ',
-                          controller: controllers[i]['quantityController'],
-                          fieldType: 1,
-                          selectionHandler: (text) {
-                            if (["", null, false, 0].contains(
-                                controllers[i]['quantityController']!.text)) {
-                              // do sth
-                              values[i].quantity = 0;
-                            } else {
-                              values[i].quantity = int.parse(
-                                  controllers[i]['quantityController']!.text);
-                            }
-                            widget.model.changeState();
-                          }),
+                      child: !widget.model.readOnlyView
+                          ? FieldData(
+                              // title: 'Đơn vị tính ',
+                              controller: controllers[i]['quantityController'],
+                              fieldType: 1,
+                              selectionHandler: (text) {
+                                if (["", null, false, 0].contains(controllers[i]
+                                        ['quantityController']!
+                                    .text)) {
+                                  // do sth
+                                  values[i].quantity = 0;
+                                } else {
+                                  values[i].quantity = int.parse(controllers[i]
+                                          ['quantityController']!
+                                      .text);
+                                }
+                                widget.model.changeState();
+                              })
+                          : FieldData(
+                              fieldType: 3,
+                              value: '${values[i].quantity}',
+                            ),
                       flex: 2,
                     ),
                     Expanded(

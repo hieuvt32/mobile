@@ -20,66 +20,113 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
         alignment: Alignment.bottomCenter,
         child: Visibility(
           visible: true,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: hexToColor('#FF0F00'),
-                  // side: BorderSide(
-                  //   width: 1.0,
-                  // ),
-                  minimumSize: Size(120, 32),
-                  // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    // side: BorderSide(
-                    //   color: hexToColor('#0072BC'),
-                    // ),
-                  ),
-                ),
-                onPressed: () {},
-                child: Text(
-                  'Hủy',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: hexToColor('#0072BC'),
-                  // side: BorderSide(
-                  //   width: 1.0,
-                  // ),
-
-                  minimumSize: Size(120, 32),
-                  // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    // side: BorderSide(
-                    //   color: hexToColor('#FF0F00'),
-                    // ),
-                  ),
-                ),
-                onPressed: () async {
-                  await widget.model.createOrder(context);
-                },
-                child: Text(
-                  widget.model.sellInWarehouse ? 'Hoàn thành' : 'Tạo đơn',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              )
-            ],
-          ),
+          child: _buildBottomButton(),
         ),
       ),
     );
+  }
+
+  _buildBottomButton() {
+    switch (widget.model.orderState) {
+      case OrderState.PreNewOrder:
+      case OrderState.NewOrder:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: hexToColor('#FF0F00'),
+                // side: BorderSide(
+                //   width: 1.0,
+                // ),
+                minimumSize: Size(120, 32),
+                // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  // side: BorderSide(
+                  //   color: hexToColor('#0072BC'),
+                  // ),
+                ),
+              ),
+              onPressed: () {},
+              child: Text(
+                'Hủy',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: hexToColor('#0072BC'),
+                // side: BorderSide(
+                //   width: 1.0,
+                // ),
+
+                minimumSize: Size(120, 32),
+                // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  // side: BorderSide(
+                  //   color: hexToColor('#FF0F00'),
+                  // ),
+                ),
+              ),
+              onPressed: () async {
+                if (widget.model.orderState == OrderState.PreNewOrder)
+                  await widget.model.createOrder(context);
+                else {
+                  await widget.model.updateOrder(context);
+                }
+              },
+              child: Text(
+                widget.model.sellInWarehouse
+                    ? 'Hoàn thành'
+                    : (widget.model.orderState == OrderState.PreNewOrder
+                        ? 'Tạo đơn'
+                        : 'Lưu'),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          ],
+        );
+      case OrderState.WaitingForShipment:
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: hexToColor('#FF0F00'),
+            // side: BorderSide(
+            //   width: 1.0,
+            // ),
+            minimumSize: Size(double.infinity, 48),
+            // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              // side: BorderSide(
+              //   color: hexToColor('#0072BC'),
+              // ),
+            ),
+          ),
+          onPressed: () async {
+            await widget.model.updateOrder(context, status: 'Đang giao hàng');
+          },
+          child: Text(
+            'Xác nhận xuất kho',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        );
+      case OrderState.Delivering:
+        return Text('');
+      default:
+    }
   }
 }

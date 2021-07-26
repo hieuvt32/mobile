@@ -68,7 +68,8 @@ class EditOrderViewModel extends BaseViewModel {
   String? _customerValue;
 
   bool _sellInWarehouse = false;
-  bool _readOnlyView = false;
+  // bool _readOnlyView = false;
+  bool _haveDelivery = false;
 
   String? _name;
 
@@ -78,7 +79,24 @@ class EditOrderViewModel extends BaseViewModel {
 
   bool get sellInWarehouse => _sellInWarehouse;
 
-  bool get readOnlyView => _readOnlyView;
+  bool get readOnlyView {
+    if (_order != null) {
+      if (_order!.status == 'Đã giao hàng') {
+        return true;
+      }
+
+      if (_order!.status == 'Đang giao hàng') {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool get haveDelivery => _haveDelivery;
+
+  OrderState get orderState {
+    return calculateState();
+  }
 
   List<Map<String, TextEditingController>> get productEditControllers =>
       _productEditControllers;
@@ -124,6 +142,35 @@ class EditOrderViewModel extends BaseViewModel {
   SignatureController get signatureSupplierController =>
       _signatureSupplierController;
 
+  OrderState calculateState() {
+    if (_order != null) {
+      switch (_order!.status) {
+        case "Đã đặt hàng":
+          if (_haveDelivery)
+            return OrderState.WaitingForShipment;
+          else
+            return OrderState.NewOrder;
+        case "Đang giao hàng":
+          return OrderState.Delivering;
+        default:
+      }
+    }
+
+    return OrderState.PreNewOrder;
+  }
+
+  String get orderStatus {
+    if (_order != null) {
+      switch (_order!.status) {
+        case "Đã đặt hàng":
+          return 'Đã đặt';
+        default:
+      }
+    }
+
+    return '';
+  }
+
   initState() {
     _signatureSupplierController = SignatureController(
       penStrokeWidth: 5,
@@ -142,6 +189,7 @@ class EditOrderViewModel extends BaseViewModel {
     _config = Config();
 
     _products = [];
+    // _readOnlyView = false;
 
     _productForLocations = [];
 
@@ -151,6 +199,7 @@ class EditOrderViewModel extends BaseViewModel {
     _editAddresses = [];
 
     _customers = [];
+    _haveDelivery = false;
 
     _responseGetCustomers = null;
     _customerValue = null;
@@ -184,6 +233,10 @@ class EditOrderViewModel extends BaseViewModel {
       status: '',
       listShell: [],
     );
+  }
+
+  setHaveDelivery(bool haveDelivery) {
+    _haveDelivery = haveDelivery;
   }
 
   initPreData() async {
@@ -240,10 +293,17 @@ class EditOrderViewModel extends BaseViewModel {
 
       if (response != null && response.order != null) {
         _order = response.order;
-        if (_order!.status == 'Đã giao hàng') {
-          _readOnlyView = true;
-        }
+
         if (_order!.products != null && _order!.products.length > 0) {
+          _customerValue = _order!.vendor;
+          _sellInWarehouse = _order!.sellInWarehouse == 1;
+
+          _responseGetDeliveryAddress = await locator<Api>()
+              .getDeliveryAddress(customer: _customerValue as String);
+          _addresses = _responseGetDeliveryAddress != null &&
+                  _responseGetDeliveryAddress!.addresses != null
+              ? _responseGetDeliveryAddress!.addresses!
+              : [];
           if (_order!.sellInWarehouse != 0) {
             for (var product in _order!.products) {
               _products.add(product);
@@ -253,7 +313,8 @@ class EditOrderViewModel extends BaseViewModel {
                     TextEditingController(text: "${product.quantity}")
               });
             }
-            _readOnlyView = true;
+            // TODO: Nếu lỗi xem lại tại đây
+            // _readOnlyView = true;
           } else {
             var locations = [];
             for (var product in _order!.products) {
@@ -278,15 +339,11 @@ class EditOrderViewModel extends BaseViewModel {
 
                 if (elements != null && elements.length > 0) {
                   _editAddresses.add(elements[0]);
-                  _readOnlyView = true;
+                  // _readOnlyView = true;
                 }
               }
             }
           }
-          _customerValue = _order!.vendor;
-          _sellInWarehouse = _order!.sellInWarehouse == 1;
-          _responseGetDeliveryAddress = await locator<Api>()
-              .getDeliveryAddress(customer: _customerValue as String);
         }
         notifyListeners();
       }
@@ -448,8 +505,8 @@ class EditOrderViewModel extends BaseViewModel {
         name: null,
         diaChi: '',
         customer: _customerValue as String,
-        isEnable: true,
-        isEditable: true,
+        isEnable: false,
+        isEditable: false,
       ),
     );
   }
@@ -496,7 +553,7 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.phone = elements[0].phone;
       _order!.products = _sellInWarehouse ? _products : _productForLocations;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
-      _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
+      // _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
       _order!.taxId = elements[0].taxId;
       _order!.totalCost = 0;
       _order!.vendor = elements[0].name;
@@ -529,9 +586,7 @@ class EditOrderViewModel extends BaseViewModel {
               subtitle: 'Tạo đơn hàng thành công.');
         }
 
-        if (_sellInWarehouse) {
-          _readOnlyView = true;
-        }
+        _haveDelivery = false;
 
         var donBanHangResponse =
             await locator<Api>().getSingleHoaDonBanHang(_name!);
@@ -561,7 +616,7 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
-  Future updateOrder(context) async {
+  Future updateOrder(context, {String status = ''}) async {
     var imgId = Uuid().v1().toString();
     Attachments? attachments;
     var bytes = await _signatureCustomerController.toPngBytes();
@@ -596,7 +651,11 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.phone = elements[0].phone;
       _order!.products = _sellInWarehouse ? _products : _productForLocations;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
-      // _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
+      _order!.status = ["", null, false, 0].contains(status)
+          ? !_sellInWarehouse
+              ? "Đã đặt hàng"
+              : "Đã giao hàng"
+          : status;
       _order!.taxId = elements[0].taxId;
       _order!.totalCost = 0;
       _order!.vendor = elements[0].name;
@@ -636,5 +695,8 @@ class EditOrderViewModel extends BaseViewModel {
         subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
       );
     }
+    notifyListeners();
   }
 }
+
+enum OrderState { PreNewOrder, NewOrder, WaitingForShipment, Delivering }
