@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/base_view.dart';
 import 'package:frappe_app/views/customize_app_bar.dart';
-import 'package:frappe_app/views/edit_order/edit_order_not_sell_in_ware_house.dart';
+import 'package:frappe_app/views/edit_order/edit_order_not_sell_in_warehouse.dart';
 import 'package:frappe_app/views/edit_order/edit_order_sell_in_warehouse.dart';
 import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
 

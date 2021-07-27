@@ -14,7 +14,13 @@ class ListShellView extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
   final String title;
   final int type;
-  ListShellView(this.title, {Key? key, this.type = 0}) : super(key: key);
+  final bool realOnly;
+  ListShellView(
+    this.title, {
+    Key? key,
+    this.type = 0,
+    this.realOnly = false,
+  }) : super(key: key);
 
   @override
   _ListShellViewState createState() => _ListShellViewState();
@@ -48,39 +54,43 @@ class _ListShellViewState extends State<ListShellView> {
         [
           ListShellItem(
             type: widget.type,
+            realOnly: widget.realOnly,
           ),
           SizedBox(
             height: 10,
           ),
-          Container(
-            width: double.infinity,
-            color: hexToColor('#F2F8FC'),
-            height: 40,
-            // onPressed: () {},
-            child: GestureDetector(
-              child: DottedBorder(
-                color: Color.fromRGBO(0, 114, 188, 0.3),
-                strokeWidth: 2,
-                // borderType: BorderType.Circle,
-                radius: Radius.circular(4),
-                child: Center(
-                    child: Text(
-                  'Thêm sản phẩm',
-                  style: TextStyle(fontSize: 16),
-                )),
+          Visibility(
+            child: Container(
+              width: double.infinity,
+              color: hexToColor('#F2F8FC'),
+              height: 40,
+              // onPressed: () {},
+              child: GestureDetector(
+                child: DottedBorder(
+                  color: Color.fromRGBO(0, 114, 188, 0.3),
+                  strokeWidth: 2,
+                  // borderType: BorderType.Circle,
+                  radius: Radius.circular(4),
+                  child: Center(
+                      child: Text(
+                    'Thêm vật tư',
+                    style: TextStyle(fontSize: 16),
+                  )),
+                ),
+                onTap: () {
+                  switch (widget.type) {
+                    case 0:
+                      widget.model.addNhapKho();
+                      break;
+                    case 1:
+                      widget.model.addTraVe();
+                      break;
+                    default:
+                  }
+                },
               ),
-              onTap: () {
-                switch (widget.type) {
-                  case 0:
-                    widget.model.addNhapKho();
-                    break;
-                  case 1:
-                    widget.model.addTraVe();
-                    break;
-                  default:
-                }
-              },
             ),
+            visible: !widget.model.readOnlyView,
           )
         ],
         // Icon(Icons.image) // iconPic
@@ -100,7 +110,12 @@ class _ListShellViewState extends State<ListShellView> {
 class ListShellItem extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
   final int type;
-  ListShellItem({Key? key, this.type = 0}) : super(key: key);
+  final bool realOnly;
+  ListShellItem({
+    Key? key,
+    this.type = 0,
+    this.realOnly = false,
+  }) : super(key: key);
 
   @override
   _ListShellItemState createState() => _ListShellItemState();
@@ -136,6 +151,10 @@ class _ListShellItemState extends State<ListShellItem> {
         controllers = widget.model.donNhapKhoEditControllers;
         break;
       case 1:
+        values = widget.model.traVes;
+        controllers = widget.model.donTraVeEditControllers;
+        break;
+      case 2:
         values = widget.model.traVes;
         controllers = widget.model.donTraVeEditControllers;
         break;
@@ -207,27 +226,32 @@ class _ListShellItemState extends State<ListShellItem> {
                     ),
                     Expanded(
                       flex: 5,
-                      child: FieldData(
-                        // value: 'Sản phẩm: ',
-                        fieldType: 0,
-                        values: widget.model.nguyenVatLieuVatTus
-                            .map((e) =>
-                                FieldValue(text: e.realName, value: e.name))
-                            .toList(),
-                        value: values[i].realName,
-                        selectionHandler: (value) {
-                          var firstItem = widget.model.nguyenVatLieuVatTus
-                              .where((element) {
-                                return element.realName == value;
-                              })
-                              .toList()
-                              .first;
-                          setState(() {
-                            values[i].realName = value;
-                            values[i].unit = firstItem.unit;
-                          });
-                        },
-                      ),
+                      child: !widget.realOnly
+                          ? FieldData(
+                              // value: 'Sản phẩm: ',
+                              fieldType: 0,
+                              values: widget.model.nguyenVatLieuVatTus
+                                  .map((e) => FieldValue(
+                                      text: e.realName, value: e.name))
+                                  .toList(),
+                              value: values[i].realName,
+                              selectionHandler: (value) {
+                                var firstItem = widget.model.nguyenVatLieuVatTus
+                                    .where((element) {
+                                      return element.realName == value;
+                                    })
+                                    .toList()
+                                    .first;
+                                setState(() {
+                                  values[i].realName = value;
+                                  values[i].unit = firstItem.unit;
+                                });
+                              },
+                            )
+                          : FieldData(
+                              value: '${values[i].realName}',
+                              fieldType: 3,
+                            ),
                     )
                   ],
                 ),
@@ -241,21 +265,28 @@ class _ListShellItemState extends State<ListShellItem> {
                       flex: 2,
                     ),
                     Expanded(
-                      child: FieldData(
-                          // title: 'Đơn vị tính ',
-                          controller: controllers[i]['quantityController'],
-                          fieldType: 1,
-                          selectionHandler: (text) {
-                            if (["", null, false, 0].contains(
-                                controllers[i]['quantityController']!.text)) {
-                              // do sth
-                              values[i].amount = 0;
-                            } else {
-                              values[i].amount = int.parse(
-                                  controllers[i]['quantityController']!.text);
-                            }
-                            widget.model.changeState();
-                          }),
+                      child: !widget.realOnly
+                          ? FieldData(
+                              // title: 'Đơn vị tính ',
+                              controller: controllers[i]['quantityController'],
+                              fieldType: 1,
+                              selectionHandler: (text) {
+                                if (["", null, false, 0].contains(controllers[i]
+                                        ['quantityController']!
+                                    .text)) {
+                                  // do sth
+                                  values[i].amount = 0;
+                                } else {
+                                  values[i].amount = int.parse(controllers[i]
+                                          ['quantityController']!
+                                      .text);
+                                }
+                                widget.model.changeState();
+                              })
+                          : FieldData(
+                              value: '${values[i].amount}',
+                              fieldType: 3,
+                            ),
                       flex: 2,
                     ),
                     Expanded(

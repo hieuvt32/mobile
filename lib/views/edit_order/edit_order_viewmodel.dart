@@ -44,11 +44,15 @@ class EditOrderViewModel extends BaseViewModel {
   late List<Map<String, TextEditingController>> _donNhapKhoEditControllers;
   late List<Map<String, TextEditingController>> _donTraVeEditControllers;
 
+  late List<Map<String, TextEditingController>> _donHoanTraEditControllers;
+
   late List<Product> _products;
 
   late List<Product> _productForLocations;
 
   late List<DanhSachNhapKho> _nhapKhos;
+
+  late List<DanhSachNhapKho> _hoanTras;
 
   late List<DanhSachNhapKho> _traVes;
 
@@ -110,9 +114,14 @@ class EditOrderViewModel extends BaseViewModel {
   List<Map<String, TextEditingController>> get donTraVeEditControllers =>
       _donTraVeEditControllers;
 
+  List<Map<String, TextEditingController>> get donHoanTraEditControllers =>
+      _donHoanTraEditControllers;
+
   List<DanhSachNhapKho> get nhapKhos => _nhapKhos;
 
   List<DanhSachNhapKho> get traVes => _traVes;
+
+  List<DanhSachNhapKho> get hoanTras => _hoanTras;
 
   String? get customerValue => _customerValue;
 
@@ -152,6 +161,8 @@ class EditOrderViewModel extends BaseViewModel {
             return OrderState.NewOrder;
         case "Đang giao hàng":
           return OrderState.Delivering;
+        case "Đã giao hàng":
+          return OrderState.Delivered;
         default:
       }
     }
@@ -186,6 +197,8 @@ class EditOrderViewModel extends BaseViewModel {
     _donNhapKhoEditControllers = [];
     _donTraVeEditControllers = [];
 
+    _donHoanTraEditControllers = [];
+
     _config = Config();
 
     _products = [];
@@ -195,6 +208,7 @@ class EditOrderViewModel extends BaseViewModel {
 
     _nhapKhos = [];
     _traVes = [];
+    _hoanTras = [];
     _addresses = [];
     _editAddresses = [];
 
@@ -418,6 +432,10 @@ class EditOrderViewModel extends BaseViewModel {
 
     for (var donTraVeEditController in _donTraVeEditControllers) {
       donTraVeEditController["quantityController"]!.dispose();
+    }
+
+    for (var donHoanTraEditController in _donHoanTraEditControllers) {
+      donHoanTraEditController["quantityController"]!.dispose();
     }
   }
 
@@ -699,4 +717,10 @@ class EditOrderViewModel extends BaseViewModel {
   }
 }
 
-enum OrderState { PreNewOrder, NewOrder, WaitingForShipment, Delivering }
+enum OrderState {
+  PreNewOrder,
+  NewOrder,
+  WaitingForShipment,
+  Delivering,
+  Delivered
+}

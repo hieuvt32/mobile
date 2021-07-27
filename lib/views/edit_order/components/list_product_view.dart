@@ -39,28 +39,31 @@ class _ListProductViewState extends State<ListProductView> {
               SizedBox(
                 height: 10,
               ),
-              Container(
-                width: double.infinity,
-                color: hexToColor('#F2F8FC'),
-                height: 40,
-                // onPressed: () {},
-                child: GestureDetector(
-                  child: DottedBorder(
-                    color: Color.fromRGBO(0, 114, 188, 0.3),
-                    strokeWidth: 2,
-                    // borderType: BorderType.Circle,
-                    radius: Radius.circular(4),
-                    child: Center(
-                        child: Text(
-                      'Thêm sản phẩm',
-                      style: TextStyle(fontSize: 16),
-                    )),
+              Visibility(
+                child: Container(
+                  width: double.infinity,
+                  color: hexToColor('#F2F8FC'),
+                  height: 40,
+                  // onPressed: () {},
+                  child: GestureDetector(
+                    child: DottedBorder(
+                      color: Color.fromRGBO(0, 114, 188, 0.3),
+                      strokeWidth: 2,
+                      // borderType: BorderType.Circle,
+                      radius: Radius.circular(4),
+                      child: Center(
+                          child: Text(
+                        'Thêm sản phẩm',
+                        style: TextStyle(fontSize: 16),
+                      )),
+                    ),
+                    onTap: () {
+                      widget.model.addSanPham();
+                    },
                   ),
-                  onTap: () {
-                    widget.model.addSanPham();
-                  },
                 ),
-              )
+                visible: !widget.model.readOnlyView,
+              ),
             ],
           ),
         )

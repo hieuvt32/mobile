@@ -8,17 +8,17 @@ import 'package:frappe_app/views/edit_order/edit_order_bottom.dart';
 import 'package:frappe_app/views/edit_order/edit_order_header.dart';
 import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
 
-class EditOrderSellNotInWareHouse extends StatefulWidget {
+class EditOrderNotSellInWareHouseNormal extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
-  EditOrderSellNotInWareHouse({Key? key}) : super(key: key);
+  EditOrderNotSellInWareHouseNormal({Key? key}) : super(key: key);
 
   @override
-  _EditOrderSellNotInWareHouseState createState() =>
-      _EditOrderSellNotInWareHouseState();
+  _EditOrderNotSellInWareHouseNormalState createState() =>
+      _EditOrderNotSellInWareHouseNormalState();
 }
 
-class _EditOrderSellNotInWareHouseState
-    extends State<EditOrderSellNotInWareHouse> {
+class _EditOrderNotSellInWareHouseNormalState
+    extends State<EditOrderNotSellInWareHouseNormal> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,10 +31,6 @@ class _EditOrderSellNotInWareHouseState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   EditOrderHeader(),
-                  Text(
-                    'Địa chỉ giao hàng',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                  ),
                   ListProductLocationView(),
                   SizedBox(
                     height: 8,

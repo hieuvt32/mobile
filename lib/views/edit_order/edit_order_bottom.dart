@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/edit_order/edit_order_not_confirm_modal.dart';
 import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
 
 class EditOrderBottom extends StatefulWidget {
@@ -126,6 +127,82 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
         );
       case OrderState.Delivering:
         return Text('');
+      case OrderState.Delivered:
+        return widget.model.sellInWarehouse
+            ? Text('')
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: hexToColor('#FF0F00'),
+                      // side: BorderSide(
+                      //   width: 1.0,
+                      // ),
+                      minimumSize: Size(120, 32),
+                      // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        // side: BorderSide(
+                        //   color: hexToColor('#0072BC'),
+                        // ),
+                      ),
+                    ),
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (_) {
+                          return GestureDetector(
+                            onTap: () {},
+                            child: EditOrderNotConfirmModal(),
+                            behavior: HitTestBehavior.opaque,
+                          );
+                        },
+                      );
+                    },
+                    child: Text(
+                      'Không xác nhận',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: hexToColor('#0072BC'),
+                      // side: BorderSide(
+                      //   width: 1.0,
+                      // ),
+
+                      minimumSize: Size(120, 32),
+                      // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        // side: BorderSide(
+                        //   color: hexToColor('#FF0F00'),
+                        // ),
+                      ),
+                    ),
+                    onPressed: () async {
+                      if (widget.model.orderState == OrderState.PreNewOrder)
+                        await widget.model.createOrder(context);
+                      else {
+                        await widget.model.updateOrder(context);
+                      }
+                    },
+                    child: Text(
+                      'Xác nhận',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              );
       default:
     }
   }

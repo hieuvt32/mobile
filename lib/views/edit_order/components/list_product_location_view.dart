@@ -37,11 +37,23 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
   Widget build(BuildContext context) {
     List<ExpansionItem> headers = _buildExpansionItems();
 
-    return ExpansionCustomPanel(
-      items: headers,
-      backgroundBodyColor: Color.fromRGBO(0, 114, 188, 0.3),
-      backgroundTitleColor: Colors.white,
-      backgroundIconColor: Color.fromRGBO(0, 0, 0, 0.1),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Địa chỉ giao hàng',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        ExpansionCustomPanel(
+          items: headers,
+          backgroundBodyColor: Color.fromRGBO(0, 114, 188, 0.3),
+          backgroundTitleColor: Colors.white,
+          backgroundIconColor: Color.fromRGBO(0, 0, 0, 0.1),
+        ),
+      ],
     );
     // return Container();
   }

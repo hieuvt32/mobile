@@ -80,7 +80,7 @@ class _ReceivingShellTabState extends State<ReceivingShellTab> {
                   ),
                 ),
                 SizedBox(
-                  width: 25,
+                  width: 20,
                 ),
                 Expanded(
                   child: Column(
