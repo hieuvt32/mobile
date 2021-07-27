@@ -65,4 +65,11 @@ class FrappeIcons {
   static const close_x = '$_basePath/close_x.svg';
   static const refresh = '$_basePath/refresh.svg';
   static const add_no_border = '$_basePath/add_no_border.svg';
+  static const shopping_cart = '$_basePath/shopping_cart.svg';
+  static const clipboard_text = '$_basePath/clipboard_text.svg';
+  static const gear_six = '$_basePath/gear_six.svg';
+  static const truck = '$_basePath/truck.svg';
+  static const users = '$_basePath/users.svg';
+  static const chart_pie_slice = '$_basePath/chart_pie_slice.svg';
+  static const shopping_bag = '$_basePath/shopping_bag.svg';
 }

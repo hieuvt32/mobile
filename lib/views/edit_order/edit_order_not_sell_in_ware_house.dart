@@ -28,8 +28,13 @@ class _EditOrderSellNotInWareHouseState
           Expanded(
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   EditOrderHeader(),
+                  Text(
+                    'Địa chỉ giao hàng',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
                   ListProductLocationView(),
                   SizedBox(
                     height: 8,

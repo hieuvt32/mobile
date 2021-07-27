@@ -344,9 +344,9 @@ class _ListOrderViewState extends State<ListOrderView>
               itemCount: stores.length,
             ),
           ),
-          SizedBox(
-            height: 16,
-          )
+          // SizedBox(
+          //   height: 16,
+          // )
         ],
       ),
     );

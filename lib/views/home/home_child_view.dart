@@ -29,24 +29,16 @@ class _HomeChildViewState extends State<HomeChildView> {
   var _ischidren = false;
   final baseItems = [
     Item(
-      icon: FrappeIcons.giao_van,
-      childrens: [],
-      // view: ProductionReportView(),
-      text: "Giao vận",
-      roles: ["Giám Đốc", "Giao Vận"],
-      visible: true,
-    ),
-    Item(
-      icon: FrappeIcons.ban_hang,
+      icon: FrappeIcons.shopping_cart,
       childrens: [
         Item(
-          icon: FrappeIcons.giao_van,
+          icon: FrappeIcons.clipboard_text,
           view: (context) {
             return ListOrderView(
               type: 'stocker',
             );
           },
-          text: "Danh sách bán hàng",
+          text: "Danh sách đơn hàng",
           visible: true,
           roles: ["Giám Đốc", "Thủ Kho"],
         ),
@@ -66,7 +58,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
-      icon: FrappeIcons.kiem_kho,
+      icon: FrappeIcons.clipboard_text,
       childrens: [],
       view: (context) {
         return InventoryView();
@@ -76,7 +68,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
-      icon: FrappeIcons.star,
+      icon: FrappeIcons.gear_six,
       childrens: [
         Item(
           icon: FrappeIcons.giao_van,
@@ -111,7 +103,15 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
-      icon: FrappeIcons.report,
+      icon: FrappeIcons.truck,
+      childrens: [],
+      // view: ProductionReportView(),
+      text: "Giao vận",
+      roles: ["Giám Đốc", "Giao Vận"],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.chart_pie_slice,
       childrens: [],
       view: (context) {
         return ListOrderView();
@@ -121,7 +121,17 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
-      icon: FrappeIcons.mua_hang,
+      icon: FrappeIcons.users,
+      childrens: [],
+      view: (context) {
+        return ListOrderView();
+      },
+      text: "Điều phối",
+      roles: ["Giám Đốc"],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.shopping_bag,
       childrens: [
         Item(
           icon: FrappeIcons.danh_sach_don_loi,
@@ -241,22 +251,24 @@ class _HomeChildViewState extends State<HomeChildView> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Visibility(
-          visible: _ischidren,
-          child: IconButton(
-            icon: Icon(Icons.chevron_left),
-            onPressed: () {
-              setState(() {
-                _ischidren = false;
-                items = baseItems;
-              });
-            },
-          ),
-        ),
-      ),
+      appBar: _ischidren
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: Visibility(
+                visible: _ischidren,
+                child: IconButton(
+                  icon: Icon(Icons.chevron_left),
+                  onPressed: () {
+                    setState(() {
+                      _ischidren = false;
+                      items = baseItems;
+                    });
+                  },
+                ),
+              ),
+            )
+          : null,
       body: _response != null
           ? SafeArea(
               child: SingleChildScrollView(
@@ -325,10 +337,11 @@ class _HomeChildViewState extends State<HomeChildView> {
                                       width:
                                           MediaQuery.of(context).size.width / 3,
                                       child: new Column(
-                                        // mainAxisSize: MainAxisSize.min,
+                                        // crossAxisAlignment:
+                                        //     CrossAxisAlignment.start,
                                         children: <Widget>[
                                           SizedBox(
-                                            height: 44,
+                                            height: 25,
                                           ),
                                           SizedBox(
                                             child: new Container(
@@ -342,13 +355,24 @@ class _HomeChildViewState extends State<HomeChildView> {
                                                 ),
                                               ),
                                               decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: hexToColor('#FF0F00'),
-                                                  width: 1,
-                                                ),
+                                                // border: Border.all(
+                                                //   color: hexToColor('#FF0F00'),
+                                                //   width: 1,
+                                                // ),
+                                                color: Colors.white,
                                                 borderRadius: BorderRadius.all(
-                                                  Radius.circular(15),
+                                                  Radius.circular(20),
                                                 ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.grey
+                                                        .withOpacity(0.5),
+                                                    spreadRadius: 1,
+                                                    blurRadius: 7,
+                                                    offset: Offset(0,
+                                                        1), // changes position of shadow
+                                                  ),
+                                                ],
                                               ),
                                               // margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
                                             ),
@@ -361,10 +385,11 @@ class _HomeChildViewState extends State<HomeChildView> {
                                             child: new Text(
                                               item.text!,
                                               style: TextStyle(
+                                                  fontSize: 16,
                                                   color: hexToColor('#FF0F00')),
                                             ),
                                           ),
-                                          i > (maxIndex - 3)
+                                          i > (maxIndex - 1)
                                               ? SizedBox(
                                                   height: 60,
                                                 )
