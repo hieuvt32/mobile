@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
-import 'package:frappe_app/views/edit_order/edit_order_not_sell_in_warehouse_tab.dart';
-import 'package:frappe_app/views/edit_order/edit_order_not_sell_in_warehouse_normal.dart';
-import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_not_sell_in_warehouse_tab.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_not_sell_in_warehouse_normal.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 
 class EditOrderSellNotInWareHouse extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();

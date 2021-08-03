@@ -12,7 +12,7 @@ import '../services/storage_service.dart' as _i19;
 import '../views/awesome_bar/awesome_bar_viewmodel.dart' as _i6;
 import '../views/change_password_viewmodel.dart' as _i7;
 import '../views/desk/desk_viewmodel.dart' as _i9;
-import '../views/edit_order/edit_order_viewmodel.dart' as _i11;
+import '../views/edit_order/common_views/edit_order_viewmodel.dart' as _i11;
 import '../views/form_view/bottom_sheets/assignees/assignees_bottom_sheet_viewmodel.dart'
     as _i5;
 import '../views/form_view/bottom_sheets/attachments/add_attachments_bottom_sheet_viewmodel.dart'

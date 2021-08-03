@@ -10,7 +10,7 @@ import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/components/field_data.dart';
-import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:frappe_app/views/expansion_custom_panel.dart';
 
 class ListProductLocationView extends StatefulWidget {

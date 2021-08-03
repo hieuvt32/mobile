@@ -3,7 +3,7 @@ import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
-import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:signature/signature.dart';
 
 class SignatureView extends StatefulWidget {
@@ -66,11 +66,12 @@ class _SignatureViewState extends State<SignatureView> {
                       SizedBox(
                         height: 12,
                       ),
-                      // model.order != null &&
-                      //         model.order!.attachSignatureImage != null
+                      // widget.model.order != null &&
+                      //         widget.model.order!.attachSignatureImage != null
                       //     ? Image.network(
-                      //         '${model.config!.baseUrl}${model.order!.attachSignatureImage}')
+                      //         '${widget.model.config!.baseUrl}${widget.model.order!.attachSignatureImage}')
                       //     :
+
                       Signature(
                         controller: widget.model.signatureCustomerController,
                         backgroundColor: Colors.white,

@@ -10,7 +10,7 @@ import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
-import 'package:frappe_app/views/edit_order/edit_order_view.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
 import 'package:frappe_app/views/liability_report/liability_report.dart';

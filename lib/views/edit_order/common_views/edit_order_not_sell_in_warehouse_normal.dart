@@ -4,9 +4,9 @@ import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/components/list_product_location_view.dart';
-import 'package:frappe_app/views/edit_order/edit_order_bottom.dart';
-import 'package:frappe_app/views/edit_order/edit_order_header.dart';
-import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_bottom.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_header.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 
 class EditOrderNotSellInWareHouseNormal extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/helpers.dart';
-import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 
 class EditOrderHeader extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();

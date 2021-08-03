@@ -20,6 +20,8 @@ class DanhSachNhapKho {
     realName = json['real_name'] != null ? json['real_name'] : '';
     amount = json['amount'];
     title = json['title'];
+    isExpanded = false;
+    unit = "Bình";
   }
 
   Map<String, dynamic> toJson() {

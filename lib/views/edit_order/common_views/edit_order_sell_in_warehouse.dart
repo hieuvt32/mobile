@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/helpers.dart';
-import 'package:frappe_app/views/edit_order/components/list_product_location_view.dart';
-import 'package:frappe_app/views/edit_order/edit_order_bottom.dart';
-import 'package:frappe_app/views/edit_order/edit_order_header.dart';
-import 'package:frappe_app/views/edit_order/tabs/receiving_shell_delivered_tab.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_bottom.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_header.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/tabs/product_tab.dart';
+import 'package:frappe_app/views/edit_order/tabs/receiving_shell_tab.dart';
+import 'package:frappe_app/views/edit_order/tabs/signature_tab.dart';
+import 'package:uuid/uuid.dart';
 
-class EditOrderSellNotInWareHouseTab extends StatefulWidget {
-  const EditOrderSellNotInWareHouseTab({Key? key}) : super(key: key);
+class EditOrderSellInWareHouse extends StatefulWidget {
+  final EditOrderViewModel model = locator<EditOrderViewModel>();
+  EditOrderSellInWareHouse({Key? key}) : super(key: key);
 
   @override
-  _EditOrderSellNotInWareHouseTabState createState() =>
-      _EditOrderSellNotInWareHouseTabState();
+  _EditOrderSellInWareHouseState createState() =>
+      _EditOrderSellInWareHouseState();
 }
 
-class _EditOrderSellNotInWareHouseTabState
-    extends State<EditOrderSellNotInWareHouseTab>
+class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
     with TickerProviderStateMixin {
   late ScrollController _scrollController;
   late TabController _tabController;
   final List<Widget> mainTabs = [
-    Tab(
-        child: Text('Sản phẩm',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ))),
     Tab(
       child: Text('Vỏ nhận',
           style: TextStyle(
@@ -32,11 +32,26 @@ class _EditOrderSellNotInWareHouseTabState
             fontWeight: FontWeight.w700,
           )),
     ),
+    Tab(
+        child: Text('Sản phẩm',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ))),
+    Tab(
+      child: Text(
+        'Ký xác nhận',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    ),
   ];
 
   @override
   void initState() {
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
     _scrollController = new ScrollController();
     super.initState();
   }
@@ -44,7 +59,7 @@ class _EditOrderSellNotInWareHouseTabState
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 25, 24, 16),
         child: NestedScrollView(
@@ -80,8 +95,9 @@ class _EditOrderSellNotInWareHouseTabState
                     physics: NeverScrollableScrollPhysics(),
                     controller: _tabController,
                     children: [
-                      ListProductLocationView(),
-                      ReceivingShellDeliveredTab(),
+                      ReceivingShellTab(),
+                      ProductTab(),
+                      SignatureTab(),
                     ],
                   ),
                 ),

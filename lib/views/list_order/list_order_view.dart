@@ -4,7 +4,7 @@ import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/helpers.dart';
-import 'package:frappe_app/views/edit_order/edit_order_view.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
 import 'package:intl/intl.dart';
 
 class ListOrderView extends StatefulWidget {
