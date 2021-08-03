@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/helpers.dart';
-import 'package:frappe_app/views/edit_order/edit_order_header.dart';
-import 'package:frappe_app/views/edit_order/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_bottom.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_header.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:frappe_app/views/edit_order/tabs/product_tab.dart';
 import 'package:frappe_app/views/edit_order/tabs/receiving_shell_tab.dart';
 import 'package:frappe_app/views/edit_order/tabs/signature_tab.dart';
+import 'package:uuid/uuid.dart';
 
 class EditOrderSellInWareHouse extends StatefulWidget {
-  final EditOrderViewModel model;
-  const EditOrderSellInWareHouse(this.model, {Key? key}) : super(key: key);
+  final EditOrderViewModel model = locator<EditOrderViewModel>();
+  EditOrderSellInWareHouse({Key? key}) : super(key: key);
 
   @override
   _EditOrderSellInWareHouseState createState() =>
@@ -23,21 +28,21 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
     Tab(
       child: Text('Vỏ nhận',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 14,
             fontWeight: FontWeight.w700,
           )),
     ),
     Tab(
         child: Text('Sản phẩm',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 14,
               fontWeight: FontWeight.w700,
             ))),
     Tab(
       child: Text(
         'Ký xác nhận',
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 14,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -56,20 +61,13 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
     return DefaultTabController(
       length: 3,
       child: Padding(
-        padding: const EdgeInsets.only(top: 0),
+        padding: const EdgeInsets.fromLTRB(24, 25, 24, 16),
         child: NestedScrollView(
           controller: _scrollController,
           headerSliverBuilder: (context, value) {
             return [
               SliverToBoxAdapter(
-                child: EditOrderHeader(
-                  widget.model.customerValue,
-                  widget.model.sellInWarehouse,
-                  widget.model.customerSelect,
-                  widget.model.sellInWarehouseSelection,
-                  customers: widget.model.customers,
-                  readOnlyView: widget.model.readOnlyView,
-                ),
+                child: EditOrderHeader(),
               ),
               SliverToBoxAdapter(
                 child: TabBar(
@@ -89,12 +87,21 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
             ];
           },
           body: Container(
-            child: TabBarView(
-              controller: _tabController,
+            child: Column(
               children: [
-                ReceivingShellTab(),
-                ProductTab(),
-                SignatureTab(),
+                Expanded(
+                  flex: 9,
+                  child: TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
+                    controller: _tabController,
+                    children: [
+                      ReceivingShellTab(),
+                      ProductTab(),
+                      SignatureTab(),
+                    ],
+                  ),
+                ),
+                EditOrderBottom(),
               ],
             ),
           ),

@@ -3,12 +3,16 @@ class DanhSachNhapKho {
   late String? realName;
   late int amount;
   late String title;
+  late String unit;
+  late bool isExpanded;
 
   DanhSachNhapKho({
     required this.type,
     required this.realName,
     required this.amount,
     required this.title,
+    this.unit = 'Bình',
+    this.isExpanded = false,
   });
 
   DanhSachNhapKho.fromJson(Map<String, dynamic> json) {
@@ -16,6 +20,8 @@ class DanhSachNhapKho {
     realName = json['real_name'] != null ? json['real_name'] : '';
     amount = json['amount'];
     title = json['title'];
+    isExpanded = false;
+    unit = "Bình";
   }
 
   Map<String, dynamic> toJson() {

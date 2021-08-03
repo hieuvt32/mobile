@@ -80,12 +80,7 @@ class LoginViewModel extends BaseViewModel {
         //await initAwesomeItems();
         await DioHelper.initCookies();
 
-        loginButtonLabel = "Success";
-
-        GetRolesResponse rolesResponse = await locator<Api>().getRoles();
-        var roleEncode = jsonEncode(rolesResponse.roles);
-        Config.set("roles", roleEncode);
-
+        loginButtonLabel = "Thành công";
         notifyListeners();
 
         return response;

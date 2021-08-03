@@ -23,7 +23,7 @@ class _CustomizeAppBarState extends State<CustomizeAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: hexToColor('#80B8DD'),
+      backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
         icon: Icon(Icons.chevron_left),
@@ -33,8 +33,8 @@ class _CustomizeAppBarState extends State<CustomizeAppBar> {
       title: Text(
         widget.title,
         style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
         ),
       ),
       // bottom: ,

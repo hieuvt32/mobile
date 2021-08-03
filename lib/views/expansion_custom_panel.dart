@@ -160,47 +160,46 @@ class CustomExpansionPanelList extends StatelessWidget {
       // _isChildExpanded(index) ? 8.0 : 0.0;
       items.add(
         new Container(
-          key: new _SaltedKey<BuildContext, int>(context, index * 2),
-          child: new Material(
-            elevation: 2.0,
-            shape: RoundedRectangleBorder(
-                borderRadius: new BorderRadius.all(
-                  new Radius.circular(_radiusValue),
-                ),
-                side: BorderSide(
-                    width: 1,
-                    style: BorderStyle.solid,
-                    color: Color.fromRGBO(
-                      0,
-                      114,
-                      188,
-                      0.3,
-                    ))),
-            child: new Column(
-              children: <Widget>[
-                Container(
-                  child: header,
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        new BorderRadius.all(new Radius.circular(_radiusValue)),
-                    color: this.backgroundTitleColor,
-                  ),
-                ),
-                new AnimatedCrossFade(
-                  firstChild: new Container(height: 0.0),
-                  secondChild: children[index].body,
-                  firstCurve:
-                      const Interval(0.0, 0.6, curve: Curves.fastOutSlowIn),
-                  secondCurve:
-                      const Interval(0.4, 1.0, curve: Curves.fastOutSlowIn),
-                  sizeCurve: Curves.fastOutSlowIn,
-                  crossFadeState: _isChildExpanded(index)
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
-                  duration: animationDuration,
-                ),
-              ],
+          decoration: BoxDecoration(
+            border: Border.all(
+              width: 1,
+              style: BorderStyle.solid,
+              color: Color.fromRGBO(
+                0,
+                114,
+                188,
+                0.3,
+              ),
             ),
+            borderRadius: BorderRadius.all(
+              new Radius.circular(_radiusValue),
+            ),
+          ),
+          key: new _SaltedKey<BuildContext, int>(context, index * 2),
+          child: new Column(
+            children: <Widget>[
+              Container(
+                child: header,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      new BorderRadius.all(new Radius.circular(_radiusValue)),
+                  color: this.backgroundTitleColor,
+                ),
+              ),
+              new AnimatedCrossFade(
+                firstChild: new Container(height: 0.0),
+                secondChild: children[index].body,
+                firstCurve:
+                    const Interval(0.0, 0.6, curve: Curves.fastOutSlowIn),
+                secondCurve:
+                    const Interval(0.4, 1.0, curve: Curves.fastOutSlowIn),
+                sizeCurve: Curves.fastOutSlowIn,
+                crossFadeState: _isChildExpanded(index)
+                    ? CrossFadeState.showSecond
+                    : CrossFadeState.showFirst,
+                duration: animationDuration,
+              ),
+            ],
           ),
         ),
       );

@@ -12,6 +12,7 @@ class Product {
   late String unit;
   late bool hiddenVatTu;
   late bool hiddenKG;
+  late bool isExpanded;
   Product({
     required this.address,
     required this.product,
@@ -26,6 +27,7 @@ class Product {
     required this.unit,
     required this.hiddenVatTu,
     required this.hiddenKG,
+    this.isExpanded = false,
   });
 
   Product.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,7 @@ class Product {
     unit = json['unit'] ?? 'Bình';
     hiddenKG = ["", null, false, 0].contains(json['kg']);
     hiddenVatTu = ["", null, false, 0].contains(json['material']);
+    isExpanded = false;
   }
 
   Map<String, dynamic> toJson() {

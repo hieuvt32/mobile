@@ -16,6 +16,7 @@ import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/get_customer_by_code_response.dart';
+import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
@@ -1529,11 +1530,11 @@ class DioApi implements Api {
   }
 
   @override
-  Future<CreateNewDeliveryAddressResponse> createNewDeliveryAddress(
+  Future<CreateNewDeliveryAddressResponse> updateDeliveryAddress(
       String diaChi, String customer, String name) async {
     try {
       final response = await DioHelper.dio.post(
-        '/method/createNewDeliveryAddress',
+        '/method/updateDeliveryAddress',
         data: Address(
                 name: name,
                 diaChi: diaChi,
@@ -1818,18 +1819,82 @@ class DioApi implements Api {
   }
 
   @override
-  Future<dynamic> uploadFilesForBytes(
+  Future<List<UploadFileResponse>> uploadFilesForBytes(
       {String doctype, String name, List<GasFile> files}) async {
+    List<UploadFileResponse> responses = [];
     for (GasFile gasFile in files) {
+      try {
+        // String fileName = frappeFile.file.path.split('/').last;
+        FormData formData = FormData.fromMap({
+          "file": MultipartFile.fromBytes(
+            gasFile.file,
+            filename: 'hieuvt.png',
+          ),
+          "docname": name,
+          "doctype": doctype,
+          "is_private": gasFile.isPrivate ? 1 : 0,
+          "folder": "Home",
+          "fieldname": "attach_signature_image"
+        });
+
+        var response = await DioHelper.dio.post(
+          "/method/upload_file",
+          data: formData,
+        );
+
+        if (response.statusCode != 200) {
+          responses.add(UploadFileResponse(
+              errorResponse: ErrorResponse(
+            statusCode: response.statusCode,
+            statusMessage: response.data["message"],
+          )));
+        }
+
+        responses.add(UploadFileResponse.fromJson(response.data));
+      } catch (e) {
+        if (e is DioError) {
+          var error = e.error;
+          if (error is SocketException) {
+            responses.add(
+              UploadFileResponse(
+                errorResponse: ErrorResponse(
+                  statusCode: HttpStatus.serviceUnavailable,
+                  statusMessage: error.message,
+                ),
+              ),
+            );
+          } else {
+            responses.add(
+              UploadFileResponse(
+                errorResponse: ErrorResponse(
+                  statusMessage: error.message,
+                  statusCode: error,
+                ),
+              ),
+            );
+          }
+        } else {
+          throw e;
+        }
+      }
+    }
+
+    return responses;
+  }
+
+  @override
+  Future<UploadFileResponse> uploadFileForBytes(
+      {String doctype, String name, GasFile file}) async {
+    try {
       // String fileName = frappeFile.file.path.split('/').last;
       FormData formData = FormData.fromMap({
         "file": MultipartFile.fromBytes(
-          gasFile.file,
-          filename: 'hieuvt.png',
+          file.file,
+          filename: file.fileName,
         ),
         "docname": name,
         "doctype": doctype,
-        "is_private": gasFile.isPrivate ? 1 : 0,
+        "is_private": file.isPrivate ? 1 : 0,
         "folder": "Home",
         "fieldname": "attach_signature_image"
       });
@@ -1838,11 +1903,37 @@ class DioApi implements Api {
         "/method/upload_file",
         data: formData,
       );
+
       if (response.statusCode != 200) {
-        throw Exception('Something went wrong');
+        return UploadFileResponse(
+            errorResponse: ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        ));
       }
 
-      return response;
+      return UploadFileResponse.fromJson(response.data);
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          return UploadFileResponse(
+            errorResponse: ErrorResponse(
+              statusCode: HttpStatus.serviceUnavailable,
+              statusMessage: error.message,
+            ),
+          );
+        } else {
+          return UploadFileResponse(
+            errorResponse: ErrorResponse(
+              statusMessage: error.message,
+              statusCode: error,
+            ),
+          );
+        }
+      } else {
+        throw e;
+      }
     }
   }
 

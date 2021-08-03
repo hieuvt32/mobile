@@ -8,6 +8,7 @@ import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/get_customer_by_code_response.dart';
+import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
@@ -69,7 +70,7 @@ abstract class Api {
     double kg,
   );
 
-  Future<CreateNewDeliveryAddressResponse> createNewDeliveryAddress(
+  Future<CreateNewDeliveryAddressResponse> updateDeliveryAddress(
     String? diaChi,
     String? customer,
     String? name,
@@ -177,10 +178,16 @@ abstract class Api {
     @required List<FrappeFile> files,
   });
 
-  Future<dynamic> uploadFilesForBytes({
+  Future<List<UploadFileResponse>> uploadFilesForBytes({
     @required String doctype,
     @required String name,
     @required List<GasFile> files,
+  });
+
+  Future<UploadFileResponse> uploadFileForBytes({
+    @required String doctype,
+    @required String name,
+    @required GasFile file,
   });
 
   Future saveDocs(String doctype, Map formValue);

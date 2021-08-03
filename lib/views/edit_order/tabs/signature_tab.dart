@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/views/edit_order/components/signature_view.dart';
 
 class SignatureTab extends StatefulWidget {
   const SignatureTab({Key? key}) : super(key: key);
@@ -10,6 +11,6 @@ class SignatureTab extends StatefulWidget {
 class _SignatureTabState extends State<SignatureTab> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return SignatureView();
   }
 }

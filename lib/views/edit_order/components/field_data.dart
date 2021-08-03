@@ -3,12 +3,20 @@ import 'package:flutter/material.dart';
 class FieldData extends StatefulWidget {
   final int? fieldType;
   final dynamic value;
-  final List<dynamic> values;
+  final List<FieldValue> values;
+  final TextEditingController? controller;
+  final Function(dynamic)? selectionHandler;
+  final bool haveTextChange;
+  final TextInputType keyboardType;
   const FieldData({
     Key? key,
     this.fieldType = 0,
     this.value,
     this.values = const [],
+    this.controller,
+    this.selectionHandler,
+    this.haveTextChange = true,
+    this.keyboardType = TextInputType.number,
   }) : super(key: key);
 
   @override
@@ -29,14 +37,20 @@ class _FieldDataState extends State<FieldData> {
       case 0:
         return Container(
           height: 32,
-          // padding: EdgeInsets.all(6),
+          padding: EdgeInsets.only(left: 10),
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(4)),
           child: DropdownButtonHideUnderline(
             child: DropdownButton(
               isExpanded: true,
-              items: [],
+              items: widget.values
+                  .map((e) => DropdownMenuItem<dynamic>(
+                        child: Text(e.text),
+                        value: e.value,
+                      ))
+                  .toList(),
+              value: widget.value,
 
               // widget.customers.map((e) {
               //   return DropdownMenuItem<dynamic>(
@@ -45,7 +59,7 @@ class _FieldDataState extends State<FieldData> {
               //   );
               // }).toList(),
               // value: widget.customerValue,
-              // onChanged: widget.customerSelection,
+              onChanged: widget.selectionHandler,
 
               // keyboardType: this.keyboardType,
               // decoration: InputDecoration(
@@ -61,7 +75,7 @@ class _FieldDataState extends State<FieldData> {
 
               style: TextStyle(
                 fontSize: 12.0,
-                height: 2,
+                height: 1,
                 color: Colors.black,
               ),
               // controller: controller,
@@ -73,7 +87,7 @@ class _FieldDataState extends State<FieldData> {
         return Container(
           height: 32,
           child: TextField(
-            keyboardType: TextInputType.number,
+            keyboardType: widget.keyboardType,
             decoration: InputDecoration(
               // suffixIcon: Icon(Icons.search),
               enabledBorder: const OutlineInputBorder(
@@ -88,19 +102,23 @@ class _FieldDataState extends State<FieldData> {
               height: 1,
               color: Colors.black,
             ),
-            onChanged: (text) {
-              // if (["", null, false, 0].contains(
-              //     controllers[index]['quantityController']!
-              //         .text)) {
-              //   // do sth
-              //   products[index].quantity = 0;
-              // } else {
-              //   products[index].quantity = int.parse(
-              //       controllers[index]['quantityController']!
-              //           .text);
-              // }
-            },
-            textAlign: TextAlign.center,
+            controller: widget.controller,
+            onChanged: widget.haveTextChange ? widget.selectionHandler : null,
+            // onSubmitted: widget.selectionHandler,
+            //(text) {
+            // if (["", null, false, 0].contains(
+            //     controllers[index]['quantityController']!
+            //         .text)) {
+            //   // do sth
+            //   products[index].quantity = 0;
+            // } else {
+            //   products[index].quantity = int.parse(
+            //       controllers[index]['quantityController']!
+            //           .text);
+            // }
+            //}
+
+            textAlign: TextAlign.start,
             // controller: controllers[index]
             //     ['quantityController'],
           ),
@@ -109,4 +127,10 @@ class _FieldDataState extends State<FieldData> {
         return Text(widget.value);
     }
   }
+}
+
+class FieldValue {
+  String text;
+  String value;
+  FieldValue({this.text = '', this.value = ''});
 }

@@ -4,11 +4,12 @@ import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/helpers.dart';
-import 'package:frappe_app/views/edit_order/edit_order_view.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
 import 'package:intl/intl.dart';
 
 class ListOrderView extends StatefulWidget {
-  const ListOrderView({Key? key}) : super(key: key);
+  String type;
+  ListOrderView({Key? key, this.type = 'customer'}) : super(key: key);
 
   @override
   _ListOrderViewState createState() => _ListOrderViewState();
@@ -200,8 +201,71 @@ class _ListOrderViewState extends State<ListOrderView>
         ),
       );
     } else {
-      // TODO: Viết content view của card với role khác customer
-      return SizedBox();
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(4),
+                bottomRight: Radius.circular(4))),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text("Khách hàng:"),
+                  flex: 1,
+                ),
+                Flexible(
+                  flex: 1,
+                  child: buildLimitTextLength(order.vendorName),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: buildLimitTextLength('-'),
+                ),
+                Text(
+                  order.vendor,
+                  style: TextStyle(
+                      color: hexToColor("#FF0F00"),
+                      fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            Visibility(
+              child: SizedBox(height: 16),
+              visible: !["", null, false, 0].contains(order.employeeName),
+            ),
+            Visibility(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Flexible(
+                    child: Text("Giao vận viên:"),
+                    flex: 1,
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: buildLimitTextLength(order.employeeName),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: buildLimitTextLength('-'),
+                  ),
+                  Text(
+                    order.plate,
+                    style: TextStyle(
+                        color: hexToColor("#FF0F00"),
+                        fontWeight: FontWeight.bold),
+                  )
+                ],
+              ),
+              visible: !["", null, false, 0].contains(order.employeeName),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -229,130 +293,38 @@ class _ListOrderViewState extends State<ListOrderView>
                     color: hexToColor("#B3D5EB"),
                     padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
                     child: Container(
-                        child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4)),
-                              color: getColorByType(type)),
-                          padding: const EdgeInsets.only(left: 12, right: 12),
-                          height: 32,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(stores[index].name,
-                                  style: TextStyle(
-                                      color: hexToColor("#14142B"),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10)),
-                              Text(
-                                  DateFormat('dd/MM/yyyy')
-                                      .format(stores[index].creation),
-                                  style: TextStyle(
-                                      color: hexToColor("#14142B"),
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 10))
-                            ],
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(4),
+                                    topRight: Radius.circular(4)),
+                                color: getColorByType(type)),
+                            padding: const EdgeInsets.only(left: 12, right: 12),
+                            height: 32,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(stores[index].name,
+                                    style: TextStyle(
+                                        color: hexToColor("#14142B"),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10)),
+                                Text(
+                                    DateFormat('dd/MM/yyyy')
+                                        .format(stores[index].creation),
+                                    style: TextStyle(
+                                        color: hexToColor("#14142B"),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 10))
+                              ],
+                            ),
                           ),
-                        ),
-                        buildCardContent("customer", stores[index])
-                      ],
-                    )
-
-                        //  Row(
-                        //   children: [
-                        //     Expanded(
-                        //       flex: 3,
-                        //       child: Column(
-                        //         crossAxisAlignment: CrossAxisAlignment.start,
-                        //         children: [
-                        //           SizedBox(
-                        //             height: 10,
-                        //           ),
-                        //           Text(
-                        //             'Tên khách hàng: ${stores[index].vendorName}',
-                        //             style: TextStyle(fontSize: 13),
-                        //           ),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //           Text(
-                        //             'Ngày tạo đơn: ${DateFormat('dd/MM/yyyy').format(stores[index].creation)}',
-                        //             style: TextStyle(fontSize: 13),
-                        //           ),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //           Visibility(
-                        //               visible: !(["", null, false, 0]
-                        //                   .contains(stores[index].employeeName)),
-                        //               child: Text(
-                        //                 'Giao vận viên: ${stores[index].employeeName}',
-                        //                 style: TextStyle(fontSize: 13),
-                        //               )),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //     SizedBox(
-                        //       width: 10,
-                        //     ),
-                        //     Expanded(
-                        //       flex: 2,
-                        //       child: Column(
-                        //         children: [
-                        //           Container(
-                        //             decoration: BoxDecoration(
-                        //               borderRadius:
-                        //                   BorderRadius.all(Radius.circular(12)),
-                        //               color: getColorByType(type),
-                        //             ),
-                        //             child: Text(
-                        //               getTextByType(type),
-                        //               style: TextStyle(
-                        //                   fontSize: 12, color: Colors.white),
-                        //             ),
-                        //             padding: EdgeInsets.fromLTRB(20, 6, 20, 6),
-                        //           ),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //           Text(
-                        //             'Mã đơn: ${stores[index].name}',
-                        //             style: TextStyle(fontSize: 13),
-                        //             textAlign: TextAlign.center,
-                        //           ),
-                        //           SizedBox(
-                        //             height: 12,
-                        //           ),
-                        //           Visibility(
-                        //             child: Text(
-                        //               stores[index].plate,
-                        //               style: TextStyle(
-                        //                 fontSize: 14,
-                        //                 color: hexToColor('#FF0F00'),
-                        //                 fontWeight: FontWeight.bold,
-                        //               ),
-                        //             ),
-                        //             visible: !(["", null, false, 0]
-                        //                 .contains(stores[index].plate)),
-                        //           ),
-                        //           Visibility(
-                        //               child: SizedBox(
-                        //                 height: 12,
-                        //               ),
-                        //               visible: !(["", null, false, 0]
-                        //                   .contains(stores[index].plate))),
-                        //         ],
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
-                        ),
+                          buildCardContent(widget.type, stores[index])
+                        ],
+                      ),
+                    ),
                   ),
                   onTap: () {
                     Navigator.of(context).push(
@@ -360,6 +332,8 @@ class _ListOrderViewState extends State<ListOrderView>
                         builder: (context) {
                           return EditOrderView(
                             name: stores[index].name,
+                            haveDelivery: !["", null, false, 0]
+                                .contains(stores[index].employeeName),
                           );
                         },
                       ),
@@ -370,9 +344,9 @@ class _ListOrderViewState extends State<ListOrderView>
               itemCount: stores.length,
             ),
           ),
-          SizedBox(
-            height: 16,
-          )
+          // SizedBox(
+          //   height: 16,
+          // )
         ],
       ),
     );
@@ -430,7 +404,7 @@ class _ListOrderViewState extends State<ListOrderView>
                 _responseDangGiaoHang != null &&
                 _responseDaDatHang != null
             ? Padding(
-                padding: const EdgeInsets.only(top: 12),
+                padding: const EdgeInsets.only(top: 12, bottom: 12),
                 child: NestedScrollView(
                   controller: _scrollController,
                   headerSliverBuilder: (context, value) {

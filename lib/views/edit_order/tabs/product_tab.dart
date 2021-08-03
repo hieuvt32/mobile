@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/views/edit_order/components/list_product_view.dart';
 
 class ProductTab extends StatefulWidget {
   const ProductTab({Key? key}) : super(key: key);
@@ -10,8 +11,6 @@ class ProductTab extends StatefulWidget {
 class _ProductTabState extends State<ProductTab> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text('Sản phẩm'),
-    );
+    return ListProductView();
   }
 }
