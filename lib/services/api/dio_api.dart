@@ -15,6 +15,7 @@ import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
+import 'package:frappe_app/model/get_customer_by_code_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_doc_response.dart';
@@ -24,6 +25,7 @@ import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
+import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
@@ -56,6 +58,7 @@ class DioApi implements Api {
           },
         ),
       );
+
       if (response.statusCode == 200) {
         if (response.headers.map["set-cookie"] != null &&
             response.headers.map["set-cookie"][3] != null) {
@@ -1356,6 +1359,53 @@ class DioApi implements Api {
   }
 
   @override
+  Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
+      String customerCode, String status) async {
+    try {
+      print(customerCode);
+      print(status);
+
+      final response = await DioHelper.dio.get(
+        '/method/getDanhSachDonBaoBinhLoi',
+        queryParameters: {"customer": customerCode, "status": status},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        var data = ListDonBaoBinhLoiRespone.fromJson(response.data);
+        return data;
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
   Future<GetCustomerByCompanyResponse> getCustomerByCompany(
       {String company}) async {
     try {
@@ -1793,6 +1843,62 @@ class DioApi implements Api {
       }
 
       return response;
+    }
+  }
+
+  @override
+  Future<GetCustomerByCodeResponse> getCusomterByCode({String code}) async {
+    try {
+      final response = await DioHelper.dio.get('/method/getDetailKhachHang',
+          queryParameters: {'customercode': code});
+
+      if (response.statusCode == 200) {
+        return GetCustomerByCodeResponse.fromJson(response.data);
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<SingleDonBaoBinhLoiRespone> getSingleDonBaoLoi(String id) async {
+    try {
+      final response = await DioHelper.dio.get('/method/getSingleDonBaoBinhLoi',
+          queryParameters: {'feedback': id});
+
+      if (response.statusCode == 200) {
+        return SingleDonBaoBinhLoiRespone.fromJson(response.data);
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
     }
   }
 }

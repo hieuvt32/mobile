@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../services/storage_service.dart';
 
 import '../app/locator.dart';
@@ -15,6 +17,11 @@ class Config {
           'userId',
         ),
       );
+
+  String get roles {
+    var roles = configContainer.get('roles');
+    return jsonDecode(roles);
+  }
 
   String get user => configContainer.get(
         'user',

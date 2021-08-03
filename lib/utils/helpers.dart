@@ -132,8 +132,8 @@ bool isSubmittable(DoctypeDoc meta) {
   return meta.isSubmittable == 1;
 }
 
-List sortBy(List data, String orderBy, Order order) {
-  if (order == Order.asc) {
+List sortBy(List data, String orderBy, OrderBy order) {
+  if (order == OrderBy.asc) {
     data.sort((a, b) {
       return a[orderBy].compareTo(b[orderBy]);
     });

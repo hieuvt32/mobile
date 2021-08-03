@@ -53,6 +53,7 @@ class Order {
     var date = json['creation'] != null
         ? DateTime.tryParse(json['creation'])
         : DateTime.now();
+
     vendorName = json['vendor_name'];
     sellInWarehouse = json['sell_in_warehouse'];
     creation = date != null ? date : DateTime.now();

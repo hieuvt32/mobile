@@ -17,3 +17,8 @@ class Constants {
     FilterOperator(label: "Is", value: "is"),
   ];
 }
+
+class Roles {
+  static final khachHang = "Khách Hàng";
+  static final giamDoc = "Giám Đốc";
+}

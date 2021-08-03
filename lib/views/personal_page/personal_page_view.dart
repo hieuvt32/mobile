@@ -1,204 +1,168 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
+import 'package:frappe_app/model/address.dart';
+import 'package:frappe_app/model/config.dart';
+import 'package:frappe_app/model/customer.dart';
+import 'package:frappe_app/model/get_customer_by_code_response.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/base_view.dart';
-import 'package:frappe_app/views/personal_page/personal_page_viewmodel.dart';
+
 import 'package:frappe_app/widgets/frappe_button.dart';
 
-class PersonalPageView extends StatelessWidget {
+class PersonalPageView extends StatefulWidget {
+  @override
+  _PersonalPageViewState createState() => _PersonalPageViewState();
+}
+
+class _PersonalPageViewState extends State<PersonalPageView> {
+  GetCustomerByCodeResponse _customerRespone = GetCustomerByCodeResponse();
+
+  @override
+  void initState() {
+    String? userId = Config().userId;
+    String customerCode = userId!.split("@")[0];
+    locator<Api>().getCusomterByCode(code: customerCode).then((value) {
+      setState(() {
+        _customerRespone = value;
+      });
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BaseView<PersonalPageViewModel>(
-        onModelReady: (model) {
-          model.initValue();
-        },
-        builder: (context, model, child) => Builder(builder: (context) {
-              return Scaffold(
-                  appBar: AppBar(
-                    title: Text('Trang cá nhân'),
-                  ),
-                  body: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+    Customer? customer = _customerRespone.customer;
+
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Trang cá nhân'),
+        ),
+        body: customer == null
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Column(
+                  children: [
+                    Container(
                       child: Column(
                         children: [
                           Container(
-                            child: Column(
-                              children: [
-                                model.enableEdit
-                                    ? InfoColumn(
-                                        field: 'Họ tên',
-                                        iconPath: FrappeIcons.person,
-                                        value: 'KH - 001',
-                                        enableEdit: model.enableEdit,
-                                      )
-                                    : Container(
-                                        padding: const EdgeInsets.only(top: 24),
-                                        child: Text(
-                                          'Phạm Văn Mạnh',
-                                          style: TextStyle(
-                                              color: hexToColor('#004716B'),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20),
-                                        )),
-                                InfoColumn(
-                                  field: 'Mã khách hàng:',
-                                  iconPath: FrappeIcons.customer,
-                                  value: 'KH - 001',
-                                  enableEdit: model.enableEdit,
-                                ),
-                                InfoColumn(
-                                  field: 'Mã số thuế:',
-                                  iconPath: FrappeIcons.tax_code,
-                                  value: '123256332',
-                                  enableEdit: false,
-                                ),
-                                InfoColumn(
-                                  field: 'Số điện thoại:',
-                                  iconPath: FrappeIcons.phone,
-                                  value: '09878383732',
-                                  enableEdit: model.enableEdit,
-                                ),
-                                InfoColumn(
-                                  field: 'Email:',
-                                  iconPath: FrappeIcons.mail,
-                                  value: 'mail@gmail.com',
-                                  enableEdit: model.enableEdit,
-                                ),
-                                InfoColumn(
-                                  field: 'Địa chỉ:',
-                                  iconPath: FrappeIcons.address,
-                                  value: '',
-                                  enableEdit: model.enableEdit,
-                                ),
-                              ],
-                            ),
+                              padding: const EdgeInsets.only(top: 24),
+                              child: Text(
+                                customer.name,
+                                style: TextStyle(
+                                    color: hexToColor('#004716B'),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              )),
+                          InfoColumn(
+                            field: 'Mã khách hàng:',
+                            iconPath: FrappeIcons.customer,
+                            value: customer.code,
                           ),
-                          model.enableEdit
-                              ? AddressEditingWidget(
-                                  pageViewModel: model,
-                                )
-                              : SizedBox.shrink(),
-                          model.enableEdit
-                              ? Container(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                      onPressed: () {
-                                        model.addAddress();
-                                      },
-                                      child: const Text('Thêm địa chỉ')),
-                                )
-                              : SizedBox(
-                                  height: 24,
-                                ),
-                          FrappeFlatButton(
-                            title:
-                                model.enableEdit ? "Lưu" : "Cập nhật thông tin",
-                            fullWidth: false,
-                            minWidth: 328,
-                            height: 52,
-                            onPressed: () {
-                              model.togggleEdit();
-                            },
-                            buttonType: ButtonType.primary,
+                          InfoColumn(
+                            field: 'Mã số thuế:',
+                            iconPath: FrappeIcons.tax_code,
+                            value: customer.taxId,
                           ),
-                          SizedBox(height: 18),
-                          model.enableEdit
-                              ? SizedBox.shrink()
-                              : FrappeOutlinedButton(
-                                  onPressed: () {},
-                                  title: 'Đổi mật khẩu',
-                                  fullWidth: false,
-                                  minWidth: 328,
-                                  height: 48,
-                                  textStyle: TextStyle(
-                                      color: hexToColor("#FF0F00"),
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                )
+                          InfoColumn(
+                            field: 'Số điện thoại:',
+                            iconPath: FrappeIcons.phone,
+                            value: customer.phone,
+                          ),
+                          InfoColumn(
+                            field: 'Email:',
+                            iconPath: FrappeIcons.mail,
+                            value: customer.email,
+                          ),
+                          InfoColumn(
+                            field: 'Địa chỉ:',
+                            iconPath: FrappeIcons.address,
+                            value: '',
+                          ),
+                          ListAddressWidget(
+                            listAddress: customer.address == null
+                                ? []
+                                : customer.address,
+                          ),
                         ],
-                      )));
-            }));
+                      ),
+                    ),
+                    SizedBox(
+                      height: 24,
+                    ),
+                    FrappeFlatButton(
+                      title: "Đổi mật khẩu",
+                      fullWidth: false,
+                      minWidth: 328,
+                      height: 52,
+                      onPressed: () {},
+                      buttonType: ButtonType.primary,
+                    ),
+                  ],
+                )));
   }
 }
 
-class AddressEditingWidget extends StatelessWidget {
-  AddressEditingWidget({required this.pageViewModel});
-  final PersonalPageViewModel pageViewModel;
+class ListAddressWidget extends StatelessWidget {
+  final List<Address>? listAddress;
 
-  final List<String> fakeData = [
-    'addres 1',
-    'addres 2',
-    'addres 3',
-    'addres 4',
-    'addres 5',
-  ];
-
-  Widget textEditField(String value, int index) {
-    return Container(
-      height: 48,
-      margin: const EdgeInsets.only(top: 8),
-      padding: const EdgeInsets.only(left: 8, right: 8),
-      decoration: BoxDecoration(
-          border: Border.all(
-            color: hexToColor('#0072BC'),
-          ),
-          borderRadius: BorderRadius.circular(4)),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextFormField(
-              initialValue: value,
-              decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none),
-            ),
-          ),
-          SizedBox(
-            width: 8,
-          ),
-          IconButton(
-            icon: FrappeIcon(
-              FrappeIcons.trash,
-            ),
-            onPressed: () {
-              print(index);
-              pageViewModel.removeAddress(index);
-            },
-          )
-        ],
-      ),
-    );
-  }
+  ListAddressWidget({required this.listAddress});
 
   @override
   Widget build(BuildContext context) {
-    print(pageViewModel.enableEdit);
-    List<String>? listAddress = pageViewModel.address;
-    return listAddress.length > 0
-        ? Column(
-            children: listAddress.asMap().entries.map<Widget>((entry) {
-            return textEditField(entry.value, entry.key);
-          }).toList())
-        : SizedBox.shrink();
+    print(listAddress);
+    return Column(
+        children: listAddress!.asMap().entries.map<Widget>((
+      entry,
+    ) {
+      Address address = this.listAddress![entry.key];
+
+      return Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: SizedBox(),
+            ),
+            Expanded(
+              flex: 9,
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  address.diaChi,
+                  style: TextStyle(
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+            )
+          ],
+        ),
+      );
+    }).toList());
   }
 }
 
 class InfoColumn extends StatelessWidget {
-  InfoColumn(
-      {required this.iconPath,
-      required this.field,
-      required this.value,
-      required this.enableEdit});
+  InfoColumn({
+    required this.iconPath,
+    required this.field,
+    required this.value,
+  });
 
   final String iconPath;
   final String field;
   final String value;
-  final bool enableEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -224,42 +188,17 @@ class InfoColumn extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       color: hexToColor('#14142B')),
                 ))),
-            this.enableEdit
-                ? Expanded(
-                    flex: 6,
-                    child: Container(
-                      height: 28,
-                      alignment: Alignment.centerLeft,
-                      child: TextFormField(
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.normal,
-                            color: hexToColor('#14142B')),
-                        initialValue: value,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                          enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: hexToColor("#0072BC"))),
-                          border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(4)),
-                              borderSide:
-                                  BorderSide(color: hexToColor("#0072BC"))),
-                        ),
-                      ),
-                    ))
-                : Expanded(
-                    flex: 6,
-                    child: Container(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          this.value,
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              color: hexToColor('#14142B')),
-                        )))
+            Expanded(
+                flex: 6,
+                child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      this.value,
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          color: hexToColor('#14142B')),
+                    )))
           ],
         ));
   }

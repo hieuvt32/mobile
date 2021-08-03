@@ -1,0 +1,141 @@
+import 'package:flutter/material.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
+import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
+import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/expansion_custom_panel.dart';
+
+class InnerList extends StatelessWidget {
+  InnerList({
+    required this.enableEdit,
+    this.listBinhLoi,
+  });
+
+  final bool enableEdit;
+  final List<BinhLoi>? listBinhLoi;
+  final childIndex;
+  final parentIndex;
+
+  ExpansionItem buildListGasBrokenItem() {
+    return ExpansionItem(
+        true,
+        (isExpanded) => Container(
+              padding: const EdgeInsets.only(right: 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Mã bình: 123456789", style: TextStyle(fontSize: 16)),
+                  isExpanded
+                      ? GestureDetector(
+                          onTap: () {},
+                          child: FrappeIcon(
+                            FrappeIcons.delete,
+                            size: 18,
+                          ),
+                        )
+                      : SizedBox()
+                ],
+              ),
+            ),
+        [
+          Padding(
+            padding: const EdgeInsets.only(left: 8, right: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Mã vạch: ",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  flex: 1,
+                ),
+                Expanded(
+                  child: Container(
+                    height: 32,
+                    alignment: Alignment.centerLeft,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: new OutlineInputBorder(
+                            borderSide: new BorderSide(color: Colors.teal)),
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 1.0, horizontal: 10),
+                      ),
+                    ),
+                  ),
+                  flex: 2,
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 12,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 8, right: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    "Lý do báo lỗi: ",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  flex: 1,
+                ),
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    child: TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        border: new OutlineInputBorder(
+                            borderSide: new BorderSide(color: Colors.teal)),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 10),
+                      ),
+                    ),
+                  ),
+                  flex: 2,
+                )
+              ],
+            ),
+          ),
+        ]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List<BinhLoi> list = listBinhLoi ?? [];
+    return Column(
+      children: [
+        ExpansionCustomPanel(
+            backgroundBodyColor: Colors.white,
+            backgroundTitleColor: hexToColor('#F2F8FC'),
+            items: list.map((e) {
+              return buildListGasBrokenItem();
+            }).toList()),
+        SizedBox(
+          height: 8,
+        ),
+        Container(
+          alignment: Alignment.center,
+          child: Container(
+            alignment: Alignment.center,
+            height: 40,
+            width: 120,
+            decoration: BoxDecoration(
+                color: hexToColor("#0072BC"),
+                borderRadius: BorderRadius.circular(4)),
+            child: TextButton(
+              onPressed: () {},
+              child: Text(
+                "Thêm bình",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        )
+      ],
+    );
+  }
+}
