@@ -27,6 +27,19 @@ class Config {
         'user',
       );
 
+  String get customerCode {
+    String userId = configContainer.get(
+          'userId',
+        ) ??
+        "";
+    String customerCode = userId.split("%")[0];
+    if (customerCode == userId) {
+      customerCode = userId.split("@")[0];
+    }
+
+    return customerCode;
+  }
+
   String? get primaryCacheKey {
     if (baseUrl != null && userId != null) {
       return "$baseUrl$userId";

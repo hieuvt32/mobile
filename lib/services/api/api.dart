@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
+import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
@@ -234,4 +235,6 @@ abstract class Api {
   Future<GetCustomerByCodeResponse> getCusomterByCode({String code});
 
   Future<SingleDonBaoBinhLoiRespone> getSingleDonBaoLoi(String id);
+
+  Future<ListBaoCaoCongNoKH> getBaoCaoCongNoChoKH(String key);
 }

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:frappe_app/model/address.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
+import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
@@ -1974,6 +1975,34 @@ class DioApi implements Api {
 
       if (response.statusCode == 200) {
         return SingleDonBaoBinhLoiRespone.fromJson(response.data);
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<ListBaoCaoCongNoKH> getBaoCaoCongNoChoKH(String key) async {
+    try {
+      final response = await DioHelper.dio
+          .get('/method/getBaoCaoCongNoChoKH', queryParameters: {'key': key});
+
+      if (response.statusCode == 200) {
+        return ListBaoCaoCongNoKH.fromJson(response.data);
       } else {
         throw ErrorResponse();
       }
