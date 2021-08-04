@@ -151,6 +151,31 @@ class _HomeChildViewState extends State<HomeChildView> {
       icon: FrappeIcons.bao_binh_loi,
       visible: true,
       text: "Báo bình lỗi",
+      childrens: [
+        Item(
+          icon: FrappeIcons.bao_binh_loi,
+          visible: true,
+          text: "Báo bình lỗi",
+          roles: ["Khách Hàng"],
+          childrens: [
+            Item(
+              icon: FrappeIcons.danh_sach_don_loi,
+              visible: true,
+              text: "Danh sách đơn lỗi",
+              view: (context) {
+                return ListBrokenOrderView();
+              },
+            ),
+            Item(
+                icon: FrappeIcons.bao_binh_loi,
+                visible: true,
+                text: "Báo bình lỗi",
+                view: (context) {
+                  return ListBrokenGasAddress();
+                }),
+          ],
+        ),
+      ],
       roles: ["Khách Hàng"],
     ),
     Item(
@@ -172,15 +197,19 @@ class _HomeChildViewState extends State<HomeChildView> {
           visible: true,
           text: "Danh sách đơn lỗi",
           view: (context) {
-            return ListBrokenOrderView();
+            return ListOrderView();
           },
         ),
         Item(
             icon: FrappeIcons.bao_binh_loi,
             visible: true,
-            text: "Báo bình lỗi",
+            text: "Báo bình lỗi"),
+        Item(
+            icon: FrappeIcons.danh_sach_don_loi,
+            visible: true,
+            text: "Báo cáo công nợ",
             view: (context) {
-              return ListBrokenGasAddress();
+              return LiabilityReportView();
             }),
       ],
     ),
@@ -263,8 +292,6 @@ class _HomeChildViewState extends State<HomeChildView> {
     locator<Api>().getRoles().then((value) {
       var roles = jsonEncode(value.roles);
       Config.set("roles", roles);
-      var rolesDecode = jsonDecode(roles);
-      print(rolesDecode);
       setState(() {
         _response = value;
       });
@@ -278,8 +305,9 @@ class _HomeChildViewState extends State<HomeChildView> {
     // items = baseItems;
     if (_response != null && _response!.roles != null) {
       for (var item in baseItems) {
-        if (item.roles!.any((role) => _response!.roles!.contains(role))) {
-          // Lists have at least one common element
+        if ((item.roles ?? [])
+            .any((role) => _response!.roles!.contains(role))) {
+          // Lists have at rleast one common element
           item.visible = true;
         } else {
           // Lists DON'T have any common element
@@ -421,7 +449,7 @@ class _HomeChildViewState extends State<HomeChildView> {
                                             padding:
                                                 new EdgeInsets.only(top: 6.0),
                                             child: new Text(
-                                              item.text!,
+                                              item.text ?? "",
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   color: hexToColor('#FF0F00')),

@@ -1431,6 +1431,7 @@ class DioApi implements Api {
         throw ErrorResponse();
       }
     } catch (e) {
+      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {

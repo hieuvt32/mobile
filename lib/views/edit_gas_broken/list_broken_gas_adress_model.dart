@@ -33,6 +33,8 @@ class EditGasBrokenViewModel extends BaseViewModel {
     }
   }
 
+  onChangeDeliveryAddress(int itemIndex) {}
+
   Future fetchDeliveryAdresses() async {
     String customerCode = (Config().userId ?? "").split('@')[0];
     locator<Api>().getDeliveryAddress(customer: customerCode).then((response) {

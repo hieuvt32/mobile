@@ -277,7 +277,16 @@ class EditOrderViewModel extends BaseViewModel {
     _customers = _responseGetCustomers != null &&
             _responseGetCustomers!.customers != null
         ? _responseGetCustomers!.customers!
-        : [];
+        : [
+            Customer(
+                code: "code",
+                name: "name",
+                realName: "realName",
+                status: "status",
+                taxId: "taxId",
+                phone: "phone",
+                email: "email")
+          ];
     notifyListeners();
   }
 
