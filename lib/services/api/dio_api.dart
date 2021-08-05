@@ -12,6 +12,7 @@ import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
@@ -2019,6 +2020,82 @@ class DioApi implements Api {
         }
       } else {
         throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<ListBaoCaoCongNoDetail> getBaoCaoCongNoDetail(
+      {String key, String previouskey, String assetname}) async {
+    try {
+      final response = await DioHelper.dio
+          .get('/method/getBaoCaoCongNoKHChiTiet', queryParameters: {
+        'key': key,
+        'previouskey': previouskey,
+        'assetname': assetname
+      });
+
+      if (response.statusCode == 200) {
+        return ListBaoCaoCongNoDetail.fromJson(response.data);
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<dynamic> createBaoNhamLan(CreateBaoNhamLanRequest request) async {
+    try {
+      dynamic json = request.toJson();
+      final response = await DioHelper.dio.post(
+        '/method/createBaoCaoNhamLan',
+        data: request.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
       }
     }
   }

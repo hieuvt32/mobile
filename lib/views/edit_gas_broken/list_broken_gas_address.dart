@@ -21,7 +21,7 @@ class ListBrokenGasAddress extends StatelessWidget {
     BinhLoi item,
   ) {
     return ExpansionItem(
-        item.isExpanded,
+        true,
         (isExpanded) => Container(
               padding: const EdgeInsets.only(right: 16),
               child: Row(

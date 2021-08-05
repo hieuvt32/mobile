@@ -4,6 +4,7 @@ import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
@@ -237,4 +238,11 @@ abstract class Api {
   Future<SingleDonBaoBinhLoiRespone> getSingleDonBaoLoi(String id);
 
   Future<ListBaoCaoCongNoKH> getBaoCaoCongNoChoKH(String key);
+
+  Future<ListBaoCaoCongNoDetail> getBaoCaoCongNoDetail(
+      {required String key,
+      required String previouskey,
+      required String assetname});
+
+  Future<dynamic> createBaoNhamLan(CreateBaoNhamLanRequest request);
 }

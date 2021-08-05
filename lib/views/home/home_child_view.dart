@@ -153,28 +153,20 @@ class _HomeChildViewState extends State<HomeChildView> {
       text: "Báo bình lỗi",
       childrens: [
         Item(
-          icon: FrappeIcons.bao_binh_loi,
+          icon: FrappeIcons.danh_sach_don_loi,
           visible: true,
-          text: "Báo bình lỗi",
-          roles: ["Khách Hàng"],
-          childrens: [
-            Item(
-              icon: FrappeIcons.danh_sach_don_loi,
-              visible: true,
-              text: "Danh sách đơn lỗi",
-              view: (context) {
-                return ListBrokenOrderView();
-              },
-            ),
-            Item(
-                icon: FrappeIcons.bao_binh_loi,
-                visible: true,
-                text: "Báo bình lỗi",
-                view: (context) {
-                  return ListBrokenGasAddress();
-                }),
-          ],
+          text: "Danh sách đơn lỗi",
+          view: (context) {
+            return ListBrokenOrderView();
+          },
         ),
+        Item(
+            icon: FrappeIcons.bao_binh_loi,
+            visible: true,
+            text: "Báo bình lỗi",
+            view: (context) {
+              return ListBrokenGasAddress();
+            }),
       ],
       roles: ["Khách Hàng"],
     ),

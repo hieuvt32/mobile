@@ -1,6 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/model/config.dart';
+import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/enums.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/widgets/frappe_bottom_sheet.dart';
 import 'package:frappe_app/widgets/frappe_button.dart';
 
@@ -10,75 +16,115 @@ class ReportMistakeView extends StatefulWidget {
 }
 
 class _ReportMistakeViewState extends State<ReportMistakeView> {
+  final _formKey = GlobalKey<FormBuilderState>();
+
+  bool isLoading = false;
+
+  Future<void> createDonBaoLoi(
+      {required String reason, required String content}) async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String customerCode = Config().customerCode;
+    CreateBaoNhamLanRequest requestPayload = CreateBaoNhamLanRequest(
+        content: content, reason: reason, customerCode: customerCode);
+
+    locator<Api>().createBaoNhamLan(requestPayload).then((value) {
+      FrappeAlert.successAlert(
+          title: "Báo cáo nhầm lẫn thành công", context: context);
+
+      _formKey.currentState!.reset();
+
+      setState(() {
+        isLoading = false;
+      });
+    }).catchError((er) {
+      FrappeAlert.errorAlert(
+          title: "Có lỗi xảy ra, vui lòng thử lại sau", context: context);
+
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Báo nhầm lẫn"),
-        ),
-        body: Stack(
+      appBar: AppBar(
+        title: Text("Báo nhầm lẫn"),
+      ),
+      body: SingleChildScrollView(
+        reverse: true, // add this line in scroll view
+        padding: const EdgeInsets.all(16),
+        child: Column(
           children: [
-            SingleChildScrollView(
-              reverse: true, // add this line in scroll view
-              padding: const EdgeInsets.all(16),
+            SizedBox(
+              height: 24,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    "Tên khách hàng:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    "Phạm Văn Mạnh",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    "Mã khách hàng:",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    "KH - 01",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            FormBuilder(
+              key: _formKey,
               child: Column(
                 children: [
-                  SizedBox(
-                    height: 24,
-                  ),
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          "Tên khách hàng:",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "Phạm Văn Mạnh",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          "Mã khách hàng:",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          "KH - 01",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
+                        flex: 2,
                         child: Text(
                           "Loại báo nhầm lẫn:",
                           style: TextStyle(
@@ -88,28 +134,32 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
                         ),
                       ),
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.black.withOpacity(0.25)),
-                            borderRadius: BorderRadius.circular(4),
+                        flex: 3,
+                        child: FormBuilderDropdown(
+                          name: 'reason',
+                          decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                            border: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.greenAccent)),
                           ),
-                          height: 32,
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            icon: const Icon(Icons.arrow_drop_down),
-                            iconSize: 24,
-                            underline: SizedBox(),
-                            style: const TextStyle(color: Colors.deepPurple),
-                            onChanged: (String? newValue) {},
-                            items: <String>['One', 'Two', 'Free', 'Four']
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
+                          // initialValue: 'Male',
+                          allowClear: true,
+                          hint: Text(
+                            'Chọn lý do',
+                            style: TextStyle(fontSize: 14),
                           ),
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(context,
+                                errorText: "Hãy chọn lý do")
+                          ]),
+                          items: ["Nhầm lẫn chi tiêu", "Nhầm lẫn bình"]
+                              .map((reason) => DropdownMenuItem(
+                                    value: reason,
+                                    child: Text('$reason'),
+                                  ))
+                              .toList(),
                         ),
                       ),
                     ],
@@ -117,10 +167,16 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
                   SizedBox(
                     height: 40,
                   ),
-                  TextField(
+                  FormBuilderTextField(
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(context,
+                          errorText: "Hãy nhập nội dung")
+                    ]),
+                    name: "content",
                     keyboardType: TextInputType.multiline,
-                    maxLines: 6,
+                    maxLines: 8,
                     decoration: new InputDecoration(
+                      hintText: "Nhập nội dung",
                       border: OutlineInputBorder(
                         borderSide:
                             const BorderSide(color: Colors.grey, width: 0.0),
@@ -130,18 +186,28 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
                 ],
               ),
             ),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 24),
-                  child: FrappeFlatButton(
-                      minWidth: 328,
-                      height: 48,
-                      onPressed: () {},
-                      buttonType: ButtonType.primary,
-                      title: "Báo cáo nhầm lẫn"),
-                ))
+            SizedBox(
+              height: 64,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 24),
+              child: FrappeFlatButton(
+                  minWidth: 328,
+                  height: 48,
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _formKey.currentState!.save();
+                      String reason = _formKey.currentState!.value['reason'];
+                      String content = _formKey.currentState!.value['content'];
+                      createDonBaoLoi(reason: reason, content: content);
+                    } else {}
+                  },
+                  buttonType: ButtonType.primary,
+                  title: "Báo cáo nhầm lẫn"),
+            )
           ],
-        ));
+        ),
+      ),
+    );
   }
 }
