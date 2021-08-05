@@ -1,6 +1,6 @@
 enum AttachmentsFilter { all, files, links }
 
-enum Order {
+enum OrderBy {
   asc,
   desc,
 }
@@ -27,3 +27,5 @@ enum ViewState {
   idle,
   busy,
 }
+
+enum ListOrderType { DonBaoBinhLoi, DonBanHang }

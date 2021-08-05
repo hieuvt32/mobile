@@ -1,12 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
+import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
+import 'package:frappe_app/model/get_customer_by_code_response.dart';
 import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
@@ -17,6 +20,7 @@ import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
+import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
@@ -81,6 +85,9 @@ abstract class Api {
   );
 
   Future<ListOrderResponse> getListOrder(int status);
+
+  Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
+      String customerCode, String status);
 
   Future<UpdateTrangThaiQuyChuanResponse> updateTrangThaiQuyChuan(
     String key,
@@ -225,4 +232,17 @@ abstract class Api {
     required List currentFilters,
     required String field,
   });
+
+  Future<GetCustomerByCodeResponse> getCusomterByCode({String code});
+
+  Future<SingleDonBaoBinhLoiRespone> getSingleDonBaoLoi(String id);
+
+  Future<ListBaoCaoCongNoKH> getBaoCaoCongNoChoKH(String key);
+
+  Future<ListBaoCaoCongNoDetail> getBaoCaoCongNoDetail(
+      {required String key,
+      required String previouskey,
+      required String assetname});
+
+  Future<dynamic> createBaoNhamLan(CreateBaoNhamLanRequest request);
 }

@@ -1,9 +1,34 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/asset_liability_report/asset_liability_report.dart';
 import 'package:frappe_app/views/expense_report/expense_report.dart';
+import 'package:frappe_app/views/report_mistake/report_mistake_view.dart';
 
 class LiabilityReportView extends StatelessWidget {
+  Widget buildColumnInfo(String textLeft, String textRight, String colorText) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16, top: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+              flex: 2,
+              child: Text(
+                textLeft,
+              )),
+          Expanded(
+              flex: 1,
+              child: Text(
+                textRight,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: hexToColor(colorText)),
+              ))
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,76 +44,10 @@ class LiabilityReportView extends StatelessWidget {
               "Tổng quan",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                      flex: 2,
-                      child: Text(
-                        "Tổng số đơn hàng",
-                      )),
-                  Expanded(
-                      flex: 1,
-                      child: Text(
-                        "50",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ))
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(flex: 2, child: Text("Tổng tiền hàng")),
-                  Expanded(
-                      flex: 1,
-                      child: Text(
-                        "52.000.000",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: hexToColor("#00478B")),
-                      ))
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(flex: 2, child: Text("Tổng tiền đã trả")),
-                  Expanded(
-                      flex: 1,
-                      child: Text(
-                        "30.000.000",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: hexToColor("#1BBD5C")),
-                      ))
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 16, top: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(flex: 2, child: Text("Tổng tiền còn nợ")),
-                  Expanded(
-                      flex: 1,
-                      child: Text(
-                        "22.000.000",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: hexToColor("#FF0F00")),
-                      ))
-                ],
-              ),
-            ),
+            buildColumnInfo("Tổng số đơn hàng", "50", "#000000"),
+            buildColumnInfo("Tổng tiền hàng", "52.000.000", "#00478B"),
+            buildColumnInfo("Tổng tiền đã trả", "30.000.000", "#1BBD5C"),
+            buildColumnInfo("Tổng tiền còn nợ", "22.000.000", "#0072BC"),
             SizedBox(
               height: 24,
             ),
@@ -129,9 +88,14 @@ class LiabilityReportView extends StatelessWidget {
               height: 48,
               width: double.infinity,
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return AssetLiabilityReport();
+                    }));
+                  },
                   child: Text(
-                    "Báo cáo chi tiêu",
+                    "Báo cáo công nợ tài sản",
                     style: TextStyle(color: Colors.white),
                   )),
             ),
@@ -146,9 +110,14 @@ class LiabilityReportView extends StatelessWidget {
               height: 48,
               width: double.infinity,
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return ReportMistakeView();
+                    }));
+                  },
                   child: Text(
-                    "Báo cáo chi tiêu",
+                    "Báo nhầm lẫn",
                     style: TextStyle(color: Colors.white),
                   )),
             )

@@ -8,13 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:frappe_app/model/address.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
+import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
+import 'package:frappe_app/model/get_customer_by_code_response.dart';
 import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
@@ -25,6 +28,7 @@ import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
+import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
@@ -57,6 +61,7 @@ class DioApi implements Api {
           },
         ),
       );
+
       if (response.statusCode == 200) {
         if (response.headers.map["set-cookie"] != null &&
             response.headers.map["set-cookie"][3] != null) {
@@ -1357,6 +1362,53 @@ class DioApi implements Api {
   }
 
   @override
+  Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
+      String customerCode, String status) async {
+    try {
+      print(customerCode);
+      print(status);
+
+      final response = await DioHelper.dio.get(
+        '/method/getDanhSachDonBaoBinhLoi',
+        queryParameters: {"customer": customerCode, "status": status},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        var data = ListDonBaoBinhLoiRespone.fromJson(response.data);
+        return data;
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
   Future<GetCustomerByCompanyResponse> getCustomerByCompany(
       {String company}) async {
     try {
@@ -1381,6 +1433,7 @@ class DioApi implements Api {
         throw ErrorResponse();
       }
     } catch (e) {
+      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {
@@ -1879,6 +1932,166 @@ class DioApi implements Api {
               statusMessage: error.message,
               statusCode: error,
             ),
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<GetCustomerByCodeResponse> getCusomterByCode({String code}) async {
+    try {
+      final response = await DioHelper.dio.get('/method/getDetailKhachHang',
+          queryParameters: {'customercode': code});
+
+      if (response.statusCode == 200) {
+        return GetCustomerByCodeResponse.fromJson(response.data);
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<SingleDonBaoBinhLoiRespone> getSingleDonBaoLoi(String id) async {
+    try {
+      final response = await DioHelper.dio.get('/method/getSingleDonBaoBinhLoi',
+          queryParameters: {'feedback': id});
+
+      if (response.statusCode == 200) {
+        return SingleDonBaoBinhLoiRespone.fromJson(response.data);
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<ListBaoCaoCongNoKH> getBaoCaoCongNoChoKH(String key) async {
+    try {
+      final response = await DioHelper.dio
+          .get('/method/getBaoCaoCongNoChoKH', queryParameters: {'key': key});
+
+      if (response.statusCode == 200) {
+        return ListBaoCaoCongNoKH.fromJson(response.data);
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<ListBaoCaoCongNoDetail> getBaoCaoCongNoDetail(
+      {String key, String previouskey, String assetname}) async {
+    try {
+      final response = await DioHelper.dio
+          .get('/method/getBaoCaoCongNoKHChiTiet', queryParameters: {
+        'key': key,
+        'previouskey': previouskey,
+        'assetname': assetname
+      });
+
+      if (response.statusCode == 200) {
+        return ListBaoCaoCongNoDetail.fromJson(response.data);
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<dynamic> createBaoNhamLan(CreateBaoNhamLanRequest request) async {
+    try {
+      dynamic json = request.toJson();
+      final response = await DioHelper.dio.post(
+        '/method/createBaoCaoNhamLan',
+        data: request.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
           );
         }
       } else {

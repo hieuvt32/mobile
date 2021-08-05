@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import '../services/storage_service.dart';
 
 import '../app/locator.dart';
@@ -16,9 +18,27 @@ class Config {
         ),
       );
 
+  String get roles {
+    var roles = configContainer.get('roles');
+    return jsonDecode(roles);
+  }
+
   String get user => configContainer.get(
         'user',
       );
+
+  String get customerCode {
+    String userId = configContainer.get(
+          'userId',
+        ) ??
+        "";
+    String customerCode = userId.split("%")[0];
+    if (customerCode == userId) {
+      customerCode = userId.split("@")[0];
+    }
+
+    return customerCode;
+  }
 
   String? get primaryCacheKey {
     if (baseUrl != null && userId != null) {

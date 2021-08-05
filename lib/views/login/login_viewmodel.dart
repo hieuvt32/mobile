@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/login_response.dart';
 import 'package:frappe_app/utils/dio_helper.dart';
@@ -40,6 +43,7 @@ class LoginViewModel extends BaseViewModel {
   }
 
   updateUserDetails(LoginResponse response) {
+    print("response response: $response");
     Config.set('isLoggedIn', true);
 
     Config.set(

@@ -214,7 +214,7 @@ class Timeline extends StatelessWidget {
         return v;
       }).toList(),
     ];
-    var events = sortBy(_events, "creation", Order.desc);
+    var events = sortBy(_events, "creation", OrderBy.desc);
     return events;
   }
 }

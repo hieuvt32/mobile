@@ -1,19 +1,25 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
+import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
+import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
 import 'package:frappe_app/views/liability_report/liability_report.dart';
+import 'package:frappe_app/views/list_broken_order/list_broken_order_view.dart';
 import 'package:frappe_app/views/list_order/list_order_view.dart';
 import 'package:frappe_app/views/production_report/production_report_view.dart';
 import 'package:frappe_app/views/search/search_view.dart';
@@ -102,6 +108,27 @@ class _HomeChildViewState extends State<HomeChildView> {
       roles: ["Giám Đốc", "Quản Đốc"],
       visible: true,
     ),
+    Item(icon: FrappeIcons.don_hang, visible: true, text: "Đơn hàng", roles: [
+      "Khách Hàng"
+    ], childrens: [
+      Item(
+          icon: FrappeIcons.list_order,
+          text: "Danh sách đơn hàng",
+          visible: true,
+          roles: ["Khách Hàng"],
+          view: (context) {
+            return ListOrderView();
+          }),
+      Item(
+        icon: FrappeIcons.ban_hang,
+        text: "Tạo đơn hàng",
+        visible: true,
+        roles: ["Khách Hàng"],
+        view: (context) {
+          return EditOrderView();
+        },
+      )
+    ]),
     Item(
       icon: FrappeIcons.truck,
       childrens: [],
@@ -114,11 +141,34 @@ class _HomeChildViewState extends State<HomeChildView> {
       icon: FrappeIcons.chart_pie_slice,
       childrens: [],
       view: (context) {
-        return ListOrderView();
+        return LiabilityReportView();
       },
       text: "Báo cáo",
-      roles: ["Giám Đốc"],
+      roles: ["Giám Đốc", "Khách Hàng"],
       visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.bao_binh_loi,
+      visible: true,
+      text: "Báo bình lỗi",
+      childrens: [
+        Item(
+          icon: FrappeIcons.danh_sach_don_loi,
+          visible: true,
+          text: "Danh sách đơn lỗi",
+          view: (context) {
+            return ListBrokenOrderView();
+          },
+        ),
+        Item(
+            icon: FrappeIcons.bao_binh_loi,
+            visible: true,
+            text: "Báo bình lỗi",
+            view: (context) {
+              return ListBrokenGasAddress();
+            }),
+      ],
+      roles: ["Khách Hàng"],
     ),
     Item(
       icon: FrappeIcons.users,
@@ -131,6 +181,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
+      visible: true,
       icon: FrappeIcons.shopping_bag,
       childrens: [
         Item(
@@ -153,6 +204,10 @@ class _HomeChildViewState extends State<HomeChildView> {
               return LiabilityReportView();
             }),
       ],
+    ),
+    Item(
+      icon: FrappeIcons.mua_hang,
+      childrens: [],
       // view: CreateOrderView(),
       text: "Mua hàng",
       roles: ["Giám Đốc"],
@@ -227,6 +282,8 @@ class _HomeChildViewState extends State<HomeChildView> {
     super.initState();
 
     locator<Api>().getRoles().then((value) {
+      var roles = jsonEncode(value.roles);
+      Config.set("roles", roles);
       setState(() {
         _response = value;
       });
@@ -240,8 +297,9 @@ class _HomeChildViewState extends State<HomeChildView> {
     // items = baseItems;
     if (_response != null && _response!.roles != null) {
       for (var item in baseItems) {
-        if (item.roles!.any((role) => _response!.roles!.contains(role))) {
-          // Lists have at least one common element
+        if ((item.roles ?? [])
+            .any((role) => _response!.roles!.contains(role))) {
+          // Lists have at rleast one common element
           item.visible = true;
         } else {
           // Lists DON'T have any common element
@@ -383,7 +441,7 @@ class _HomeChildViewState extends State<HomeChildView> {
                                             padding:
                                                 new EdgeInsets.only(top: 6.0),
                                             child: new Text(
-                                              item.text!,
+                                              item.text ?? "",
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   color: hexToColor('#FF0F00')),
