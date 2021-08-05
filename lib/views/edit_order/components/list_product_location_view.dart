@@ -368,35 +368,38 @@ class _ListProductLocationItemViewState
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
-                        !isExpanded
-                            ? GestureDetector(
-                                child: FrappeIcon(
-                                  FrappeIcons.delete,
-                                  size: 16,
+                        Visibility(
+                          child: !isExpanded
+                              ? GestureDetector(
+                                  child: FrappeIcon(
+                                    FrappeIcons.delete,
+                                    size: 16,
+                                  ),
+                                  onTap: () {},
+                                )
+                              : Row(
+                                  children: [
+                                    GestureDetector(
+                                      child: FrappeIcon(
+                                        FrappeIcons.check,
+                                        size: 16,
+                                      ),
+                                      onTap: () {},
+                                    ),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    GestureDetector(
+                                      child: FrappeIcon(
+                                        FrappeIcons.close_x,
+                                        size: 16,
+                                      ),
+                                      onTap: () {},
+                                    )
+                                  ],
                                 ),
-                                onTap: () {},
-                              )
-                            : Row(
-                                children: [
-                                  GestureDetector(
-                                    child: FrappeIcon(
-                                      FrappeIcons.check,
-                                      size: 16,
-                                    ),
-                                    onTap: () {},
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  GestureDetector(
-                                    child: FrappeIcon(
-                                      FrappeIcons.close_x,
-                                      size: 16,
-                                    ),
-                                    onTap: () {},
-                                  )
-                                ],
-                              ),
+                          visible: !widget.model.readOnlyView,
+                        ),
                       ],
                     ),
                   ),
@@ -433,6 +436,10 @@ class _ListProductLocationItemViewState
                                 setState(() {
                                   values[i].product = value;
                                   values[i].unit = firstItem.unit;
+
+                                  values[i].enabledVatTu =
+                                      firstItem.type != "Vật tư";
+                                  values[i].enabledKG = firstItem.unit == "Kg";
                                 });
                               },
                             )
@@ -456,6 +463,7 @@ class _ListProductLocationItemViewState
                       flex: 2,
                       child: !widget.model.readOnlyView
                           ? FieldData(
+                              enabled: values[i].enabledVatTu,
                               // value: 'Sản phẩm: ',
                               fieldType: 0,
                               values: widget.model.nguyenVatLieuVatTus
@@ -473,6 +481,8 @@ class _ListProductLocationItemViewState
                                 setState(() {
                                   values[i].material = value;
                                   values[i].unit = firstItem.unit;
+
+                                  values[i].enabledKG = firstItem.unit == "Kg";
                                 });
                               },
                             )
@@ -491,6 +501,7 @@ class _ListProductLocationItemViewState
                     Expanded(
                       child: !widget.model.readOnlyView
                           ? FieldData(
+                              enabled: values[i].enabledKG,
                               // title: 'Đơn vị tính ',
                               controller: controllers[i]['kgController'],
                               fieldType: 1,

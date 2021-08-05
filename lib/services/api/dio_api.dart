@@ -1899,7 +1899,7 @@ class DioApi implements Api {
         "doctype": doctype,
         "is_private": file.isPrivate ? 1 : 0,
         "folder": "Home",
-        "fieldname": "attach_signature_image"
+        "fieldname": file.fileName
       });
 
       var response = await DioHelper.dio.post(

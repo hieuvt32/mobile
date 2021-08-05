@@ -181,35 +181,37 @@ class _ListShellItemState extends State<ListShellItem> {
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
-                        !isExpanded
-                            ? GestureDetector(
-                                child: FrappeIcon(
-                                  FrappeIcons.delete,
-                                  size: 16,
-                                ),
-                                onTap: () {},
-                              )
-                            : Row(
-                                children: [
-                                  GestureDetector(
+                        Visibility(
+                            child: !isExpanded
+                                ? GestureDetector(
                                     child: FrappeIcon(
-                                      FrappeIcons.check,
-                                      size: 16,
-                                    ),
-                                    onTap: () {},
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  GestureDetector(
-                                    child: FrappeIcon(
-                                      FrappeIcons.close_x,
+                                      FrappeIcons.delete,
                                       size: 16,
                                     ),
                                     onTap: () {},
                                   )
-                                ],
-                              )
+                                : Row(
+                                    children: [
+                                      GestureDetector(
+                                        child: FrappeIcon(
+                                          FrappeIcons.check,
+                                          size: 16,
+                                        ),
+                                        onTap: () {},
+                                      ),
+                                      SizedBox(
+                                        width: 20,
+                                      ),
+                                      GestureDetector(
+                                        child: FrappeIcon(
+                                          FrappeIcons.close_x,
+                                          size: 16,
+                                        ),
+                                        onTap: () {},
+                                      )
+                                    ],
+                                  ),
+                            visible: !widget.model.readOnlyView)
                       ],
                     ),
                   ),

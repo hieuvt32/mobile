@@ -53,31 +53,34 @@ class _SignatureViewState extends State<SignatureView> {
                       SizedBox(
                         height: 12,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: GestureDetector(
-                          child: FrappeIcon(
-                            FrappeIcons.refresh,
-                            size: 16,
+                      Visibility(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: GestureDetector(
+                            child: FrappeIcon(
+                              FrappeIcons.refresh,
+                              size: 16,
+                            ),
+                            onTap: () {
+                              widget.model.clearSignatureCustomer();
+                            },
                           ),
-                          onTap: () {},
                         ),
+                        visible: !widget.model.readOnlyView,
                       ),
                       SizedBox(
                         height: 12,
                       ),
-                      // widget.model.order != null &&
-                      //         widget.model.order!.attachSignatureImage != null
-                      //     ? Image.network(
-                      //         '${widget.model.config!.baseUrl}${widget.model.order!.attachSignatureImage}')
-                      //     :
-
-                      Signature(
-                        controller: widget.model.signatureCustomerController,
-                        backgroundColor: Colors.white,
-                        height: 110,
-                        width: MediaQuery.of(context).size.width - 30,
-                      ),
+                      widget.model.readOnlyView
+                          ? Image.network(
+                              '${widget.model.config!.baseUrl}${widget.model.order!.attachSignatureCustomerImage}')
+                          : Signature(
+                              controller:
+                                  widget.model.signatureCustomerController,
+                              backgroundColor: Colors.white,
+                              height: 110,
+                              width: MediaQuery.of(context).size.width - 30,
+                            ),
                     ],
                   ),
                 ),
@@ -111,25 +114,34 @@ class _SignatureViewState extends State<SignatureView> {
                       SizedBox(
                         height: 12,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: GestureDetector(
-                          child: FrappeIcon(
-                            FrappeIcons.refresh,
-                            size: 16,
+                      Visibility(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: GestureDetector(
+                            child: FrappeIcon(
+                              FrappeIcons.refresh,
+                              size: 16,
+                            ),
+                            onTap: () {
+                              widget.model.clearSignatureSupplier();
+                            },
                           ),
-                          onTap: () {},
                         ),
+                        visible: !widget.model.readOnlyView,
                       ),
                       SizedBox(
                         height: 12,
                       ),
-                      Signature(
-                        controller: widget.model.signatureSupplierController,
-                        backgroundColor: Colors.white,
-                        height: 110,
-                        width: MediaQuery.of(context).size.width - 30,
-                      ),
+                      widget.model.readOnlyView
+                          ? Image.network(
+                              '${widget.model.config!.baseUrl}${widget.model.order!.attachSignatureSupplierImage}')
+                          : Signature(
+                              controller:
+                                  widget.model.signatureSupplierController,
+                              backgroundColor: Colors.white,
+                              height: 110,
+                              width: MediaQuery.of(context).size.width - 30,
+                            ),
                     ],
                   ),
                 ),

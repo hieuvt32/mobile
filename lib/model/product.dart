@@ -10,8 +10,8 @@ class Product {
   late String type;
   late String? material;
   late String unit;
-  late bool hiddenVatTu;
-  late bool hiddenKG;
+  late bool enabledVatTu;
+  late bool enabledKG;
   late bool isExpanded;
   Product({
     required this.address,
@@ -25,8 +25,8 @@ class Product {
     required this.type,
     required this.material,
     required this.unit,
-    required this.hiddenVatTu,
-    required this.hiddenKG,
+    required this.enabledVatTu,
+    required this.enabledKG,
     this.isExpanded = false,
   });
 
@@ -42,8 +42,8 @@ class Product {
     type = json['type'];
     material = json['material'];
     unit = json['unit'] ?? 'Bình';
-    hiddenKG = ["", null, false, 0].contains(json['kg']);
-    hiddenVatTu = ["", null, false, 0].contains(json['material']);
+    enabledKG = ["", null, false, 0].contains(json['kg']);
+    enabledVatTu = ["", null, false, 0].contains(json['material']);
     isExpanded = false;
   }
 

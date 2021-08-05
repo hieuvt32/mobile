@@ -28,11 +28,13 @@ class Customer {
     taxId = json['tax_id'];
     phone = json['phone'];
     email = json['email'];
-    address = (json['recieve_address'] as List<dynamic>?)!.map((e) {
-      var cast = e as Map<String, dynamic>;
+    address = json['recieve_address'] != null
+        ? (json['recieve_address'] as List<dynamic>?)!.map((e) {
+            var cast = e as Map<String, dynamic>;
 
-      return Address.fromJson(cast);
-    }).toList();
+            return Address.fromJson(cast);
+          }).toList()
+        : [];
   }
 
   Map<String, dynamic> toJson() {

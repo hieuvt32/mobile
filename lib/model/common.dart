@@ -84,9 +84,11 @@ class GasFile {
   bool isPrivate;
   Uint8List file;
   String fileName;
+  String fieldName;
   GasFile({
     this.isPrivate = false,
     required this.file,
     required this.fileName,
+    required this.fieldName,
   });
 }

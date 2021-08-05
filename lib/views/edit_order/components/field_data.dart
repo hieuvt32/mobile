@@ -8,6 +8,7 @@ class FieldData extends StatefulWidget {
   final Function(dynamic)? selectionHandler;
   final bool haveTextChange;
   final TextInputType keyboardType;
+  final bool enabled;
   const FieldData({
     Key? key,
     this.fieldType = 0,
@@ -17,6 +18,7 @@ class FieldData extends StatefulWidget {
     this.selectionHandler,
     this.haveTextChange = true,
     this.keyboardType = TextInputType.number,
+    this.enabled = true,
   }) : super(key: key);
 
   @override
@@ -59,7 +61,7 @@ class _FieldDataState extends State<FieldData> {
               //   );
               // }).toList(),
               // value: widget.customerValue,
-              onChanged: widget.selectionHandler,
+              onChanged: widget.enabled ? widget.selectionHandler : null,
 
               // keyboardType: this.keyboardType,
               // decoration: InputDecoration(
@@ -87,6 +89,7 @@ class _FieldDataState extends State<FieldData> {
         return Container(
           height: 32,
           child: TextField(
+            enabled: widget.enabled,
             keyboardType: widget.keyboardType,
             decoration: InputDecoration(
               // suffixIcon: Icon(Icons.search),
@@ -94,6 +97,12 @@ class _FieldDataState extends State<FieldData> {
                 borderRadius: BorderRadius.all(Radius.circular(4.0)),
                 borderSide: const BorderSide(
                   color: Colors.grey,
+                ),
+              ),
+              disabledBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(4.0)),
+                borderSide: const BorderSide(
+                  color: Color.fromRGBO(0, 0, 0, 0.2),
                 ),
               ),
             ),

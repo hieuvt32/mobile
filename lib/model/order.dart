@@ -23,7 +23,10 @@ class Order {
   late String vendorAddress;
   late double totalCost;
 
-  late String attachSignatureImage;
+  late String attachSignatureSupplierImage;
+  late String attachSignatureCustomerImage;
+
+  late String type;
 
   Order({
     required this.vendorName,
@@ -43,7 +46,9 @@ class Order {
     required this.email,
     required this.vendorAddress,
     required this.totalCost,
-    required this.attachSignatureImage,
+    required this.attachSignatureSupplierImage,
+    required this.attachSignatureCustomerImage,
+    required this.type,
   }) {
     coGiaoVanVien = false;
     creation = DateTime.now();
@@ -76,9 +81,14 @@ class Order {
     vendorAddress =
         json['vendor_address'] == null ? '' : json['vendor_address'];
     totalCost = json['total_cost'] == null ? '' : json['total_cost'];
-    attachSignatureImage = json['attach_signature_image'] == null
-        ? ''
-        : json['attach_signature_image'];
+    attachSignatureSupplierImage =
+        json['attach_signature_supplier_image'] == null
+            ? ''
+            : json['attach_signature_supplier_image'];
+    attachSignatureCustomerImage =
+        json['attach_signature_customer_image'] == null
+            ? ''
+            : json['attach_signature_customer_image'];
     coGiaoVanVien = employeeName != '' && plate != '';
   }
 
@@ -99,7 +109,8 @@ class Order {
     final List<Map<String, dynamic>> lstProduct =
         products != null ? products.map((e) => e.toJson()).toList() : [];
     data['product_list'] = lstProduct;
-    data['attach_signature_image'] = attachSignatureImage;
+    data['attach_signature_customer_image'] = attachSignatureCustomerImage;
+    data['attach_signature_supplier_image'] = attachSignatureSupplierImage;
     // data['plate'] = this.plate;
     // data['employee_name'] = this.employeeName;
     return data;

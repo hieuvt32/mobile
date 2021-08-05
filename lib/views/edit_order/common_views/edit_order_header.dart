@@ -17,7 +17,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
   @override
   Widget build(BuildContext context) {
     var customerMap = Map.fromIterable(widget.model.customers,
-        key: (v) => v.name, value: (v) => v.realName);
+        key: (v) => v.code, value: (v) => v.realName);
 
     return Container(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
@@ -58,7 +58,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                                 items: widget.model.customers.map((e) {
                                   return DropdownMenuItem<dynamic>(
                                     child: Text(e.realName),
-                                    value: e.name,
+                                    value: e.code,
                                   );
                                 }).toList(),
                                 value: widget.model.customerValue,

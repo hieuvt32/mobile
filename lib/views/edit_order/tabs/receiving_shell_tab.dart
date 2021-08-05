@@ -112,10 +112,12 @@ class _ReceivingShellTabState extends State<ReceivingShellTab> {
           ),
           ListShellView(
             'Danh sách vỏ bình nhập kho',
+            realOnly: widget.model.readOnlyView,
           ),
           ListShellView(
             'Danh sách vỏ bình trả lại khách',
             type: 1,
+            realOnly: widget.model.readOnlyView,
           ),
         ],
       ),
