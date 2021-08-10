@@ -1,5 +1,6 @@
 class Product {
   late String address;
+  late String diaChi;
   late String? product;
   late int quantity;
   late int actualQuantity;
@@ -27,6 +28,7 @@ class Product {
     required this.unit,
     required this.enabledVatTu,
     required this.enabledKG,
+    required this.diaChi,
     this.isExpanded = false,
   });
 
@@ -44,6 +46,7 @@ class Product {
     unit = json['unit'] ?? 'Bình';
     enabledKG = ["", null, false, 0].contains(json['kg']);
     enabledVatTu = ["", null, false, 0].contains(json['material']);
+    diaChi = json['dia_chi'];
     isExpanded = false;
   }
 

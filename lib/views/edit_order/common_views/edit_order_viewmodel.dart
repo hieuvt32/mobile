@@ -456,6 +456,7 @@ class EditOrderViewModel extends BaseViewModel {
       unitPrice: 0,
       enabledVatTu: false,
       enabledKG: false,
+      diaChi: "",
     ));
     _productEditControllers.add({
       "kgController": TextEditingController(),
@@ -479,6 +480,7 @@ class EditOrderViewModel extends BaseViewModel {
       unitPrice: 0,
       enabledVatTu: false,
       enabledKG: false,
+      diaChi: "",
     ));
     _productForLocationEditControllers.add({
       "kgController": TextEditingController(),

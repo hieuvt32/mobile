@@ -1322,11 +1322,15 @@ class DioApi implements Api {
   }
 
   @override
-  Future<ListOrderResponse> getListOrder(int status) async {
+  Future<ListOrderResponse> getListOrder(int status,
+      {int sellInWareHouse = 0}) async {
     try {
       final response = await DioHelper.dio.get(
         '/method/getHoaDonMuaHang',
-        queryParameters: {"status": status},
+        queryParameters: {
+          "status": status,
+          "sell_in_warehouse": sellInWareHouse
+        },
         options: Options(
           validateStatus: (status) {
             return status < 500;

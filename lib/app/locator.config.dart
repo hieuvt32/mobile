@@ -14,16 +14,18 @@ import '../views/change_password_viewmodel.dart' as _i7;
 import '../views/desk/desk_viewmodel.dart' as _i9;
 import '../views/edit_gas_broken/list_broken_gas_adress_model.dart' as _i11;
 import '../views/edit_order/common_views/edit_order_viewmodel.dart' as _i12;
+import '../views/edit_order/transportation_views/transportation_viewmodel.dart'
+    as _i21;
 import '../views/form_view/bottom_sheets/assignees/assignees_bottom_sheet_viewmodel.dart'
     as _i5;
 import '../views/form_view/bottom_sheets/attachments/add_attachments_bottom_sheet_viewmodel.dart'
     as _i3;
 import '../views/form_view/bottom_sheets/attachments/view_attachments_bottom_sheet_viewmodel.dart'
-    as _i21;
+    as _i22;
 import '../views/form_view/bottom_sheets/reviews/add_review_bottom_sheet_viewmodel.dart'
     as _i4;
 import '../views/form_view/bottom_sheets/reviews/view_reviews_bottom_sheet_viewmodel.dart'
-    as _i22;
+    as _i23;
 import '../views/form_view/bottom_sheets/share/share_bottom_sheet_viewmodel.dart'
     as _i18;
 import '../views/form_view/bottom_sheets/tags/tags_bottom_sheet_viewmodel.dart'
@@ -70,9 +72,11 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
   gh.lazySingleton<_i19.StorageService>(() => _i19.StorageService());
   gh.lazySingleton<_i20.TagsBottomSheetViewModel>(
       () => _i20.TagsBottomSheetViewModel());
-  gh.lazySingleton<_i21.ViewAttachmenetsBottomSheetViewModel>(
-      () => _i21.ViewAttachmenetsBottomSheetViewModel());
-  gh.lazySingleton<_i22.ViewReviewsBottomSheetViewModel>(
-      () => _i22.ViewReviewsBottomSheetViewModel());
+  gh.lazySingleton<_i21.TransportationViewModel>(
+      () => _i21.TransportationViewModel());
+  gh.lazySingleton<_i22.ViewAttachmenetsBottomSheetViewModel>(
+      () => _i22.ViewAttachmenetsBottomSheetViewModel());
+  gh.lazySingleton<_i23.ViewReviewsBottomSheetViewModel>(
+      () => _i23.ViewReviewsBottomSheetViewModel());
   return get;
 }

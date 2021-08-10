@@ -84,7 +84,7 @@ abstract class Api {
     ChangePasswordRequest changePasswordRequest,
   );
 
-  Future<ListOrderResponse> getListOrder(int status);
+  Future<ListOrderResponse> getListOrder(int status, {int sellInWareHouse = 0});
 
   Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
       String customerCode, String status);
