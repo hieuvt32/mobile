@@ -84,7 +84,7 @@ abstract class Api {
     ChangePasswordRequest changePasswordRequest,
   );
 
-  Future<ListOrderResponse> getListOrder(int status, {int sellInWareHouse = 0});
+  Future<ListOrderResponse> getListOrder(int status, {int? sellInWareHouse});
 
   Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
       String customerCode, String status);
@@ -105,6 +105,14 @@ abstract class Api {
   Future<CreateDonNhapKhoResponse> createDonNhapKho(DonNhapKho donNhapKho);
 
   Future<UpdateDonNhapKhoResponse> updateDonNhapKho(DonNhapKho donNhapKho);
+
+  Future<dynamic> updateGiaoViecSignature(
+    String order,
+    String status,
+    String address,
+    String attachSignatureCustomerImage,
+    String attachSignatureDeliverImage,
+  );
 
   Future<GetSingleDonNhapKhoResponse> getSingleDonNhapKho(String maDon);
 

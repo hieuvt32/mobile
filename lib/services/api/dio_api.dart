@@ -1322,15 +1322,18 @@ class DioApi implements Api {
   }
 
   @override
-  Future<ListOrderResponse> getListOrder(int status,
-      {int sellInWareHouse = 0}) async {
+  Future<ListOrderResponse> getListOrder(int status, {sellInWareHouse}) async {
     try {
+      var data = {
+        "status": status,
+      };
+
+      if (sellInWareHouse != null) {
+        data["sell_in_warehouse"] = sellInWareHouse;
+      }
       final response = await DioHelper.dio.get(
         '/method/getHoaDonMuaHang',
-        queryParameters: {
-          "status": status,
-          "sell_in_warehouse": sellInWareHouse
-        },
+        queryParameters: data,
         options: Options(
           validateStatus: (status) {
             return status < 500;
@@ -2096,6 +2099,61 @@ class DioApi implements Api {
           throw ErrorResponse(
             statusMessage: error.message,
             statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<dynamic> updateGiaoViecSignature(
+      String order,
+      String status,
+      String address,
+      String attachSignatureCustomerImage,
+      String attachSignatureDeliverImage) async {
+    var data = {
+      'order': order,
+      'status': status,
+      'address': address,
+      'attach_signature_customer_image': attachSignatureCustomerImage,
+      'attach_signature_deliver_image': attachSignatureDeliverImage,
+    };
+
+    try {
+      var response = await DioHelper.dio.post(
+        '/method/updateGiaoViecSignature',
+        data: data,
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
           );
         }
       } else {

@@ -23,17 +23,17 @@ class TransportationViewModel extends BaseViewModel {
     isLoading = true;
     _responseDaDatHang = await locator<Api>().getListOrder(
       0,
-      sellInWareHouse: 1,
+      sellInWareHouse: 0,
     );
 
     _responseDangGiaoHang = await locator<Api>().getListOrder(
       1,
-      sellInWareHouse: 1,
+      sellInWareHouse: 0,
     );
 
     _responseDaGiaoHang = await locator<Api>().getListOrder(
       2,
-      sellInWareHouse: 1,
+      sellInWareHouse: 0,
     );
 
     if (_responseDaDatHang != null &&
