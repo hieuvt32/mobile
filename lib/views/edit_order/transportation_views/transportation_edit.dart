@@ -123,7 +123,9 @@ class _TransportationEditState extends State<TransportationEdit>
                           physics: NeverScrollableScrollPhysics(),
                           controller: _tabController,
                           children: [
-                            OrderDetailTab(),
+                            OrderDetailTab(
+                              address: widget.address,
+                            ),
                             TransportationSignatureTab(
                               address: widget.address,
                             ),

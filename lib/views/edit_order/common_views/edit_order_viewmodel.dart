@@ -11,6 +11,7 @@ import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_guyen_vat_lieu_san_pham_response.dart';
+import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/nguyen_vat_lieu_san_pham.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
@@ -66,6 +67,12 @@ class EditOrderViewModel extends BaseViewModel {
   late List<NguyenVatLieuSanPham> _nguyenVatLieuVatTus;
 
   late List<NguyenVatLieuSanPham> _nguyenVatLieuSanPhams;
+
+  GiaoViecSignatureResponse? _giaoViecSignatureResponse;
+
+  late List<GiaoViecSignature> _giaoViecSignatures;
+
+  List<GiaoViecSignature> get giaoViecSignatures => _giaoViecSignatures;
 
   // Object? _diaChiSelect;
 
@@ -189,6 +196,8 @@ class EditOrderViewModel extends BaseViewModel {
   initState() {
     _isLoading = true;
 
+    _giaoViecSignatures = [];
+
     _signatureSupplierController = SignatureController(
       penStrokeWidth: 5,
       penColor: Colors.black,
@@ -267,6 +276,7 @@ class EditOrderViewModel extends BaseViewModel {
     await getVatTuSanPham();
     await getChiTietDonHang();
     await getChiTietDonNhapKho();
+    await getGiaoViecSignature();
     _isLoading = false;
   }
 
@@ -280,6 +290,19 @@ class EditOrderViewModel extends BaseViewModel {
     initState();
   }
 
+  GiaoViecSignature? getGiaoViecSignatureByAddress(String address) {
+    var giaoViecSignatureByAddress = _giaoViecSignatures
+        .where((element) => element.address == address)
+        .toList();
+
+    if (giaoViecSignatureByAddress != null &&
+        giaoViecSignatureByAddress.length > 0) {
+      return giaoViecSignatureByAddress[0];
+    }
+
+    return null;
+  }
+
   Future getCustomerByCompany() async {
     _responseGetCustomers = await locator<Api>().getCustomerByCompany();
 
@@ -287,6 +310,19 @@ class EditOrderViewModel extends BaseViewModel {
             _responseGetCustomers!.customers != null
         ? _responseGetCustomers!.customers!
         : [];
+    notifyListeners();
+  }
+
+  Future getGiaoViecSignature() async {
+    if (!["", null, false, 0].contains(_name)) {
+      _giaoViecSignatureResponse =
+          await locator<Api>().getGiaoViecSignature(_name!);
+
+      _giaoViecSignatures = _giaoViecSignatureResponse != null &&
+              _giaoViecSignatureResponse!.message != null
+          ? _giaoViecSignatureResponse!.message
+          : [];
+    }
     notifyListeners();
   }
 

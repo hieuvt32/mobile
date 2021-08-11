@@ -90,7 +90,7 @@ class _ListShellViewState extends State<ListShellView> {
                 },
               ),
             ),
-            visible: !widget.model.readOnlyView,
+            visible: !widget.realOnly,
           )
         ],
         // Icon(Icons.image) // iconPic

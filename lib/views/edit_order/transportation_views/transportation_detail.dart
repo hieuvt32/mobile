@@ -54,108 +54,109 @@ class _TransportationDetailState extends State<TransportationDetail> {
             SizedBox(
               height: 12,
             ),
-            ...datas
-                .map(
-                  (e) => GestureDetector(
-                    child: Container(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-                        child: Column(
+            ...datas.map((e) {
+              var giaoViewSig =
+                  model.getGiaoViecSignatureByAddress(e.key.address);
+              return GestureDetector(
+                child: Container(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text("Địa chỉ: ",
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700)),
-                                  flex: 2,
-                                ),
-                                Expanded(
-                                  child: Text("${e.key.diaChi}",
-                                      style: TextStyle(
-                                          // color: Colors.grey,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700)),
-                                  flex: 8,
-                                )
-                              ],
+                            Expanded(
+                              child: Text("Địa chỉ: ",
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700)),
+                              flex: 2,
                             ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text("Thời gian: ",
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700)),
-                                  flex: 2,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                      "${DateFormat('HH:mm - dd/MM/yyyy').format(model.order!.modified)}",
-                                      style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700)),
-                                  flex: 8,
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text("Trạng thái: ",
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700)),
-                                  flex: 2,
-                                ),
-                                Expanded(
-                                  child: Text("${model.order!.status}",
-                                      style: TextStyle(
-                                          color: Color.fromRGBO(0, 71, 139, 1),
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700)),
-                                  flex: 8,
-                                )
-                              ],
+                            Expanded(
+                              child: Text("${e.key.diaChi}",
+                                  style: TextStyle(
+                                      // color: Colors.grey,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700)),
+                              flex: 8,
                             )
                           ],
                         ),
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          width: 1,
-                          color: Color.fromRGBO(0, 114, 188, 0.5),
+                        SizedBox(
+                          height: 8,
                         ),
-                      ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text("Thời gian: ",
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700)),
+                              flex: 2,
+                            ),
+                            Expanded(
+                              child: Text(
+                                  "${DateFormat('HH:mm - dd/MM/yyyy').format(model.order!.modified)}",
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700)),
+                              flex: 8,
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text("Trạng thái: ",
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700)),
+                              flex: 2,
+                            ),
+                            Expanded(
+                              child: Text(
+                                  "${giaoViewSig != null ? giaoViewSig.status : model.order!.status}",
+                                  style: TextStyle(
+                                      color: Color.fromRGBO(0, 71, 139, 1),
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700)),
+                              flex: 8,
+                            )
+                          ],
+                        )
+                      ],
                     ),
-                    onTap: () {
-                      if (model.order!.status != "Đã giao hàng") {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return TransportationEdit(
-                                // name: item.name,
-                                address: e.key,
-                              );
-                            },
-                          ),
-                        );
-                      }
-                    },
                   ),
-                )
-                .toList()
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(4),
+                    border: Border.all(
+                      width: 1,
+                      color: Color.fromRGBO(0, 114, 188, 0.5),
+                    ),
+                  ),
+                ),
+                onTap: () {
+                  if (model.order!.status != "Đã giao hàng") {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return TransportationEdit(
+                            // name: item.name,
+                            address: e.key,
+                          );
+                        },
+                      ),
+                    );
+                  }
+                },
+              );
+            }).toList()
           ],
         ),
       ),

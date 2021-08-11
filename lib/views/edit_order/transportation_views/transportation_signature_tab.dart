@@ -21,8 +21,17 @@ class TransportationSignatureTab extends StatefulWidget {
 
 class _TransportationSignatureTabState
     extends State<TransportationSignatureTab> {
+  bool readOnly = false;
   @override
   Widget build(BuildContext context) {
+    var giaoViewSig =
+        widget.model.getGiaoViecSignatureByAddress(widget.address.address);
+    readOnly = giaoViewSig != null && giaoViewSig.status == "Đã giao hàng";
+    var attachImageCustomer =
+        giaoViewSig != null ? giaoViewSig.attachSignatureCustomerImage : '';
+    var attachImageDeliver =
+        giaoViewSig != null ? giaoViewSig.attachSignatureDeliverImage : '';
+
     return Container(
       child: Column(
         children: [
@@ -75,22 +84,25 @@ class _TransportationSignatureTabState
                                   },
                                 ),
                               ),
-                              visible: !widget.model.readOnlyView,
+                              visible: !readOnly,
                             ),
                             SizedBox(
                               height: 12,
                             ),
-                            widget.model.readOnlyView
-                                ? Image.network(
-                                    '${widget.model.config!.baseUrl}${widget.model.order!.attachSignatureCustomerImage}')
-                                : Signature(
-                                    controller: widget
-                                        .model.signatureCustomerController,
-                                    backgroundColor: Colors.white,
-                                    height: 110,
-                                    width:
-                                        MediaQuery.of(context).size.width - 30,
-                                  ),
+                            Container(
+                              width: double.infinity,
+                              child: readOnly
+                                  ? Image.network(
+                                      '${widget.model.config!.baseUrl}$attachImageCustomer')
+                                  : Signature(
+                                      controller: widget
+                                          .model.signatureCustomerController,
+                                      backgroundColor: Colors.white,
+                                      height: 110,
+                                      width: MediaQuery.of(context).size.width -
+                                          30,
+                                    ),
+                            ),
                           ],
                         ),
                       ),
@@ -137,22 +149,25 @@ class _TransportationSignatureTabState
                                   },
                                 ),
                               ),
-                              visible: !widget.model.readOnlyView,
+                              visible: !readOnly,
                             ),
                             SizedBox(
                               height: 12,
                             ),
-                            widget.model.readOnlyView
-                                ? Image.network(
-                                    '${widget.model.config!.baseUrl}${widget.model.order!.attachSignatureSupplierImage}')
-                                : Signature(
-                                    controller: widget
-                                        .model.signatureSupplierController,
-                                    backgroundColor: Colors.white,
-                                    height: 110,
-                                    width:
-                                        MediaQuery.of(context).size.width - 30,
-                                  ),
+                            Container(
+                              width: double.infinity,
+                              child: readOnly
+                                  ? Image.network(
+                                      '${widget.model.config!.baseUrl}$attachImageDeliver')
+                                  : Signature(
+                                      controller: widget
+                                          .model.signatureSupplierController,
+                                      backgroundColor: Colors.white,
+                                      height: 110,
+                                      width: MediaQuery.of(context).size.width -
+                                          30,
+                                    ),
+                            ),
                           ],
                         ),
                       ),
@@ -214,7 +229,7 @@ class _TransportationSignatureTabState
                 onPressed: () async {
                   await widget.model.updateOrder(context);
                   await widget.model.updateGiaoViecSignature(context,
-                      address: widget.address.address);
+                      address: widget.address.address, status: "Đã giao hàng");
                 },
                 child: Text(
                   widget.model.sellInWarehouse
