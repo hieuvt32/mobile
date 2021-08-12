@@ -8,7 +8,7 @@ import 'package:get_it/get_it.dart' as _i1;
 import 'package:injectable/injectable.dart' as _i2;
 
 import '../services/connectivity_service.dart' as _i8;
-import '../services/storage_service.dart' as _i20;
+import '../services/storage_service.dart' as _i19;
 import '../views/awesome_bar/awesome_bar_viewmodel.dart' as _i6;
 import '../views/change_password_viewmodel.dart' as _i7;
 import '../views/desk/desk_viewmodel.dart' as _i9;
@@ -27,18 +27,18 @@ import '../views/form_view/bottom_sheets/reviews/add_review_bottom_sheet_viewmod
 import '../views/form_view/bottom_sheets/reviews/view_reviews_bottom_sheet_viewmodel.dart'
     as _i23;
 import '../views/form_view/bottom_sheets/share/share_bottom_sheet_viewmodel.dart'
-    as _i19;
+    as _i18;
 import '../views/form_view/bottom_sheets/tags/tags_bottom_sheet_viewmodel.dart'
-    as _i21;
-import '../views/form_view/form_view_viewmodel.dart' as _i15;
+    as _i20;
+import '../views/form_view/form_view_viewmodel.dart' as _i14;
 import '../views/list_view/bottom_sheets/edit_filter_bottom_sheet_viewmodel.dart'
-    as _i11;
+    as _i10;
 import '../views/list_view/bottom_sheets/filters_bottom_sheet_viewmodel.dart'
-    as _i14;
-import '../views/list_view/list_view_viewmodel.dart' as _i16;
-import '../views/login/login_viewmodel.dart' as _i17;
+    as _i13;
+import '../views/list_view/list_view_viewmodel.dart' as _i15;
+import '../views/login/login_viewmodel.dart' as _i16;
 import '../views/new_doc/new_doc_viewmodel.dart'
-    as _i18; // ignore_for_file: unnecessary_lambdas
+    as _i17; // ignore_for_file: unnecessary_lambdas
 
 // ignore_for_file: lines_longer_than_80_chars
 /// initializes the registration of provided dependencies inside of [GetIt]
