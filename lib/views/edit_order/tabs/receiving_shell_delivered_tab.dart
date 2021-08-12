@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/edit_order/components/list_product_return.dart';
 import 'package:frappe_app/views/edit_order/components/list_shell_view.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 
@@ -185,9 +186,8 @@ class _ReceivingShellDeliveredTabState
               ],
             ),
           ),
-          ListShellView(
+          ListProductReturnView(
             'Danh sách hoàn trả',
-            type: 2,
             realOnly: true,
           ),
           ListShellView(

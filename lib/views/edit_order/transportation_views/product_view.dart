@@ -176,7 +176,7 @@ class _ProductItemState extends State<ProductItem> {
                     Expanded(
                       flex: 2,
                       child: FieldData(
-                        value: values[i].material,
+                        value: values[i].material ?? '',
                         fieldType: 3,
                       ),
                     ),

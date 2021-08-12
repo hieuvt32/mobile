@@ -12,7 +12,9 @@ import 'transportation_signature_tab.dart';
 class TransportationEdit extends StatefulWidget {
   final TransportationKey address;
   final EditOrderViewModel model = locator<EditOrderViewModel>();
-  TransportationEdit({Key? key, required this.address}) : super(key: key);
+  final bool isLatest;
+  TransportationEdit({Key? key, required this.address, this.isLatest = false})
+      : super(key: key);
 
   @override
   _TransportationEditState createState() => _TransportationEditState();
@@ -128,6 +130,7 @@ class _TransportationEditState extends State<TransportationEdit>
                             ),
                             TransportationSignatureTab(
                               address: widget.address,
+                              isLatest: widget.isLatest,
                             ),
                           ],
                         ),

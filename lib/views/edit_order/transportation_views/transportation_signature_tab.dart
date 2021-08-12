@@ -11,8 +11,12 @@ import 'transportation_detail.dart';
 class TransportationSignatureTab extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
   final TransportationKey address;
-  TransportationSignatureTab({Key? key, required this.address})
-      : super(key: key);
+  final bool isLatest;
+  TransportationSignatureTab({
+    Key? key,
+    required this.address,
+    this.isLatest = false,
+  }) : super(key: key);
 
   @override
   _TransportationSignatureTabState createState() =>
@@ -227,7 +231,10 @@ class _TransportationSignatureTabState
                   ),
                 ),
                 onPressed: () async {
-                  await widget.model.updateOrder(context);
+                  await widget.model.updateOrder(context,
+                      status: widget.isLatest
+                          ? "Đã giao hàng"
+                          : widget.model.order!.status);
                   await widget.model.updateGiaoViecSignature(context,
                       address: widget.address.address, status: "Đã giao hàng");
                 },
