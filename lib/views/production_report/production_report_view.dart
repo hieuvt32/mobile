@@ -46,9 +46,9 @@ class _ProductionReportViewState extends State<ProductionReportView> {
         ),
         actions: [],
         title: Text(
-          'Báo cáo sản xuất $formattedDate',
+          'Báo cáo sản xuất ($formattedDate)',
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -71,7 +71,7 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: hexToColor('#00478B'),
+                              // color: hexToColor('#00478B'),
                             ),
                           ),
                           Text(
@@ -85,15 +85,18 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                      child: const Divider(
-                        color: Color.fromRGBO(0, 0, 0, 0.3),
-                        height: 1,
-                        thickness: 1,
-                        indent: 1,
-                        endIndent: 1,
-                      ),
+                    // Padding(
+                    //   padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                    //   child: const Divider(
+                    //     color: Color.fromRGBO(0, 0, 0, 0.3),
+                    //     height: 1,
+                    //     thickness: 1,
+                    //     indent: 1,
+                    //     endIndent: 1,
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: 36,
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(26, 6, 0, 0),
@@ -104,7 +107,7 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
-                              color: hexToColor('#00478B'),
+                              // color: hexToColor('#00478B'),
                             ),
                             textAlign: TextAlign.left,
                           ),
@@ -120,14 +123,15 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                             padding: const EdgeInsets.fromLTRB(28.0, 0, 28, 12),
                             child: Container(
                               decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
-                                      color: Color.fromRGBO(0, 0, 0, 0.3))),
+                                      color: Color.fromRGBO(0, 0, 0, 0.4),
+                                      width: 0.5)),
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(24, 8, 26, 8),
+                                    const EdgeInsets.fromLTRB(8, 24, 8, 24),
                                 child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: <Widget>[
                                     Column(
                                       children: [
@@ -139,7 +143,7 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 12,
+                                          height: 24,
                                         ),
                                         Text(
                                           'Loại vật tư: ${_response!.reportQuyChuanThongTins![index].material}',
@@ -149,10 +153,10 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                                           ),
                                         ),
                                         SizedBox(
-                                          height: 12,
+                                          height: 24,
                                         ),
                                         Text(
-                                          'Khối lượng: ${_response!.reportQuyChuanThongTins![index].kg}',
+                                          'Số lượng: ${_response!.reportQuyChuanThongTins![index].total}',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
@@ -162,23 +166,43 @@ class _ProductionReportViewState extends State<ProductionReportView> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                     ),
+                                    SizedBox(
+                                      width: 55,
+                                    ),
                                     Column(
                                       children: [
                                         Text(
-                                          'Số lượng',
+                                          '',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
                                           ),
                                         ),
+                                        SizedBox(
+                                          height: 24,
+                                        ),
                                         Text(
-                                          '${_response!.reportQuyChuanThongTins![index].total}',
+                                          'Kg:          ${_response!.reportQuyChuanThongTins![index].kg}',
                                           style: TextStyle(
-                                              fontSize: 32,
-                                              fontWeight: FontWeight.w700,
-                                              color: hexToColor('#FF0F00')),
+                                            fontSize: 14,
+                                            // fontWeight: FontWeight.w700,
+                                            // color: hexToColor('#FF0F00'),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 24,
+                                        ),
+                                        Text(
+                                          'Đơn vị tính:  Bình',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            // fontWeight: FontWeight.w700,
+                                            // color: hexToColor('#FF0F00'),
+                                          ),
                                         )
                                       ],
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                     )
                                   ],
                                 ),

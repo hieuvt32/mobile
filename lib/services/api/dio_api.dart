@@ -1168,10 +1168,11 @@ class DioApi implements Api {
 
   @override
   Future<UpdateTrangThaiQuyChuanResponse> updateTrangThaiQuyChuan(
-      String key, int status) async {
+      String key, int status, String serial) async {
     var queryParams = {
       'key': key,
       'status': status,
+      'serial': serial,
     };
     try {
       final response = await DioHelper.dio.post(

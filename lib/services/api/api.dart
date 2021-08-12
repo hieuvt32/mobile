@@ -93,6 +93,7 @@ abstract class Api {
   Future<UpdateTrangThaiQuyChuanResponse> updateTrangThaiQuyChuan(
     String key,
     int status,
+    String serial,
   );
 
   Future<CreateHoaDonMuaBanRespone> createHoaDonMuaBan(Order order);

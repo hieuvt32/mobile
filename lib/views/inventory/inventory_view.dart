@@ -7,6 +7,7 @@ import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/inventory/store.dart';
+import 'package:intl/intl.dart';
 
 class InventoryView extends StatefulWidget {
   const InventoryView({Key? key}) : super(key: key);
@@ -19,8 +20,15 @@ class _InventoryViewState extends State<InventoryView>
     with SingleTickerProviderStateMixin {
   final bodyGlobalKey = GlobalKey();
   final List<Widget> myTabs = [
-    Tab(text: 'Vật tư'),
-    Tab(text: 'Thành phẩm'),
+    Tab(
+      child: Text("Vật tư",
+          style: TextStyle(color: hexToColor('#14142B'))
+              .copyWith(fontSize: 14, fontWeight: FontWeight.w600)),
+    ),
+    Tab(
+        child: Text('Thành phẩm',
+            style: TextStyle(color: hexToColor('#14142B'))
+                .copyWith(fontSize: 14, fontWeight: FontWeight.w600))),
     // Tab(text: 'fixed'),
   ];
   //TODO: Button xác nhận không fix cứng phải scroll hết mới đến
@@ -117,28 +125,29 @@ class _InventoryViewState extends State<InventoryView>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          SizedBox(
-            height: 12,
-          ),
-          const Divider(
-            color: Color.fromRGBO(0, 0, 0, 0.3),
-            height: 1,
-            thickness: 1,
-            indent: 1,
-            endIndent: 1,
-          ),
+          // SizedBox(
+          //   height: 12,
+          // ),
+          // const Divider(
+          //   color: Color.fromRGBO(0, 0, 0, 0.3),
+          //   height: 1,
+          //   thickness: 1,
+          //   indent: 1,
+          //   endIndent: 1,
+          // ),
           SizedBox(
             height: 16,
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(28, 0, 28, 0),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Text(
                     'Tên',
+                    textAlign: TextAlign.center,
                     style: TextStyle(color: hexToColor('#14142B'))
                         .copyWith(fontSize: 14, fontWeight: FontWeight.w700),
                   ),
@@ -153,7 +162,7 @@ class _InventoryViewState extends State<InventoryView>
                   ),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 3,
                   child: Text(
                     'Thực tế',
                     style: TextStyle(color: hexToColor('#14142B'))
@@ -175,6 +184,7 @@ class _InventoryViewState extends State<InventoryView>
                   padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
                   child: Container(
                     decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
                         border:
                             Border.all(color: Color.fromRGBO(0, 0, 0, 0.5))),
                     child: Padding(
@@ -182,7 +192,7 @@ class _InventoryViewState extends State<InventoryView>
                       child: Row(
                         children: <Widget>[
                           Expanded(
-                            flex: 2,
+                            flex: 3,
                             child: Text(
                               '${stores[index].customName}',
                               style: TextStyle(color: hexToColor('#14142B'))
@@ -204,7 +214,7 @@ class _InventoryViewState extends State<InventoryView>
                             ),
                           ),
                           Expanded(
-                            flex: 1,
+                            flex: 3,
                             child: Container(
                               // width: 64,
                               height: 24,
@@ -293,6 +303,8 @@ class _InventoryViewState extends State<InventoryView>
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('dd/MM/yyyy').format(now);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -308,7 +320,7 @@ class _InventoryViewState extends State<InventoryView>
           ),
           actions: [],
           title: Text(
-            'Kiểm kho (21/6/2021)',
+            'Kiểm kho ($formattedDate)',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
