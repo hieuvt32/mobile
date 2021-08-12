@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
+import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
@@ -10,6 +11,9 @@ import 'package:frappe_app/views/personal_page/personal_page_view.dart';
 class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print(Config().roles);
+    List<dynamic> userRoles = Config().roles as List<dynamic>;
+
     return Scaffold(
       // appBar: AppBar(
       //     backgroundColor: Colors.transparent,
@@ -36,8 +40,10 @@ class ProfileView extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        //  ChangePasswordView();
-                        return PersonalPageView();
+                        if (userRoles.contains("Khách Hàng")) {
+                          return PersonalPageView();
+                        }
+                        return ChangePasswordView();
                       },
                     ),
                   );
@@ -53,7 +59,9 @@ class ProfileView extends StatelessWidget {
                       height: 25,
                     ),
                     Text(
-                      'Đổi mật khẩu',
+                      userRoles.contains("Khách Hàng")
+                          ? 'Trang cá nhân'
+                          : 'Đổi mật khẩu',
                       style: TextStyle(
                         color: hexToColor('#00478B'),
                         fontSize: 32,

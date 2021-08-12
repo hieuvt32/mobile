@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:frappe_app/utils/constants.dart';
+import 'package:frappe_app/utils/enums.dart';
+
 import '../services/storage_service.dart';
 
 import '../app/locator.dart';
@@ -18,9 +21,21 @@ class Config {
         ),
       );
 
-  String get roles {
-    var roles = configContainer.get('roles');
-    return jsonDecode(roles);
+  List<UserRole> get roles {
+    dynamic roles = configContainer.get('roles');
+    if (roles == null) return [];
+
+    List<dynamic> decodedRoles = jsonDecode(roles);
+
+    List<UserRole> listRole = [];
+    decodedRoles.forEach((element) {
+      UserRole? role = Constants.mappingRole[element];
+      if (role != null) {
+        listRole.add(role);
+      }
+    });
+
+    return listRole;
   }
 
   String get user => configContainer.get(

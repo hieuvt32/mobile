@@ -39,6 +39,84 @@ class _AssetLiabilityReportState extends State<AssetLiabilityReport> {
   List<BaoCaoCongNo> listBaoCaoCongNo = [];
   bool isLoading = true;
 
+  _buildHeaderListView() {
+    final List<String> listTitle = ["Sản phẩm", "Nhận", "Kg", "Trả", "Nợ"];
+    return Container(
+      height: 42,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          color: hexToColor("#0072BC").withOpacity(0.3),
+          border: Border(
+              bottom: BorderSide(
+                  color: hexToColor("#0072BC").withOpacity(0.3), width: 1))),
+      child: Row(
+          children: listTitle.asMap().entries.map((entry) {
+        return Expanded(
+          flex: entry.key == 0 ? 2 : 1,
+          child: Text(
+            entry.value,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        );
+      }).toList()),
+    );
+  }
+
+  _buildListItemView(BaoCaoCongNo baoCaoCongNo) {
+    final List<String> listRow = [
+      baoCaoCongNo.sanpham,
+      baoCaoCongNo.nhan,
+      baoCaoCongNo.kg,
+      baoCaoCongNo.tra,
+      baoCaoCongNo.no
+    ];
+
+    return Container(
+      height: 42,
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(
+                  color: hexToColor("#0072BC").withOpacity(0.3), width: 1))),
+      alignment: Alignment.center,
+      child: Row(
+          children: listRow.asMap().entries.map((entry) {
+        print(entry.value);
+        return Expanded(
+            flex: entry.key == 0 ? 2 : 1,
+            child: entry.key == 0
+                ? GestureDetector(
+                    onTap: () {
+                      Navigator.of(this.context).push(
+                          MaterialPageRoute(builder: (BuildContext context) {
+                        return AssetLiabilityReportDetail();
+                      }));
+                    },
+                    child: Text(
+                      entry.value,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: hexToColor("#007BFF"),
+                          decoration: TextDecoration.underline,
+                          decorationColor: hexToColor("#007BFF")),
+                    ),
+                  )
+                : Text(
+                    entry.value,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ));
+      }).toList()),
+    );
+  }
+
+  _buildListContentView() {
+    return listBaoCaoCongNo.map((e) {
+      return _buildListItemView(e);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,65 +127,9 @@ class _AssetLiabilityReportState extends State<AssetLiabilityReport> {
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : SingleChildScrollView(
-                child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.topCenter,
-                    child: Container(
-                      child: DataTable(
-                          columnSpacing: 46,
-                          headingRowColor: MaterialStateProperty.all(
-                              hexToColor("#0072BC").withOpacity(0.3)),
-                          horizontalMargin: 8,
-                          columns: <DataColumn>[
-                            DataColumn(
-                              label: Text(
-                                'Sản phẩm',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'Nhận',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'Trả',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'Nợ',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                'Kg',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-                            ),
-                          ],
-                          rows: listBaoCaoCongNo.map<DataRow>((value) {
-                            return DataRow(
-                              cells: <DataCell>[
-                                DataCell(Text(value.sanpham), onTap: () {
-                                  Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) {
-                                    return AssetLiabilityReportDetail();
-                                  }));
-                                }),
-                                DataCell(Text(value.nhan)),
-                                DataCell(Text(value.tra)),
-                                DataCell(Text(value.no)),
-                                DataCell(Text(value.kg)),
-                              ],
-                            );
-                          }).toList()),
-                    )),
+            : ListView(
+                padding: const EdgeInsets.only(left: 8, right: 8),
+                children: [_buildHeaderListView(), ..._buildListContentView()],
               ));
   }
 }

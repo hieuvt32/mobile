@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:frappe_app/model/don_bao_binh_loi.dart';
 
 class ListDonBaoBinhLoiRespone {
@@ -60,11 +61,15 @@ class BinhLoi {
   late String serial;
   late String description;
   late bool isExpanded;
+  TextEditingController? serialController;
+  TextEditingController? descriptionController;
 
   BinhLoi(
       {required this.serial,
       required this.description,
-      required this.isExpanded});
+      required this.isExpanded,
+      this.serialController,
+      this.descriptionController});
 
   BinhLoi.fromJson(Map<String, dynamic> json) {
     serial = json['serial'];

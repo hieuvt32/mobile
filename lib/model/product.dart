@@ -1,5 +1,6 @@
 class Product {
   late String address;
+  late String? diaChi;
   late String? product;
   late int quantity;
   late int actualQuantity;
@@ -45,6 +46,7 @@ class Product {
     enabledKG = ["", null, false, 0].contains(json['kg']);
     enabledVatTu = ["", null, false, 0].contains(json['material']);
     isExpanded = false;
+    diaChi = json['dia_chi'];
   }
 
   Map<String, dynamic> toJson() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/base_view.dart';
 import 'package:frappe_app/views/customize_app_bar.dart';
@@ -60,13 +61,18 @@ class _EditOrderViewState extends State<EditOrderView>
             )
           ],
         ),
-        body: _buidMainView(model),
+        body: model.isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : _buidMainView(model),
       ),
     );
   }
 
   Widget _buidMainView(EditOrderViewModel model) {
-    if (model.sellInWarehouse) {
+    if (model.sellInWarehouse &&
+        !model.isAvailableRoles([UserRole.KhachHang])) {
       return EditOrderSellInWareHouse();
     }
     return EditOrderSellNotInWareHouse();

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/address.dart';
@@ -15,8 +17,10 @@ import 'package:frappe_app/model/nguyen_vat_lieu_san_pham.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/views/base_viewmodel.dart';
+import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:injectable/injectable.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
@@ -27,6 +31,8 @@ class EditOrderViewModel extends BaseViewModel {
   late SignatureController _signatureSupplierController;
 
   Order? _order;
+
+  List<UserRole> _userRoles = [];
 
   GetCustomerByCompanyResponse? _responseGetCustomers;
 
@@ -75,9 +81,13 @@ class EditOrderViewModel extends BaseViewModel {
   // bool _readOnlyView = false;
   bool _haveDelivery = false;
 
+  bool _isLoading = false;
+
   String? _name;
 
   String? _title;
+
+  bool get isLoading => _isLoading;
 
   String get title => _title ?? '';
 
@@ -85,14 +95,16 @@ class EditOrderViewModel extends BaseViewModel {
 
   bool get readOnlyView {
     if (_order != null) {
-      if (_order!.status == 'Đã giao hàng') {
-        return true;
-      }
+      if (['Chờ xác nhận', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy']
+          .contains(_order!.status)) return true;
 
-      if (_order!.status == 'Đang giao hàng') {
-        return true;
-      }
+      // if (_order!.status == 'Đã giao hàng') {
+      //   return true;
+      // }else if (_order!.status == 'Đang giao hàng') {
+      //   return true;
+
     }
+
     return false;
   }
 
@@ -122,6 +134,14 @@ class EditOrderViewModel extends BaseViewModel {
   List<DanhSachNhapKho> get traVes => _traVes;
 
   List<DanhSachNhapKho> get hoanTras => _hoanTras;
+
+  List<UserRole> get userRoles {
+    if (_userRoles.length == 0) {
+      return Config().roles;
+    }
+
+    return _userRoles;
+  }
 
   String? get customerValue => _customerValue;
 
@@ -154,6 +174,8 @@ class EditOrderViewModel extends BaseViewModel {
   OrderState calculateState() {
     if (_order != null) {
       switch (_order!.status) {
+        case "Chờ xác nhận":
+          return OrderState.WaitForComfirm;
         case "Đã đặt hàng":
           if (_haveDelivery)
             return OrderState.WaitingForShipment;
@@ -163,6 +185,8 @@ class EditOrderViewModel extends BaseViewModel {
           return OrderState.Delivering;
         case "Đã giao hàng":
           return OrderState.Delivered;
+        case "Đã hủy":
+          return OrderState.Cancelled;
         default:
       }
     }
@@ -182,7 +206,21 @@ class EditOrderViewModel extends BaseViewModel {
     return '';
   }
 
+  bool isAvailableRoles(List<UserRole> roles) {
+    return _userRoles.any((element) => roles.contains(element));
+  }
+
   initState() {
+    // Save current role to  _userRoles variable;
+    _userRoles = Config().roles;
+
+    if (isAvailableRoles([UserRole.KhachHang])) {
+      String customerCode = Config().customerCode;
+
+      getCustomerByCode(customerCode);
+      customerSelect(customerCode);
+    }
+
     _signatureSupplierController = SignatureController(
       penStrokeWidth: 5,
       penColor: Colors.black,
@@ -256,11 +294,17 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   initPreData() async {
-    await getCustomerByCompany();
+    if (!_userRoles.contains(UserRole.KhachHang)) {
+      await getCustomerByCompany();
+    }
+
     await getNguyenVatLieuSanPham();
     await getVatTuSanPham();
     await getChiTietDonHang();
     await getChiTietDonNhapKho();
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   setName(String? name) {
@@ -270,7 +314,50 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   init() {
+    if (_name != null && _name!.length > 0) {
+      _isLoading = true;
+    }
+
     initState();
+  }
+
+  saveTemplateOrder(bool enableToSave) {
+    final String key = "order_template";
+
+    if (enableToSave) {
+      List<Map<String, dynamic>> listProduct = _products.map((value) {
+        return {
+          "actualKg": value.actualKg,
+          "address": value.address,
+          "kg": value.kg,
+          "material": value.material,
+          "product": value.product,
+          "quantity": value.quantity,
+          "status": value.status,
+          "type": value.type,
+          "unit": value.unit,
+          "unitPrice": value.unitPrice,
+        };
+      }).toList();
+
+      Config.set(key, jsonEncode(listProduct));
+    } else
+      Config.remove(key);
+
+    _sellInWarehouse = enableToSave;
+    notifyListeners();
+  }
+
+// customer logic code;
+  Future getCustomerByCode(String customerCode) async {
+    locator<Api>().getCusomterByCode(code: customerCode).then((response) {
+      Customer? customer = response.customer;
+      if (customer != null) {
+        _customers = [customer];
+        _customerValue = customerCode;
+        notifyListeners();
+      }
+    });
   }
 
   Future getCustomerByCompany() async {
@@ -545,7 +632,50 @@ class EditOrderViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  Future customerCreateOrder(BuildContext context) async {
+    try {
+      Customer customer = _customers[0];
+
+      _order!.email = customer.email;
+      _order!.paymentStatus = 'Chưa thanh toán';
+      _order!.phone = customer.phone;
+      _order!.products = _productForLocations;
+      _order!.sellInWarehouse = 0;
+      _order!.status = "Chờ xác nhận";
+      _order!.taxId = customer.taxId;
+      _order!.totalCost = 0;
+      _order!.vendor = customer.code;
+      _order!.vendorName = customer.realName;
+      _order!.type = 'M';
+
+      _order!.vendorAddress = '';
+
+      _order!.vendorName = customer.realName;
+
+      var createOrderResponse =
+          await locator<Api>().createHoaDonMuaBan(_order!);
+
+      FrappeAlert.successAlert(
+          title: 'Tạo đơn thành công',
+          context: context,
+          subtitle: 'Tạo đơn hàng thành công.');
+
+      initState();
+    } catch (err) {
+      FrappeAlert.errorAlert(
+          title: 'Error',
+          context: context,
+          subtitle: 'Có lỗi xảy ra, vui lòng thử lại sau.');
+    }
+  }
+
   Future createOrder(context) async {
+    // customer logic code
+    if (_userRoles.contains(UserRole.KhachHang)) {
+      await customerCreateOrder(context);
+      return;
+    }
+
     var imgId = Uuid().v1().toString();
     Attachments? customerAttachmemts;
     var customerBytes = await _signatureCustomerController.toPngBytes();
@@ -793,12 +923,35 @@ class EditOrderViewModel extends BaseViewModel {
     }
     notifyListeners();
   }
+
+  Future<void> cancelOrder(context) async {
+    try {
+      _order!.status = "Đã hủy";
+
+      await locator<Api>().updateHoaDonMuaBan(_order!);
+
+      FrappeAlert.successAlert(
+          title: 'Success',
+          context: context,
+          subtitle: 'Hủy đơn hàng thành công.');
+
+      Navigator.pop(context, true);
+    } catch (err) {
+      FrappeAlert.errorAlert(
+        title: 'Error',
+        context: context,
+        subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
+      );
+    }
+  }
 }
 
 enum OrderState {
+  WaitForComfirm,
   PreNewOrder,
   NewOrder,
   WaitingForShipment,
   Delivering,
-  Delivered
+  Delivered,
+  Cancelled
 }

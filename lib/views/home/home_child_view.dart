@@ -14,8 +14,10 @@ import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
+import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
+import 'package:frappe_app/views/edit_order/customer/customer_order_view.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
 import 'package:frappe_app/views/liability_report/liability_report.dart';
@@ -117,7 +119,7 @@ class _HomeChildViewState extends State<HomeChildView> {
           visible: true,
           roles: ["Khách Hàng"],
           view: (context) {
-            return ListOrderView();
+            return CustomerListOrderView();
           }),
       Item(
         icon: FrappeIcons.ban_hang,

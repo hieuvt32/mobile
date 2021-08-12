@@ -7,22 +7,13 @@ class ItemCardOrder extends StatelessWidget {
   ItemCardOrder(
       {required this.cartContent,
       required this.leftHeaderText,
-      required this.rightHeaderText});
+      required this.rightHeaderText,
+      required this.headerColor});
 
   final String leftHeaderText;
   final String rightHeaderText;
   final Widget cartContent;
-
-  Color getColorByType(int type) {
-    switch (type) {
-      case 0:
-        return hexToColor('#0072BC');
-      case 1:
-        return hexToColor('#FF0F00');
-      default:
-        return hexToColor('#1BBD5C');
-    }
-  }
+  final Color headerColor;
 
   Widget buildLimitTextLength(String content) {
     return RichText(
@@ -46,7 +37,7 @@ class ItemCardOrder extends StatelessWidget {
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(4),
                       topRight: Radius.circular(4)),
-                  color: getColorByType(0)),
+                  color: headerColor),
               padding: const EdgeInsets.only(left: 12, right: 12),
               height: 32,
               child: Row(

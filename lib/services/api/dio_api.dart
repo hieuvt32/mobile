@@ -12,6 +12,7 @@ import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/create_bao_binh_loi_request.dart';
 import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
@@ -1322,11 +1323,14 @@ class DioApi implements Api {
   }
 
   @override
-  Future<ListOrderResponse> getListOrder(int status) async {
+  Future<ListOrderResponse> getListOrder(
+      {int status, String customer, String type}) async {
     try {
+      dynamic params = {"status": status, "customer": customer};
+
       final response = await DioHelper.dio.get(
         '/method/getHoaDonMuaHang',
-        queryParameters: {"status": status},
+        queryParameters: params,
         options: Options(
           validateStatus: (status) {
             return status < 500;
@@ -1365,9 +1369,6 @@ class DioApi implements Api {
   Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
       String customerCode, String status) async {
     try {
-      print(customerCode);
-      print(status);
-
       final response = await DioHelper.dio.get(
         '/method/getDanhSachDonBaoBinhLoi',
         queryParameters: {"customer": customerCode, "status": status},
@@ -1377,8 +1378,6 @@ class DioApi implements Api {
           },
         ),
       );
-
-      print(response.statusCode);
 
       if (response.statusCode == 200) {
         var data = ListDonBaoBinhLoiRespone.fromJson(response.data);
@@ -2064,6 +2063,90 @@ class DioApi implements Api {
       final response = await DioHelper.dio.post(
         '/method/createBaoCaoNhamLan',
         data: request.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<dynamic> createBaoBinhLoi(CreateBaoBinhLoiRequest request) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/createDonBaoLoiBinh',
+        data: request.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future deleteDonBaoBinhLoi(String name) async {
+    print(name);
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/deleteDonBaoLoiBinh',
+        data: {'name': name},
         options: Options(
           validateStatus: (status) {
             return status < 500;

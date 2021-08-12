@@ -4,6 +4,7 @@ import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/address.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/utils/enums.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/base_view.dart';
@@ -12,14 +13,21 @@ import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_adress_model.da
 import 'package:frappe_app/views/expansion_custom_panel.dart';
 import 'package:frappe_app/widgets/frappe_button.dart';
 
-class ListBrokenGasAddress extends StatelessWidget {
+class ListBrokenGasAddress extends StatefulWidget {
   ListBrokenGasAddress({this.id});
   final String? id;
 
+  @override
+  _ListBrokenGasAddressState createState() => _ListBrokenGasAddressState();
+}
+
+class _ListBrokenGasAddressState extends State<ListBrokenGasAddress> {
   ExpansionItem buildBrokenGasListItem(
-    bool enableEdit,
-    BinhLoi item,
-  ) {
+      {required bool enableEdit,
+      required BinhLoi item,
+      required int childIndex,
+      required int parentIndex,
+      required EditGasBrokenViewModel model}) {
     return ExpansionItem(
         true,
         (isExpanded) => Container(
@@ -32,7 +40,10 @@ class ListBrokenGasAddress extends StatelessWidget {
                   enableEdit
                       ? isExpanded
                           ? GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                model.deleteBinhLoiItem(
+                                    parentIndex, childIndex);
+                              },
                               child: FrappeIcon(
                                 FrappeIcons.delete,
                                 size: 18,
@@ -61,6 +72,7 @@ class ListBrokenGasAddress extends StatelessWidget {
                           height: 32,
                           alignment: Alignment.centerLeft,
                           child: TextField(
+                            controller: item.serialController,
                             decoration: InputDecoration(
                               border: new OutlineInputBorder(
                                   borderSide:
@@ -98,6 +110,7 @@ class ListBrokenGasAddress extends StatelessWidget {
                       ? Container(
                           alignment: Alignment.centerLeft,
                           child: TextField(
+                            controller: item.descriptionController,
                             keyboardType: TextInputType.multiline,
                             maxLines: null,
                             decoration: InputDecoration(
@@ -121,8 +134,12 @@ class ListBrokenGasAddress extends StatelessWidget {
         ]);
   }
 
-  ExpansionItem buildExpansionItem(
-      bool enableEdit, DonBaoLoiAddress item, List<Address> deliveryAddresses) {
+  ExpansionItem buildExpansionItem({
+    required bool enableEdit,
+    required DonBaoLoiAddress item,
+    required int itemIndex,
+    required EditGasBrokenViewModel model,
+  }) {
     return ExpansionItem(
         item.isExpanded,
         (isExpanded) => Row(
@@ -139,13 +156,17 @@ class ListBrokenGasAddress extends StatelessWidget {
                                 hint: Text("Chọn địa chỉ"),
                                 isExpanded: true,
                                 decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.all(0),
                                     enabledBorder: InputBorder.none),
                                 icon: const Icon(Icons.arrow_drop_down),
                                 iconSize: 24,
                                 style:
                                     const TextStyle(color: Colors.deepPurple),
-                                onChanged: (String? newValue) {},
-                                items: deliveryAddresses.map((value) {
+                                onChanged: (String? newValue) {
+                                  model.changeAddress(
+                                      itemIndex, newValue ?? "");
+                                },
+                                items: model.deliveryAddresses.map((value) {
                                   return DropdownMenuItem<String>(
                                     value: value.diaChi,
                                     child: Text(value.diaChi),
@@ -170,30 +191,65 @@ class ListBrokenGasAddress extends StatelessWidget {
           ExpansionCustomPanel(
               backgroundBodyColor: Colors.white,
               backgroundTitleColor: hexToColor('#F2F8FC'),
-              items: item.listBinhloi.map((e) {
-                return buildBrokenGasListItem(enableEdit, e);
+              items: item.listBinhloi.asMap().entries.map((entry) {
+                return buildBrokenGasListItem(
+                    enableEdit: enableEdit,
+                    item: entry.value,
+                    parentIndex: itemIndex,
+                    childIndex: entry.key,
+                    model: model);
               }).toList()),
           SizedBox(
             height: 8,
           ),
           enableEdit
-              ? Container(
-                  alignment: Alignment.center,
-                  child: Container(
-                    alignment: Alignment.center,
-                    height: 40,
-                    width: 120,
-                    decoration: BoxDecoration(
-                        color: hexToColor("#0072BC"),
-                        borderRadius: BorderRadius.circular(4)),
-                    child: TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Thêm bình",
-                        style: TextStyle(color: Colors.white),
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 120,
+                        decoration: BoxDecoration(
+                            color: hexToColor("#0072BC"),
+                            borderRadius: BorderRadius.circular(4)),
+                        child: TextButton(
+                          onPressed: () {
+                            model.addBinhLoi(itemIndex);
+                          },
+                          child: Text(
+                            "Thêm bình",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(
+                      width: 40,
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: 40,
+                        width: 120,
+                        decoration: BoxDecoration(
+                            color: hexToColor("#FF0F00"),
+                            borderRadius: BorderRadius.circular(4)),
+                        child: TextButton(
+                          onPressed: () {
+                            model.deleteAddress(itemIndex);
+                          },
+                          child: Text(
+                            "Xóa địa chỉ",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                 )
               : SizedBox()
         ]);
@@ -203,7 +259,7 @@ class ListBrokenGasAddress extends StatelessWidget {
   Widget build(BuildContext context) {
     return BaseView<EditGasBrokenViewModel>(
         onModelReady: (model) {
-          model.initData(id);
+          model.initState(widget.id);
         },
         builder: (context, model, child) => Builder(builder: (context) {
               SingleDonBaoBinhLoiRespone? donBaoBinhLoi = model.donBaoBinhLoi;
@@ -235,10 +291,13 @@ class ListBrokenGasAddress extends StatelessWidget {
                                   backgroundIconColor:
                                       hexToColor("#000000").withOpacity(0.18),
                                   items: listDonBaoLoiAddress
-                                      .map((item) => buildExpansionItem(
-                                          enableEdit,
-                                          item,
-                                          model.deliveryAddresses))
+                                      .asMap()
+                                      .entries
+                                      .map((entry) => buildExpansionItem(
+                                          enableEdit: enableEdit,
+                                          itemIndex: entry.key,
+                                          item: entry.value,
+                                          model: model))
                                       .toList()),
                               enableEdit
                                   ? Padding(
@@ -258,7 +317,9 @@ class ListBrokenGasAddress extends StatelessWidget {
                                             ),
                                             height: 40,
                                             child: TextButton(
-                                                onPressed: () {},
+                                                onPressed: () {
+                                                  model.addNewAddress();
+                                                },
                                                 child: Text("Thêm địa chỉ")),
                                           )),
                                     )
@@ -277,6 +338,7 @@ class ListBrokenGasAddress extends StatelessWidget {
                               ),
                               enableEdit
                                   ? TextField(
+                                      controller: model.noteFieldController,
                                       maxLines: 4,
                                       keyboardType: TextInputType.multiline,
                                       decoration: InputDecoration(
@@ -307,7 +369,23 @@ class ListBrokenGasAddress extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(4)),
                                       child: TextButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          model
+                                              .createDonBaoBinhLoi()
+                                              .then((value) {
+                                            FrappeAlert.successAlert(
+                                                title:
+                                                    "Báo bình lỗi thành công.",
+                                                context: context);
+                                            model.initData();
+                                            model.notifyListeners();
+                                          }).catchError((err) {
+                                            FrappeAlert.errorAlert(
+                                                title:
+                                                    "Có lỗi xảy ra, vui lòng thử lại sau.",
+                                                context: context);
+                                          });
+                                        },
                                         child: Text(
                                           "Báo bình lỗi",
                                           style: TextStyle(color: Colors.white),
@@ -346,7 +424,10 @@ class ListBrokenGasAddress extends StatelessWidget {
                                               borderRadius:
                                                   BorderRadius.circular(4)),
                                           child: TextButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              model
+                                                  .deleteDonBinhBaoLoi(context);
+                                            },
                                             child: Text(
                                               "Xóa",
                                               style: TextStyle(
