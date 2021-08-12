@@ -13,6 +13,7 @@ import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_guyen_vat_lieu_san_pham_response.dart';
+import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/nguyen_vat_lieu_san_pham.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
@@ -72,6 +73,12 @@ class EditOrderViewModel extends BaseViewModel {
   late List<NguyenVatLieuSanPham> _nguyenVatLieuVatTus;
 
   late List<NguyenVatLieuSanPham> _nguyenVatLieuSanPhams;
+
+  GiaoViecSignatureResponse? _giaoViecSignatureResponse;
+
+  late List<GiaoViecSignature> _giaoViecSignatures;
+
+  List<GiaoViecSignature> get giaoViecSignatures => _giaoViecSignatures;
 
   // Object? _diaChiSelect;
 
@@ -220,6 +227,9 @@ class EditOrderViewModel extends BaseViewModel {
       getCustomerByCode(customerCode);
       customerSelect(customerCode);
     }
+    _isLoading = true;
+
+    _giaoViecSignatures = [];
 
     _signatureSupplierController = SignatureController(
       penStrokeWidth: 5,
@@ -304,6 +314,9 @@ class EditOrderViewModel extends BaseViewModel {
     await getChiTietDonNhapKho();
 
     _isLoading = false;
+
+    await getGiaoViecSignature();
+    _isLoading = false;
     notifyListeners();
   }
 
@@ -360,6 +373,19 @@ class EditOrderViewModel extends BaseViewModel {
     });
   }
 
+  GiaoViecSignature? getGiaoViecSignatureByAddress(String address) {
+    var giaoViecSignatureByAddress = _giaoViecSignatures
+        .where((element) => element.address == address)
+        .toList();
+
+    if (giaoViecSignatureByAddress != null &&
+        giaoViecSignatureByAddress.length > 0) {
+      return giaoViecSignatureByAddress[0];
+    }
+
+    return null;
+  }
+
   Future getCustomerByCompany() async {
     _responseGetCustomers = await locator<Api>().getCustomerByCompany();
 
@@ -367,6 +393,19 @@ class EditOrderViewModel extends BaseViewModel {
             _responseGetCustomers!.customers != null
         ? _responseGetCustomers!.customers!
         : [];
+    notifyListeners();
+  }
+
+  Future getGiaoViecSignature() async {
+    if (!["", null, false, 0].contains(_name)) {
+      _giaoViecSignatureResponse =
+          await locator<Api>().getGiaoViecSignature(_name!);
+
+      _giaoViecSignatures = _giaoViecSignatureResponse != null &&
+              _giaoViecSignatureResponse!.message != null
+          ? _giaoViecSignatureResponse!.message
+          : [];
+    }
     notifyListeners();
   }
 
@@ -543,6 +582,7 @@ class EditOrderViewModel extends BaseViewModel {
       unitPrice: 0,
       enabledVatTu: false,
       enabledKG: false,
+      diaChi: "",
     ));
     _productEditControllers.add({
       "kgController": TextEditingController(),
@@ -566,6 +606,7 @@ class EditOrderViewModel extends BaseViewModel {
       unitPrice: 0,
       enabledVatTu: false,
       enabledKG: false,
+      diaChi: "",
     ));
     _productForLocationEditControllers.add({
       "kgController": TextEditingController(),
@@ -669,68 +710,56 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
-  Future createOrder(context) async {
-    // customer logic code
+  Future createOrder(context, {String type = 'B'}) async {
     if (_userRoles.contains(UserRole.KhachHang)) {
       await customerCreateOrder(context);
       return;
     }
 
-    var imgId = Uuid().v1().toString();
     Attachments? customerAttachmemts;
-    var customerBytes = await _signatureCustomerController.toPngBytes();
-    if (customerBytes != null) {
-      var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
-        doctype: 'HLGas_HoaDonMuaBan',
-        name: _name!, //
-        file: GasFile(
-          file: customerBytes,
-          fileName: 'hlgas_hoadonmuaban-$imgId.png',
-          fieldName: 'attach_signature_customer_image',
-        ),
-      );
-
-      if (responseUploadCustomer != null &&
-          responseUploadCustomer.attachments != null) {
-        customerAttachmemts = responseUploadCustomer.attachments;
-      } else {
-        customerAttachmemts = null;
-      }
-    } else {
-      FrappeAlert.errorAlert(
-        title: "Thông báo",
-        subtitle: "Bạn phải có chữ ký khách hàng, trước khi hoàn thành đơn.",
-        context: context,
-      );
-      return;
-    }
-
     Attachments? supplierAttachments;
-    var supplierBytes = await _signatureSupplierController.toPngBytes();
-    if (supplierBytes != null) {
-      var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
-        doctype: 'HLGas_HoaDonMuaBan',
-        name: _name!, //
-        file: GasFile(
-          file: supplierBytes,
-          fileName: 'hlgas_hoadonmuaban-$imgId.png',
-          fieldName: '  ',
-        ),
-      );
+    if (order!.sellInWarehouse == 1) {
+      var imgId = Uuid().v1().toString();
+      var customerBytes = await _signatureCustomerController.toPngBytes();
+      if (customerBytes != null) {
+        var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
+          doctype: 'HLGas_HoaDonMuaBan',
+          name: _name!, //
+          file: GasFile(
+            file: customerBytes,
+            fileName: 'hlgas_hoadonmuaban-$imgId.png',
+            fieldName: 'attach_signature_customer_image',
+          ),
+        );
 
-      if (responseUploadSupplier != null &&
-          responseUploadSupplier.attachments != null) {
-        supplierAttachments = responseUploadSupplier.attachments;
-      } else {
-        supplierAttachments = null;
+        if (responseUploadCustomer != null &&
+            responseUploadCustomer.attachments != null) {
+          customerAttachmemts = responseUploadCustomer.attachments;
+        } else {
+          customerAttachmemts = null;
+        }
       }
-    } else {
-      FrappeAlert.errorAlert(
-        title: "Thông báo",
-        subtitle: "Bạn phải có chữ ký nhà cung cấp, trước khi hoàn thành đơn.",
-        context: context,
-      );
-      return;
+
+      imgId = Uuid().v1().toString();
+      var supplierBytes = await _signatureSupplierController.toPngBytes();
+      if (supplierBytes != null) {
+        var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
+          doctype: 'HLGas_HoaDonMuaBan',
+          name: _name!, //
+          file: GasFile(
+            file: supplierBytes,
+            fileName: 'hlgas_hoadonmuaban-$imgId.png',
+            fieldName: 'attach_signature_supplier_image',
+          ),
+        );
+
+        if (responseUploadSupplier != null &&
+            responseUploadSupplier.attachments != null) {
+          supplierAttachments = responseUploadSupplier.attachments;
+        } else {
+          supplierAttachments = null;
+        }
+      }
     }
     // if (!_sellInWarehouse) {
     //   for
@@ -742,7 +771,7 @@ class EditOrderViewModel extends BaseViewModel {
         : [];
 
     var elements =
-        customers!.where((element) => element.name == _customerValue).toList();
+        customers!.where((element) => element.code == _customerValue).toList();
 
     if (elements != null && elements.length > 0) {
       _order!.email = elements[0].email;
@@ -750,12 +779,14 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.phone = elements[0].phone;
       _order!.products = _sellInWarehouse ? _products : _productForLocations;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
-      // _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
+      _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
       _order!.taxId = elements[0].taxId;
       _order!.totalCost = 0;
-      _order!.vendor = elements[0].name;
+      _order!.vendor = elements[0].code;
 
       _order!.vendorAddress = '';
+
+      _order!.type = type;
 
       _order!.vendorName = elements[0].realName;
       _order!.attachSignatureCustomerImage =
@@ -816,47 +847,50 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
-  Future updateOrder(context, {String status = ''}) async {
-    var imgId = Uuid().v1().toString();
+  Future updateOrder(context, {String status = '', String type = 'B'}) async {
     Attachments? customerAttachmemts;
-    var customerBytes = await _signatureCustomerController.toPngBytes();
-    if (customerBytes != null) {
-      var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
-        doctype: 'HLGas_HoaDonMuaBan',
-        name: _name!, //
-        file: GasFile(
-          file: customerBytes,
-          fileName: 'hlgas_hoadonmuaban-$imgId.png',
-          fieldName: 'attach_signature_customer_image',
-        ),
-      );
-
-      if (responseUploadCustomer != null &&
-          responseUploadCustomer.attachments != null) {
-        customerAttachmemts = responseUploadCustomer.attachments;
-      } else {
-        customerAttachmemts = null;
-      }
-    }
-
     Attachments? supplierAttachments;
-    var supplierBytes = await _signatureSupplierController.toPngBytes();
-    if (supplierBytes != null) {
-      var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
-        doctype: 'HLGas_HoaDonMuaBan',
-        name: _name!, //
-        file: GasFile(
-          file: supplierBytes,
-          fileName: 'hlgas_hoadonmuaban-$imgId.png',
-          fieldName: '  ',
-        ),
-      );
+    if (order!.sellInWarehouse == 1) {
+      var imgId = Uuid().v1().toString();
+      var customerBytes = await _signatureCustomerController.toPngBytes();
+      if (customerBytes != null) {
+        var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
+          doctype: 'HLGas_HoaDonMuaBan',
+          name: _name!, //
+          file: GasFile(
+            file: customerBytes,
+            fileName: 'hlgas_hoadonmuaban-$imgId.png',
+            fieldName: 'attach_signature_customer_image',
+          ),
+        );
 
-      if (responseUploadSupplier != null &&
-          responseUploadSupplier.attachments != null) {
-        supplierAttachments = responseUploadSupplier.attachments;
-      } else {
-        supplierAttachments = null;
+        if (responseUploadCustomer != null &&
+            responseUploadCustomer.attachments != null) {
+          customerAttachmemts = responseUploadCustomer.attachments;
+        } else {
+          customerAttachmemts = null;
+        }
+      }
+
+      imgId = Uuid().v1().toString();
+      var supplierBytes = await _signatureSupplierController.toPngBytes();
+      if (supplierBytes != null) {
+        var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
+          doctype: 'HLGas_HoaDonMuaBan',
+          name: _name!, //
+          file: GasFile(
+            file: supplierBytes,
+            fileName: 'hlgas_hoadonmuaban-$imgId.png',
+            fieldName: 'attach_signature_supplier_image',
+          ),
+        );
+
+        if (responseUploadSupplier != null &&
+            responseUploadSupplier.attachments != null) {
+          supplierAttachments = responseUploadSupplier.attachments;
+        } else {
+          supplierAttachments = null;
+        }
       }
     }
 
@@ -866,7 +900,7 @@ class EditOrderViewModel extends BaseViewModel {
         : [];
 
     var elements =
-        customers!.where((element) => element.name == _order!.vendor).toList();
+        customers!.where((element) => element.code == _order!.vendor).toList();
 
     if (elements != null && elements.length > 0) {
       _order!.email = elements[0].email;
@@ -881,9 +915,11 @@ class EditOrderViewModel extends BaseViewModel {
           : status;
       _order!.taxId = elements[0].taxId;
       _order!.totalCost = 0;
-      _order!.vendor = elements[0].name;
+      _order!.vendor = elements[0].code;
 
       _order!.vendorAddress = '';
+
+      _order!.type = type;
 
       _order!.vendorName = elements[0].realName;
       _order!.attachSignatureCustomerImage =
@@ -943,6 +979,66 @@ class EditOrderViewModel extends BaseViewModel {
         subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
       );
     }
+  }
+
+  Future updateGiaoViecSignature(context,
+      {String status = '', String address = ''}) async {
+    Attachments? customerAttachmemts;
+    Attachments? supplierAttachments;
+    var imgId = Uuid().v1().toString();
+    var customerBytes = await _signatureCustomerController.toPngBytes();
+    if (customerBytes != null) {
+      var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
+        doctype: 'HLGas_GiaoViec_Signature',
+        name: _name!, //
+        file: GasFile(
+          file: customerBytes,
+          fileName: 'hlgas_giaoviec_signature-$imgId.png',
+          fieldName: 'attach_signature_customer_image',
+        ),
+      );
+
+      if (responseUploadCustomer != null &&
+          responseUploadCustomer.attachments != null) {
+        customerAttachmemts = responseUploadCustomer.attachments;
+      } else {
+        customerAttachmemts = null;
+      }
+    }
+
+    imgId = Uuid().v1().toString();
+    var supplierBytes = await _signatureSupplierController.toPngBytes();
+    if (supplierBytes != null) {
+      var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
+        doctype: 'HLGas_GiaoViec_Signature',
+        name: _name!, //
+        file: GasFile(
+          file: supplierBytes,
+          fileName: 'hlgas_giaoviec_signature-$imgId.png',
+          fieldName: 'attach_signature_deliver_image',
+        ),
+      );
+
+      if (responseUploadSupplier != null &&
+          responseUploadSupplier.attachments != null) {
+        supplierAttachments = responseUploadSupplier.attachments;
+      } else {
+        supplierAttachments = null;
+      }
+    }
+
+    await locator<Api>().updateGiaoViecSignature(
+        _order!.name,
+        status != null && status != '' ? status : _order!.status,
+        address,
+        customerAttachmemts != null ? customerAttachmemts.fileUrl : '',
+        supplierAttachments != null ? supplierAttachments.fileUrl : '');
+
+    // if(updateGiaoViecSignatureResponse != null) {
+
+    // }
+
+    notifyListeners();
   }
 }
 

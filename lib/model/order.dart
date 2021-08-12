@@ -3,6 +3,7 @@ import 'package:frappe_app/model/product.dart';
 class Order {
   late String vendorName;
   late DateTime creation;
+  late DateTime modified;
   late String status;
   late String name;
   late String employeeName;
@@ -52,6 +53,7 @@ class Order {
   }) {
     coGiaoVanVien = false;
     creation = DateTime.now();
+    modified = DateTime.now();
   }
 
   Order.fromJson(Map<String, dynamic> json) {
@@ -91,6 +93,11 @@ class Order {
             ? ''
             : json['attach_signature_customer_image'];
     coGiaoVanVien = employeeName != '' && plate != '';
+    type = json['type'] == null ? 'B' : json['type'];
+    var modifiedDate = json['modified'] != null
+        ? DateTime.tryParse(json['modified'])
+        : DateTime.now();
+    modified = modifiedDate != null ? modifiedDate : DateTime.now();
   }
 
   Map<String, dynamic> toJson() {
@@ -108,6 +115,7 @@ class Order {
     data['tax_id'] = taxId;
     data['vendor_address'] = vendorAddress;
     data['total_cost'] = totalCost;
+    data['type'] = type;
     final List<Map<String, dynamic>> lstProduct =
         products != null ? products.map((e) => e.toJson()).toList() : [];
     data['product_list'] = lstProduct;

@@ -11,9 +11,11 @@ import '../services/connectivity_service.dart' as _i8;
 import '../services/storage_service.dart' as _i20;
 import '../views/awesome_bar/awesome_bar_viewmodel.dart' as _i6;
 import '../views/change_password_viewmodel.dart' as _i7;
-import '../views/desk/desk_viewmodel.dart' as _i10;
-import '../views/edit_gas_broken/list_broken_gas_adress_model.dart' as _i12;
-import '../views/edit_order/common_views/edit_order_viewmodel.dart' as _i13;
+import '../views/desk/desk_viewmodel.dart' as _i9;
+import '../views/edit_gas_broken/list_broken_gas_adress_model.dart' as _i11;
+import '../views/edit_order/common_views/edit_order_viewmodel.dart' as _i12;
+import '../views/edit_order/transportation_views/transportation_viewmodel.dart'
+    as _i21;
 import '../views/form_view/bottom_sheets/assignees/assignees_bottom_sheet_viewmodel.dart'
     as _i5;
 import '../views/form_view/bottom_sheets/attachments/add_attachments_bottom_sheet_viewmodel.dart'
@@ -53,24 +55,25 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
   gh.lazySingleton<_i7.ChangePasswordViewModel>(
       () => _i7.ChangePasswordViewModel());
   gh.lazySingleton<_i8.ConnectivityService>(() => _i8.ConnectivityService());
-
-  gh.lazySingleton<_i10.DeskViewModel>(() => _i10.DeskViewModel());
-  gh.lazySingleton<_i11.EditFilterBottomSheetViewModel>(
-      () => _i11.EditFilterBottomSheetViewModel());
-  gh.lazySingleton<_i12.EditGasBrokenViewModel>(
-      () => _i12.EditGasBrokenViewModel());
-  gh.lazySingleton<_i13.EditOrderViewModel>(() => _i13.EditOrderViewModel());
-  gh.lazySingleton<_i14.FiltersBottomSheetViewModel>(
-      () => _i14.FiltersBottomSheetViewModel());
-  gh.lazySingleton<_i15.FormViewViewModel>(() => _i15.FormViewViewModel());
-  gh.lazySingleton<_i16.ListViewViewModel>(() => _i16.ListViewViewModel());
-  gh.lazySingleton<_i17.LoginViewModel>(() => _i17.LoginViewModel());
-  gh.lazySingleton<_i18.NewDocViewModel>(() => _i18.NewDocViewModel());
-  gh.lazySingleton<_i19.ShareBottomSheetViewModel>(
-      () => _i19.ShareBottomSheetViewModel());
-  gh.lazySingleton<_i20.StorageService>(() => _i20.StorageService());
-  gh.lazySingleton<_i21.TagsBottomSheetViewModel>(
-      () => _i21.TagsBottomSheetViewModel());
+  gh.lazySingleton<_i9.DeskViewModel>(() => _i9.DeskViewModel());
+  gh.lazySingleton<_i10.EditFilterBottomSheetViewModel>(
+      () => _i10.EditFilterBottomSheetViewModel());
+  gh.lazySingleton<_i11.EditGasBrokenViewModel>(
+      () => _i11.EditGasBrokenViewModel());
+  gh.lazySingleton<_i12.EditOrderViewModel>(() => _i12.EditOrderViewModel());
+  gh.lazySingleton<_i13.FiltersBottomSheetViewModel>(
+      () => _i13.FiltersBottomSheetViewModel());
+  gh.lazySingleton<_i14.FormViewViewModel>(() => _i14.FormViewViewModel());
+  gh.lazySingleton<_i15.ListViewViewModel>(() => _i15.ListViewViewModel());
+  gh.lazySingleton<_i16.LoginViewModel>(() => _i16.LoginViewModel());
+  gh.lazySingleton<_i17.NewDocViewModel>(() => _i17.NewDocViewModel());
+  gh.lazySingleton<_i18.ShareBottomSheetViewModel>(
+      () => _i18.ShareBottomSheetViewModel());
+  gh.lazySingleton<_i19.StorageService>(() => _i19.StorageService());
+  gh.lazySingleton<_i20.TagsBottomSheetViewModel>(
+      () => _i20.TagsBottomSheetViewModel());
+  gh.lazySingleton<_i21.TransportationViewModel>(
+      () => _i21.TransportationViewModel());
   gh.lazySingleton<_i22.ViewAttachmenetsBottomSheetViewModel>(
       () => _i22.ViewAttachmenetsBottomSheetViewModel());
   gh.lazySingleton<_i23.ViewReviewsBottomSheetViewModel>(

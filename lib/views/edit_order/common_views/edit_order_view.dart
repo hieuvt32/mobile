@@ -25,10 +25,10 @@ class _EditOrderViewState extends State<EditOrderView>
   @override
   Widget build(BuildContext context) {
     return BaseView<EditOrderViewModel>(
-      onModelReady: (model) {
+      onModelReady: (model) async {
         model.setName(widget.name);
         model.init();
-        model.initPreData();
+        await model.initPreData();
         model.setHaveDelivery(widget.haveDelivery);
         // this.initTab();
       },

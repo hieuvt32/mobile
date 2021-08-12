@@ -18,6 +18,7 @@ import 'package:frappe_app/views/customer_list_order/customer_list_order_view.da
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
 import 'package:frappe_app/views/edit_order/customer/customer_order_view.dart';
+import 'package:frappe_app/views/edit_order/transportation_views/transportation_list.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
 import 'package:frappe_app/views/liability_report/liability_report.dart';
@@ -134,7 +135,9 @@ class _HomeChildViewState extends State<HomeChildView> {
     Item(
       icon: FrappeIcons.truck,
       childrens: [],
-      // view: ProductionReportView(),
+      view: (context) {
+        return TransportationList();
+      },
       text: "Giao vận",
       roles: ["Giám Đốc", "Giao Vận"],
       visible: true,

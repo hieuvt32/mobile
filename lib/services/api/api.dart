@@ -20,6 +20,7 @@ import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
+import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/model/list_order_response.dart';
@@ -85,8 +86,8 @@ abstract class Api {
     ChangePasswordRequest changePasswordRequest,
   );
 
-  Future<ListOrderResponse> getListOrder(
-      {required int status, String? customer, String? type});
+  Future<ListOrderResponse> getListOrder(int status,
+      {customer, type, int? sellInWareHouse});
 
   Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
       String customerCode, String status);
@@ -108,7 +109,17 @@ abstract class Api {
 
   Future<UpdateDonNhapKhoResponse> updateDonNhapKho(DonNhapKho donNhapKho);
 
+  Future<dynamic> updateGiaoViecSignature(
+    String order,
+    String status,
+    String address,
+    String attachSignatureCustomerImage,
+    String attachSignatureDeliverImage,
+  );
+
   Future<GetSingleDonNhapKhoResponse> getSingleDonNhapKho(String maDon);
+
+  Future<GiaoViecSignatureResponse> getGiaoViecSignature(String order);
 
   Future<UpdateBienBanKiemKhoResponse> updateBienBanKiemKho(
     int type,

@@ -28,6 +28,7 @@ import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
+import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/model/list_order_response.dart';
@@ -1323,14 +1324,28 @@ class DioApi implements Api {
   }
 
   @override
-  Future<ListOrderResponse> getListOrder(
-      {int status, String customer, String type}) async {
+  Future<ListOrderResponse> getListOrder(int status,
+      {sellInWareHouse, customer, type}) async {
     try {
-      dynamic params = {"status": status, "customer": customer};
+      var data = {
+        "status": status,
+      };
+
+      if (sellInWareHouse != null) {
+        data["sell_in_warehouse"] = sellInWareHouse;
+      }
+
+      if (customer != null) {
+        data["customer"] = customer;
+      }
+
+      if (type != null) {
+        data['type'] = type;
+      }
 
       final response = await DioHelper.dio.get(
         '/method/getHoaDonMuaHang',
-        queryParameters: params,
+        queryParameters: data,
         options: Options(
           validateStatus: (status) {
             return status < 500;
@@ -2059,7 +2074,6 @@ class DioApi implements Api {
   @override
   Future<dynamic> createBaoNhamLan(CreateBaoNhamLanRequest request) async {
     try {
-      dynamic json = request.toJson();
       final response = await DioHelper.dio.post(
         '/method/createBaoCaoNhamLan',
         data: request.toJson(),
@@ -2079,7 +2093,6 @@ class DioApi implements Api {
         );
       }
     } catch (e) {
-      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {
@@ -2102,28 +2115,32 @@ class DioApi implements Api {
   @override
   Future<dynamic> createBaoBinhLoi(CreateBaoBinhLoiRequest request) async {
     try {
-      final response = await DioHelper.dio.post(
-        '/method/createDonBaoLoiBinh',
-        data: request.toJson(),
-        options: Options(
-          validateStatus: (status) {
-            return status < 500;
-          },
-        ),
-      );
+      final response = await DioHelper.dio.post('/method/createDonBaoLoiBinh',
+          data: request.toJson(), options: Options(
+        validateStatus: (status) {
+          return status < 500;
+        },
+      ));
 
       if (response.statusCode == 200) {
-        return response;
-      } else {
+        return GiaoViecSignatureResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
         throw ErrorResponse(
           statusCode: response.statusCode,
-          statusMessage: response.data["message"],
+          statusMessage: response.statusMessage,
         );
+      } else {
+        throw ErrorResponse();
       }
     } catch (e) {
-      print(e);
       if (e is DioError) {
-        var error = e.error;
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
         if (error is SocketException) {
           throw ErrorResponse(
             statusCode: HttpStatus.serviceUnavailable,
@@ -2131,8 +2148,62 @@ class DioApi implements Api {
           );
         } else {
           throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<dynamic> updateGiaoViecSignature(
+      String order,
+      String status,
+      String address,
+      String attachSignatureCustomerImage,
+      String attachSignatureDeliverImage) async {
+    var data = {
+      'order': order,
+      'status': status,
+      'address': address,
+      'attach_signature_customer_image': attachSignatureCustomerImage,
+      'attach_signature_deliver_image': attachSignatureDeliverImage,
+    };
+
+    try {
+      var response = await DioHelper.dio.post(
+        '/method/updateGiaoViecSignature',
+        data: data,
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
             statusMessage: error.message,
-            statusCode: error,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
           );
         }
       } else {
@@ -2155,15 +2226,16 @@ class DioApi implements Api {
       );
 
       if (response.statusCode == 200) {
-        return response;
-      } else {
+        return GiaoViecSignatureResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
         throw ErrorResponse(
           statusCode: response.statusCode,
-          statusMessage: response.data["message"],
+          statusMessage: response.statusMessage,
         );
+      } else {
+        throw ErrorResponse();
       }
     } catch (e) {
-      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {
@@ -2172,13 +2244,50 @@ class DioApi implements Api {
             statusMessage: error.message,
           );
         } else {
-          throw ErrorResponse(
-            statusMessage: error.message,
-            statusCode: error,
-          );
+          throw ErrorResponse(statusMessage: error.message);
         }
       } else {
-        throw e;
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<GiaoViecSignatureResponse> getGiaoViecSignature(String order) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getAllGiaoViecSignature',
+        queryParameters: {'order': order},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GiaoViecSignatureResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
       }
     }
   }
