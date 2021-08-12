@@ -105,6 +105,8 @@ class EditOrderViewModel extends BaseViewModel {
       if (['Chờ xác nhận', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy']
           .contains(_order!.status)) return true;
 
+      if (isAvailableRoles([UserRole.KhachHang])) return true;
+
       // if (_order!.status == 'Đã giao hàng') {
       //   return true;
       // }else if (_order!.status == 'Đang giao hàng') {
@@ -227,7 +229,6 @@ class EditOrderViewModel extends BaseViewModel {
       getCustomerByCode(customerCode);
       customerSelect(customerCode);
     }
-    _isLoading = true;
 
     _giaoViecSignatures = [];
 
@@ -313,9 +314,8 @@ class EditOrderViewModel extends BaseViewModel {
     await getChiTietDonHang();
     await getChiTietDonNhapKho();
 
-    _isLoading = false;
-
     await getGiaoViecSignature();
+
     _isLoading = false;
     notifyListeners();
   }

@@ -84,19 +84,19 @@ class _ListOrderViewState extends State<ListOrderView>
 
     _responseDaGiaoHang = null;
 
-    locator<Api>().getListOrder(status: 0).then((value) {
+    locator<Api>().getListOrder(0).then((value) {
       setState(() {
         _responseDaDatHang = value;
       });
     });
 
-    locator<Api>().getListOrder(status: 1).then((value) {
+    locator<Api>().getListOrder(1).then((value) {
       setState(() {
         _responseDangGiaoHang = value;
       });
     });
 
-    locator<Api>().getListOrder(status: 2).then((value) {
+    locator<Api>().getListOrder(2).then((value) {
       setState(() {
         _responseDaGiaoHang = value;
       });

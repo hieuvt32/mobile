@@ -66,8 +66,8 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
     Map<String, double> totalPriceByAddress = {};
 
     products.forEach((product) {
-      totalPriceByAddress[product.diaChi ?? ""] =
-          totalPriceByAddress[product.diaChi ?? ""] ?? 0 + product.unitPrice;
+      totalPriceByAddress[product.diaChi] =
+          totalPriceByAddress[product.diaChi] ?? 0 + product.unitPrice;
     });
 
     return Container(
@@ -179,16 +179,11 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
       String customerCode = userId!.split("@")[0];
 
       List<ListOrderResponse> listResponse = await Future.wait([
-        locator<Api>()
-            .getListOrder(status: 0, customer: customerCode, type: "M"),
-        locator<Api>()
-            .getListOrder(status: 1, customer: customerCode, type: "M"),
-        locator<Api>()
-            .getListOrder(status: 2, customer: customerCode, type: "M"),
-        locator<Api>()
-            .getListOrder(status: 3, customer: customerCode, type: "M"),
-        locator<Api>()
-            .getListOrder(status: 4, customer: customerCode, type: "M")
+        locator<Api>().getListOrder(0, customer: customerCode, type: "M"),
+        locator<Api>().getListOrder(1, customer: customerCode, type: "M"),
+        locator<Api>().getListOrder(2, customer: customerCode, type: "M"),
+        locator<Api>().getListOrder(3, customer: customerCode, type: "M"),
+        locator<Api>().getListOrder(4, customer: customerCode, type: "M")
       ]);
 
       setState(() {

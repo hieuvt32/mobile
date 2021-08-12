@@ -1327,7 +1327,7 @@ class DioApi implements Api {
   Future<ListOrderResponse> getListOrder(int status,
       {sellInWareHouse, customer, type}) async {
     try {
-      var data = {
+      Map<String, dynamic> data = {
         "status": status,
       };
 
@@ -1364,6 +1364,7 @@ class DioApi implements Api {
         throw ErrorResponse();
       }
     } catch (e) {
+      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {
