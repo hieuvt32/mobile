@@ -1,5 +1,8 @@
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_not_confirm_modal.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
@@ -29,6 +32,25 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
 
   _buildBottomButton() {
     switch (widget.model.orderState) {
+      case OrderState.WaitForComfirm:
+        return Container(
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: hexToColor("#FF0F00"))),
+            height: 48,
+            width: double.infinity,
+            child: TextButton(
+                onPressed: () {
+                  widget.model.cancelOrder(context);
+                },
+                child: Text(
+                  "Hủy đơn hàng",
+                  style: TextStyle(color: hexToColor("#FF0F00"), fontSize: 16),
+                )),
+          ),
+        );
+
       case OrderState.PreNewOrder:
       case OrderState.NewOrder:
         return Row(
@@ -83,11 +105,13 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                 }
               },
               child: Text(
-                widget.model.sellInWarehouse
-                    ? 'Hoàn thành'
-                    : (widget.model.orderState == OrderState.PreNewOrder
-                        ? 'Tạo đơn'
-                        : 'Lưu'),
+                widget.model.userRoles.contains(UserRole.KhachHang)
+                    ? "Đặt hàng"
+                    : widget.model.sellInWarehouse
+                        ? 'Hoàn thành'
+                        : (widget.model.orderState == OrderState.PreNewOrder
+                            ? 'Tạo đơn'
+                            : 'Lưu'),
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -203,7 +227,10 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                   )
                 ],
               );
+      case OrderState.Cancelled:
+      // return Container(child: ,)
       default:
+        return Container();
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/don_bao_binh_loi.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/item_cart_order.dart';
@@ -80,9 +81,12 @@ class _ListBrokenOrderViewState extends State<ListBrokenOrderView>
   ) {
     List<DonBaoBinhLoi> list;
 
+    Color headerCardColor;
     if (status == BrokenOrderStatus.responded) {
       list = listOrderResponded ?? [];
+      headerCardColor = hexToColor("#0072BC");
     } else {
+      headerCardColor = hexToColor("#FF0F00");
       list = listOrderNotResponded ?? [];
     }
 
@@ -95,16 +99,17 @@ class _ListBrokenOrderViewState extends State<ListBrokenOrderView>
             return GestureDetector(
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  new MaterialPageRoute(
                     builder: (context) {
                       return ListBrokenGasAddress(
                         id: item.id,
                       );
                     },
                   ),
-                );
+                ).then((refresh) => refresh ? this._onFetchData() : null);
               },
               child: ItemCardOrder(
+                headerColor: headerCardColor,
                 cartContent: buildCardContent(item.addresses),
                 leftHeaderText: item.id,
                 rightHeaderText:
@@ -149,7 +154,10 @@ class _ListBrokenOrderViewState extends State<ListBrokenOrderView>
         listOrderNotResponded = value.listDonBaoBinhLoi;
       });
     }).catchError((err) {
-      listOrderNotResponded = [];
+      FrappeAlert.errorAlert(title: err.statusMessage, context: context);
+      setState(() {
+        listOrderNotResponded = [];
+      });
     });
   }
 

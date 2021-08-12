@@ -45,6 +45,70 @@ class _AssetLiabilityReportDetailState
   List<BaoCaoCongNoDetail> listBaoCaoCongNoDetail = [];
   bool isLoading = true;
 
+  _buildHeaderListView() {
+    final List<String> listTitle = ["Ngày", "Nhận", "Kg", "Trả", "Nợ"];
+    return Container(
+      height: 42,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          color: hexToColor("#0072BC").withOpacity(0.3),
+          border: Border(
+              bottom: BorderSide(
+                  color: hexToColor("#0072BC").withOpacity(0.3), width: 1))),
+      child: Row(
+          children: listTitle.asMap().entries.map((entry) {
+        return Expanded(
+          flex: entry.key == 0 ? 2 : 1,
+          child: Text(
+            entry.value,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        );
+      }).toList()),
+    );
+  }
+
+  _buildListItemView(BaoCaoCongNoDetail baoCaoCongNo) {
+    final List<String> listRow = [
+      baoCaoCongNo.date,
+      baoCaoCongNo.nhan,
+      baoCaoCongNo.kg,
+      baoCaoCongNo.tra,
+      baoCaoCongNo.no
+    ];
+
+    return Container(
+      height: 42,
+      decoration: BoxDecoration(
+          border: Border(
+              bottom: BorderSide(
+                  color: hexToColor("#0072BC").withOpacity(0.3), width: 1))),
+      alignment: Alignment.center,
+      child: Row(
+          children: listRow.asMap().entries.map((entry) {
+        print(entry.value);
+        return Expanded(
+            flex: entry.key == 0 ? 2 : 1,
+            child: Text(
+              entry.value,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 16,
+                  color: (entry.key == 0 && entry.value == "Chuyển")
+                      ? hexToColor("#FF0F00")
+                      : null),
+            ));
+      }).toList()),
+    );
+  }
+
+  _buildListContentView() {
+    return listBaoCaoCongNoDetail.map((e) {
+      return _buildListItemView(e);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,64 +119,9 @@ class _AssetLiabilityReportDetailState
             ? Center(
                 child: CircularProgressIndicator(),
               )
-            : SingleChildScrollView(
-                child: Container(
-                width: double.infinity,
-                alignment: Alignment.topCenter,
-                child: IgnorePointer(
-                    child: Container(
-                  child: DataTable(
-                      columnSpacing: 60,
-                      headingRowColor: MaterialStateProperty.all(
-                          hexToColor("#0072BC").withOpacity(0.3)),
-                      horizontalMargin: 8,
-                      columns: <DataColumn>[
-                        DataColumn(
-                          numeric: true,
-                          label: Text(
-                            'Ngày',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Nhận',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Trả',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Nợ',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                        DataColumn(
-                          label: Text(
-                            'Kg',
-                            style: TextStyle(fontStyle: FontStyle.italic),
-                          ),
-                        ),
-                      ],
-                      rows: listBaoCaoCongNoDetail.map<DataRow>((value) {
-                        return DataRow(
-                          cells: <DataCell>[
-                            DataCell(
-                              Text(value.date),
-                            ),
-                            DataCell(Text(value.nhan)),
-                            DataCell(Text(value.tra)),
-                            DataCell(Text(value.no)),
-                            DataCell(Text(value.kg)),
-                          ],
-                        );
-                      }).toList()),
-                )),
-              )));
+            : ListView(
+                padding: const EdgeInsets.only(left: 8, right: 8),
+                children: [_buildHeaderListView(), ..._buildListContentView()],
+              ));
   }
 }

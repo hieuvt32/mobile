@@ -29,3 +29,5 @@ enum ViewState {
 }
 
 enum ListOrderType { DonBaoBinhLoi, DonBanHang }
+
+enum UserRole { KhachHang, GiamDoc, DieuPhoi, ThuKho, GiaoVan }

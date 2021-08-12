@@ -4,6 +4,7 @@ import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/create_bao_binh_loi_request.dart';
 import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
@@ -85,7 +86,8 @@ abstract class Api {
     ChangePasswordRequest changePasswordRequest,
   );
 
-  Future<ListOrderResponse> getListOrder(int status, {int? sellInWareHouse});
+  Future<ListOrderResponse> getListOrder(int status,
+      {customer, type, int? sellInWareHouse});
 
   Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
       String customerCode, String status);
@@ -257,4 +259,8 @@ abstract class Api {
       required String assetname});
 
   Future<dynamic> createBaoNhamLan(CreateBaoNhamLanRequest request);
+
+  Future<dynamic> createBaoBinhLoi(CreateBaoBinhLoiRequest request);
+
+  Future deleteDonBaoBinhLoi(String name);
 }

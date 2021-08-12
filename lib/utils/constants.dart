@@ -1,4 +1,5 @@
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/utils/enums.dart';
 
 class Constants {
   static var offlinePageSize = 50;
@@ -16,9 +17,12 @@ class Constants {
     // FilterOperator(label: "Not In", value: "not in"),
     FilterOperator(label: "Is", value: "is"),
   ];
-}
 
-class Roles {
-  static final khachHang = "Khách Hàng";
-  static final giamDoc = "Giám Đốc";
+  static Map<String, UserRole> mappingRole = {
+    "Khách Hàng": UserRole.KhachHang,
+    "Thủ Kho": UserRole.ThuKho,
+    "Giám Đốc": UserRole.GiamDoc,
+    "Giao Vận": UserRole.GiaoVan,
+    "Điều Phối": UserRole.DieuPhoi,
+  };
 }

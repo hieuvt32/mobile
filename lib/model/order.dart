@@ -62,6 +62,7 @@ class Order {
         : DateTime.now();
 
     vendorName = json['vendor_name'];
+    type = json['type'];
     sellInWarehouse = json['sell_in_warehouse'];
     creation = date != null ? date : DateTime.now();
     status = json['order_status'];
@@ -108,6 +109,7 @@ class Order {
     data['order_status'] = status;
     data['payment_status'] = paymentStatus;
     data['vendor'] = vendor;
+    data['type'] = type;
     data['phone'] = phone;
     data['email'] = email;
     data['tax_id'] = taxId;

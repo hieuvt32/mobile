@@ -48,6 +48,7 @@ class Product {
     enabledVatTu = ["", null, false, 0].contains(json['material']);
     diaChi = json['dia_chi'];
     isExpanded = false;
+    diaChi = json['dia_chi'];
   }
 
   Map<String, dynamic> toJson() {
