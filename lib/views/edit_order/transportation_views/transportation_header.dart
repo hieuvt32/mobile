@@ -44,6 +44,9 @@ class _TransportationHeaderState extends State<TransportationHeader> {
                             child: Text("${widget.model.customerValue}"))
                       ],
                     ),
+                    SizedBox(
+                      height: 8,
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -58,6 +61,9 @@ class _TransportationHeaderState extends State<TransportationHeader> {
                             child: Text("${widget.model.order!.phone}"))
                       ],
                     ),
+                    SizedBox(
+                      height: 8,
+                    ),
                     Row(
                       children: [
                         Expanded(
@@ -70,6 +76,9 @@ class _TransportationHeaderState extends State<TransportationHeader> {
                         Expanded(
                             flex: 6, child: Text("${widget.model.order!.name}"))
                       ],
+                    ),
+                    SizedBox(
+                      height: 8,
                     ),
                     Row(
                       children: [
@@ -100,12 +109,15 @@ class _TransportationHeaderState extends State<TransportationHeader> {
                             color: Color.fromRGBO(33, 33, 33, 1),
                             fontSize: 24,
                             fontWeight: FontWeight.w700)),
-                    const Divider(
-                      color: Color.fromRGBO(0, 0, 0, 0.3),
-                      height: 1,
-                      thickness: 1,
-                      indent: 1,
-                      endIndent: 1,
+                    Container(
+                      child: const Divider(
+                        color: Colors.black,
+                        height: 1,
+                        thickness: 1,
+                        indent: 1,
+                        endIndent: 1,
+                      ),
+                      width: 52,
                     ),
                     Text("$quantity",
                         style: TextStyle(

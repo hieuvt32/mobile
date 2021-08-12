@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
+import 'package:frappe_app/model/bien_ban_kiem_kho.dart';
+import 'package:frappe_app/model/get_bien_ban_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/report_quy_chuan_thong_tin.dart';
 import 'package:frappe_app/services/api/api.dart';
@@ -22,12 +24,12 @@ class _InventoryViewState extends State<InventoryView>
   final List<Widget> myTabs = [
     Tab(
       child: Text("Vật tư",
-          style: TextStyle(color: hexToColor('#14142B'))
-              .copyWith(fontSize: 14, fontWeight: FontWeight.w600)),
+          style:
+              TextStyle().copyWith(fontSize: 14, fontWeight: FontWeight.w600)),
     ),
     Tab(
         child: Text('Thành phẩm',
-            style: TextStyle(color: hexToColor('#14142B'))
+            style: TextStyle()
                 .copyWith(fontSize: 14, fontWeight: FontWeight.w600))),
     // Tab(text: 'fixed'),
   ];
@@ -39,6 +41,9 @@ class _InventoryViewState extends State<InventoryView>
   GetKiemKhoResponse? _responseVatTu;
 
   GetKiemKhoResponse? _responseThanhPham;
+
+  GetBienBanKiemKhoResponse? _responsebienBanKiemKho;
+  var _readOnly = false;
 
   // final List<Store> stores = [
   //   Store(name: 'Van A', system: 30, reality: 0),
@@ -69,6 +74,8 @@ class _InventoryViewState extends State<InventoryView>
     _responseVatTu = null;
     _responseThanhPham = null;
 
+    _readOnly = false;
+
     super.initState();
     locator<Api>().getKiemKho(0).then((value) {
       setState(() {
@@ -81,6 +88,36 @@ class _InventoryViewState extends State<InventoryView>
         _responseThanhPham = value;
       });
     });
+
+    locator<Api>().getBienBanKiemKho().then((value) {
+      setState(() {
+        _responsebienBanKiemKho = value;
+
+        if (_responsebienBanKiemKho != null &&
+            _responsebienBanKiemKho!.bienBanKiemKho != null) {
+          _readOnly = true;
+        }
+      });
+    });
+  }
+
+  KiemKhoDanhSach? getDetailBienBanKiemKho(int type, String name) {
+    if (_responsebienBanKiemKho != null &&
+        _responsebienBanKiemKho!.bienBanKiemKho != null) {
+      if (type == 0) {
+        if (_responsebienBanKiemKho!.bienBanKiemKho!.materialList.length > 0) {
+          return _responsebienBanKiemKho!.bienBanKiemKho!.materialList
+              .where((element) => element.realName == name)
+              .first;
+        }
+      }
+      if (_responsebienBanKiemKho!.bienBanKiemKho!.semiProductList.length > 0) {
+        return _responsebienBanKiemKho!.bienBanKiemKho!.semiProductList
+            .where((element) => element.realName == name)
+            .first;
+      }
+    }
+    return null;
   }
 
   @override
@@ -120,6 +157,7 @@ class _InventoryViewState extends State<InventoryView>
   Widget buidVatTu(GetKiemKhoResponse? response, int type) {
     var stores = (response!.thongKeKhos != null ? response.thongKeKhos : [])
         as List<BangThongKeKho>;
+
     return Container(
         child: SingleChildScrollView(
       child: Column(
@@ -177,9 +215,11 @@ class _InventoryViewState extends State<InventoryView>
             height: 16,
           ),
           Container(
-            height: 432,
+            height: 450,
             child: ListView.builder(
               itemBuilder: (ctx, index) {
+                var bienBanKiemKho =
+                    getDetailBienBanKiemKho(type, stores[index].realName);
                 return Padding(
                   padding: const EdgeInsets.fromLTRB(12.0, 0, 12, 12),
                   child: Container(
@@ -188,7 +228,7 @@ class _InventoryViewState extends State<InventoryView>
                         border:
                             Border.all(color: Color.fromRGBO(0, 0, 0, 0.5))),
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      padding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -215,44 +255,62 @@ class _InventoryViewState extends State<InventoryView>
                           ),
                           Expanded(
                             flex: 3,
-                            child: Container(
-                              // width: 64,
-                              height: 24,
-                              child: TextField(
-                                keyboardType: TextInputType.number,
-                                decoration: InputDecoration(
-                                  // suffixIcon: Icon(Icons.search),
-                                  enabledBorder: const OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(0.0)),
-                                    borderSide: const BorderSide(
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                  // labelText: 'Mã vạch, Mã chế tạo',
-                                  // labelStyle: TextStyle(
-                                  //     fontSize: 14,
-                                  //     fontWeight: FontWeight.w400,
-                                  //     color: Color.fromRGBO(
-                                  //         20, 20, 43, 0.5)),
-                                ),
-                                style: TextStyle(
-                                  fontSize: 13.0,
-                                  height: 1,
-                                  color: Colors.black,
-                                ),
-                                textAlign: TextAlign.center,
-                                onChanged: (text) {
-                                  setState(() {
-                                    stores[index].actualCount = int.parse(text);
-                                  });
-                                },
-                                onSubmitted: (text) {
-                                  setState(() {
-                                    stores[index].actualCount = int.parse(text);
-                                  });
-                                },
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                !_readOnly
+                                    ? Container(
+                                        width: 80,
+                                        height: 32,
+                                        child: TextField(
+                                          keyboardType: TextInputType.number,
+                                          decoration: InputDecoration(
+                                            // suffixIcon: Icon(Icons.search),
+                                            enabledBorder:
+                                                const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(4.0)),
+                                              borderSide: const BorderSide(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                            // labelText: 'Mã vạch, Mã chế tạo',
+                                            // labelStyle: TextStyle(
+                                            //     fontSize: 14,
+                                            //     fontWeight: FontWeight.w400,
+                                            //     color: Color.fromRGBO(
+                                            //         20, 20, 43, 0.5)),
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: 20.0,
+                                            height: 1,
+                                            color: Colors.black,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                          onChanged: (text) {
+                                            setState(() {
+                                              stores[index].actualCount =
+                                                  int.parse(text);
+                                            });
+                                          },
+                                          onSubmitted: (text) {
+                                            setState(() {
+                                              stores[index].actualCount =
+                                                  int.parse(text);
+                                            });
+                                          },
+                                        ),
+                                      )
+                                    : Text(
+                                        "${bienBanKiemKho != null ? bienBanKiemKho.actualCount : 0}",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                                color: hexToColor('#14142B'))
+                                            .copyWith(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w700),
+                                      )
+                              ],
                             ),
                           ),
                         ],
@@ -264,38 +322,53 @@ class _InventoryViewState extends State<InventoryView>
               itemCount: stores.length,
             ),
           ),
-          ElevatedButton(
-            child: Text(
-              'Xác nhận',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onPressed: () {
-              locator<Api>().updateBienBanKiemKho(type, stores).then((value) {
-                FrappeAlert.successAlert(
-                  title: "Cập nhật thành công",
-                  subtitle: "Quy chuẩn thông tin đã được cập nhật.",
-                  context: context,
-                );
-              });
-            },
-            style: ElevatedButton.styleFrom(
-              primary: hexToColor('#FF0F00'),
-              // side: BorderSide(
-              //   width: 1.0,
-              // ),
-              minimumSize: Size(120, 40),
-              padding: EdgeInsets.fromLTRB(118, 13, 118, 13),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12.0),
-                side: BorderSide(
-                  color: hexToColor('#FF0F00'),
+          Visibility(
+              visible: !_readOnly,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                child: Container(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    child: Text(
+                      'Xác nhận',
+                      style: TextStyle(
+                        fontSize: 18,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: () {
+                      locator<Api>()
+                          .updateBienBanKiemKho(type, stores)
+                          .then((value) {
+                        setState(() {
+                          _readOnly = true;
+                        });
+                        FrappeAlert.successAlert(
+                          title: "Cập nhật thành công",
+                          subtitle: "Quy chuẩn thông tin đã được cập nhật.",
+                          context: context,
+                        );
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: hexToColor('#FF0F00'),
+                      // side: BorderSide(
+                      //   width: 1.0,
+                      // ),
+                      // minimumSize: Size(120, 40),
+                      // padding: EdgeInsets.fromLTRB(118, 13, 118, 13),
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        side: BorderSide(
+                          color: hexToColor('#FF0F00'),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
+              )),
         ],
       ),
     ));
@@ -329,7 +402,9 @@ class _InventoryViewState extends State<InventoryView>
           // bottom: ,
         ),
         // body: AnswerButton(),
-        body: _responseVatTu != null && _responseThanhPham != null
+        body: _responseVatTu != null &&
+                _responseThanhPham != null &&
+                _responsebienBanKiemKho != null
             ? Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: NestedScrollView(

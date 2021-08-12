@@ -18,6 +18,7 @@ import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
+import 'package:frappe_app/model/get_bien_ban_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_customer_by_code_response.dart';
 import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
@@ -1212,6 +1213,49 @@ class DioApi implements Api {
 
       if (response.statusCode == 200) {
         return GetKiemKhoResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<GetBienBanKiemKhoResponse> getBienBanKiemKho() async {
+    // var queryParams = {
+    //   // 'type': type,
+    // };
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getBienBanKiemKho',
+        // queryParameters: queryParams,
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GetBienBanKiemKhoResponse.fromJson(response.data);
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw ErrorResponse(
           statusCode: response.statusCode,

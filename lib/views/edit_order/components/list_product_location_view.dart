@@ -104,8 +104,6 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
   }
 
   List<ExpansionItem> _buildExpansionItems() {
-    var total = widget.model.productForLocations
-        .fold<int>(0, (sum, item) => sum + item.quantity);
     var values = widget.model.editAddresses;
     var expansionItems = values.asMap().map(
           (i, e) => MapEntry(
@@ -114,6 +112,10 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
               isParentExpanded, // isExpanded ?
               (isExpanded) {
                 isParentExpanded = isExpanded;
+
+                var total = widget.model.productForLocations
+                    .where((element) => element.address == values[i].name)
+                    .fold<int>(0, (sum, item) => sum + item.quantity);
                 return Container(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -145,6 +147,14 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                                         value: values[i].name,
                                         selectionHandler: (value) {
                                           setState(() {
+                                            var addresses = widget
+                                                .model.addresses
+                                                .where((element) =>
+                                                    element.name == value);
+                                            if (addresses.length > 0) {
+                                              values[i].diaChi = widget
+                                                  .model.addresses.first.diaChi;
+                                            }
                                             values[i].name = value;
                                           });
                                         },
@@ -181,17 +191,14 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                                   },
                                   child: Column(
                                     children: [
-                                      Opacity(
-                                        opacity: !widget.model.editAddresses[i]
-                                                .isEditable
-                                            ? 0
-                                            : 1,
-                                        child: FrappeIcon(
-                                          FrappeIcons.add_no_border,
-                                          color: Color.fromRGBO(0, 0, 0, 0.5),
-                                          size: 16,
-                                        ),
-                                      )
+                                      Visibility(
+                                          visible: !widget.model
+                                              .editAddresses[i].isEditable,
+                                          child: FrappeIcon(
+                                            FrappeIcons.add_no_border,
+                                            color: Color.fromRGBO(0, 0, 0, 0.5),
+                                            size: 16,
+                                          ))
                                     ],
                                   ),
                                 ),
@@ -231,7 +238,9 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                 );
               },
               [
-                ListProductLocationItemView(),
+                ListProductLocationItemView(
+                  address: values[i].name,
+                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -314,7 +323,8 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
 
 class ListProductLocationItemView extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
-  ListProductLocationItemView({Key? key}) : super(key: key);
+  final String? address;
+  ListProductLocationItemView({Key? key, this.address}) : super(key: key);
 
   @override
   _ListProductLocationItemViewState createState() =>
@@ -346,7 +356,12 @@ class _ListProductLocationItemViewState
   }
 
   List<ExpansionItem> _buildExpansionItems() {
-    values = widget.model.productForLocations;
+    values = [];
+    if (widget.address != null) {
+      values = widget.model.productForLocations
+          .where((element) => element.address == widget.address)
+          .toList();
+    }
     controllers = widget.model.productForLocationEditControllers;
 
     var expansionItems = values

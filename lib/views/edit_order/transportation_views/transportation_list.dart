@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
-import 'package:frappe_app/utils/helpers.dart';
-import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
-import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:frappe_app/widgets/limit_text_length.dart';
-import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 
 import '../../base_view.dart';
@@ -77,15 +73,17 @@ class _TransportationListState extends State<TransportationList> {
 
             return GestureDetector(
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return TransportationDetail(
-                        name: item.name,
-                      );
-                    },
-                  ),
-                );
+                if (item.status != "Đã đặt hàng") {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return TransportationDetail(
+                          name: item.name,
+                        );
+                      },
+                    ),
+                  );
+                }
               },
               child: ItemCardOrder(
                 cartContent: buildCardContent(
@@ -113,10 +111,25 @@ class _TransportationListState extends State<TransportationList> {
                     )),
                 leftHeaderText: item.name,
                 rightHeaderText: DateFormat('dd/MM/yyyy').format(item.creation),
+                headerColor: getHeaderColor(item.status),
               ),
             );
           }),
     );
+  }
+
+  Color getHeaderColor(String status) {
+    switch (status) {
+      case "Đã đặt hàng":
+        return Color.fromRGBO(0, 114, 188, 1);
+      case "Đang giao hàng":
+        return Color.fromRGBO(255, 15, 0, 1);
+      case "Đã giao hàng":
+        return Color.fromRGBO(27, 189, 92, 1);
+      default:
+    }
+
+    return Color.fromRGBO(0, 114, 188, 1);
   }
 
   @override

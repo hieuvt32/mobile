@@ -36,8 +36,7 @@ class _TransportationBottomState extends State<TransportationBottom> {
               ),
             ),
             onPressed: () async {
-              widget.model.order!.status = "Đang giao hàng";
-              await widget.model.updateOrder(context);
+              await widget.model.updateOrder(context, status: "Đang giao hàng");
             },
             child: Text(
               'Giao hàng',

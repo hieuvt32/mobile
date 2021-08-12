@@ -30,7 +30,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
     var isAvailableRoles = widget.model.isAvailableRoles;
 
     var customerMap = Map.fromIterable(widget.model.customers,
-        key: (v) => v.code, value: (v) => v.name);
+        key: (v) => v.code, value: (v) => v.realName);
 
     return Container(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 32),

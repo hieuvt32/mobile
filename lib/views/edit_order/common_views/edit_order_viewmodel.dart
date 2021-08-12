@@ -327,9 +327,9 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   init() {
-    if (_name != null && _name!.length > 0) {
-      _isLoading = true;
-    }
+    // if (_name != null && _name!.length > 0) {
+    _isLoading = true;
+    // }
 
     initState();
   }
