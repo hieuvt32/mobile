@@ -6,9 +6,11 @@ import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/edit_order/common_views/product_location_detail_view.dart';
 import 'package:frappe_app/views/edit_order/components/field_data.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:frappe_app/views/expansion_custom_panel.dart';
@@ -244,6 +246,41 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                 SizedBox(
                   height: 10,
                 ),
+                Visibility(
+                    visible:
+                        widget.model.isAvailableRoles([UserRole.KhachHang]) &&
+                            [OrderState.Delivering, OrderState.Delivered]
+                                .contains(widget.model.orderState),
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: hexToColor('#0072BC'),
+                          minimumSize: Size(120, 32),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (!["", null, false, 0]
+                              .contains(widget.model.editAddresses[i].name)) {
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(builder: (context) {
+                              return ProductLocationDetailView(
+                                  address: values[i].name ?? "");
+                            }));
+                          }
+                        },
+                        child: Text(
+                          'Xem chi tiết',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    )),
                 Visibility(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

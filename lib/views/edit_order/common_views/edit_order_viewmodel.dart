@@ -78,6 +78,10 @@ class EditOrderViewModel extends BaseViewModel {
 
   late List<GiaoViecSignature> _giaoViecSignatures;
 
+  late double _totalOrderPrice = 0;
+
+  double get totalOrderPrice => _totalOrderPrice;
+
   List<GiaoViecSignature> get giaoViecSignatures => _giaoViecSignatures;
 
   // Object? _diaChiSelect;
@@ -105,7 +109,8 @@ class EditOrderViewModel extends BaseViewModel {
       if (['Chờ xác nhận', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy']
           .contains(_order!.status)) return true;
 
-      if (isAvailableRoles([UserRole.KhachHang])) return true;
+      if (_order!.status == "Đã đặt hàng" &&
+          isAvailableRoles([UserRole.KhachHang])) return true;
 
       // if (_order!.status == 'Đã giao hàng') {
       //   return true;
@@ -437,6 +442,11 @@ class EditOrderViewModel extends BaseViewModel {
         _order = response.order;
 
         if (_order!.products != null && _order!.products.length > 0) {
+          // get total price of an order
+          _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
+            return pv + cu.unitPrice;
+          });
+
           _customerValue = _order!.vendor;
           _sellInWarehouse = _order!.sellInWarehouse == 1;
 
