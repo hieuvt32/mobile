@@ -135,12 +135,11 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                   MaterialPageRoute(
                     builder: (context) {
                       return EditOrderView(
-                          name: listOrder[index].name,
-                          haveDelivery: !["", null, false, 0]
-                              .contains(listOrder[index].employeeName));
+                          name: listOrder[index].name, haveDelivery: true);
                     },
                   ),
-                ).then((refresh) => refresh ? this._onFetchData() : null);
+                ).then((refresh) =>
+                    (refresh != null && refresh) ? this._onFetchData() : false);
               },
               child: ItemCardOrder(
                 headerColor: headerColor,
@@ -179,11 +178,16 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
       String customerCode = userId!.split("@")[0];
 
       List<ListOrderResponse> listResponse = await Future.wait([
-        locator<Api>().getListOrder(0, customer: customerCode, type: "M"),
-        locator<Api>().getListOrder(1, customer: customerCode, type: "M"),
-        locator<Api>().getListOrder(2, customer: customerCode, type: "M"),
-        locator<Api>().getListOrder(3, customer: customerCode, type: "M"),
-        locator<Api>().getListOrder(4, customer: customerCode, type: "M")
+        locator<Api>().getListOrder(0,
+            customer: customerCode, type: "M", sellInWareHouse: 0),
+        locator<Api>().getListOrder(1,
+            customer: customerCode, type: "M", sellInWareHouse: 0),
+        locator<Api>().getListOrder(2,
+            customer: customerCode, type: "M", sellInWareHouse: 0),
+        locator<Api>().getListOrder(3,
+            customer: customerCode, type: "M", sellInWareHouse: 0),
+        locator<Api>().getListOrder(4,
+            customer: customerCode, type: "M", sellInWareHouse: 0)
       ]);
 
       setState(() {

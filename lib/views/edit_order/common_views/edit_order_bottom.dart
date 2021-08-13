@@ -122,6 +122,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
           ],
         );
       case OrderState.WaitingForShipment:
+        if (widget.model.isAvailableRoles([UserRole.KhachHang]))
+          return SizedBox();
+
         return ElevatedButton(
           style: ElevatedButton.styleFrom(
             primary: hexToColor('#FF0F00'),
@@ -149,6 +152,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
             ),
           ),
         );
+
       case OrderState.Delivering:
         return Text('');
       case OrderState.Delivered:

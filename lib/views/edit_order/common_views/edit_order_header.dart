@@ -138,10 +138,12 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: widget.model.orderState !=
-                                    OrderState.PreNewOrder
-                                ? hexToColor('#AAAAAA')
-                                : Color.fromRGBO(0, 0, 0, 0.75),
+                            color: isAvailableRoles([UserRole.KhachHang])
+                                ? Color.fromRGBO(0, 0, 0, 0.75)
+                                : widget.model.orderState !=
+                                        OrderState.PreNewOrder
+                                    ? hexToColor('#AAAAAA')
+                                    : Color.fromRGBO(0, 0, 0, 0.75),
                           ),
                         ),
                       ],
@@ -179,6 +181,35 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                         color: Color.fromRGBO(0, 0, 0, 0.75),
                       ),
                     ),
+                    isAvailableRoles([UserRole.KhachHang])
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 16,
+                              ),
+                              Text(
+                                'Tổng tiền',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color.fromRGBO(0, 0, 0, 0.75),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                widget.model.totalOrderPrice.toString(),
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: hexToColor("#FF0F00"),
+                                ),
+                              ),
+                            ],
+                          )
+                        : SizedBox()
                   ],
                 ),
               )
