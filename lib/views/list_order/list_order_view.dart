@@ -275,7 +275,7 @@ class _ListOrderViewState extends State<ListOrderView>
         response != null && response.orders != null ? response.orders! : [];
 
     return Container(
-      padding: const EdgeInsets.only(left: 24, right: 24),
+      padding: const EdgeInsets.only(left: 24, right: 24, top: 12),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -292,7 +292,7 @@ class _ListOrderViewState extends State<ListOrderView>
                 return GestureDetector(
                   child: Container(
                     color: hexToColor("#B3D5EB"),
-                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
+                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
                     child: Container(
                       child: Column(
                         children: [
