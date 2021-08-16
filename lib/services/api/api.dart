@@ -28,6 +28,7 @@ import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
+import 'package:frappe_app/model/rating_order_request.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
 import 'package:frappe_app/model/update_trang_thai_quy_chuan_response.dart';
@@ -266,4 +267,6 @@ abstract class Api {
   Future<dynamic> createBaoBinhLoi(CreateBaoBinhLoiRequest request);
 
   Future deleteDonBaoBinhLoi(String name);
+  Future createRatingDonHang(CreateRatingRequest request);
+  Future deleteDonMuaBan(String order);
 }

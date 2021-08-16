@@ -126,7 +126,9 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                               ),
                               fillColor:
                                   MaterialStateProperty.resolveWith(getColor),
-                              value: widget.model.sellInWarehouse,
+                              value: isAvailableRoles([UserRole.KhachHang])
+                                  ? widget.model.saveTemplate
+                                  : widget.model.sellInWarehouse,
                               onChanged: onCheckboxChange),
                         ),
 
