@@ -335,7 +335,8 @@ class EditOrderViewModel extends BaseViewModel {
     // if (_name != null && _name!.length > 0) {
     _isLoading = true;
     // }
-
+    if (["", null, false, 0].contains(_name) &&
+        orderState == OrderState.PreNewOrder) return;
     initState();
   }
 
@@ -625,13 +626,14 @@ class EditOrderViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  addNhapKho() {
+  addNhapKho({String address = ''}) {
     _nhapKhos.add(
       DanhSachNhapKho(
         type: "Nhập kho",
         realName: null,
         amount: 0,
         title: '',
+        address: address,
       ),
     );
 
@@ -641,13 +643,14 @@ class EditOrderViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  addTraVe() {
+  addTraVe({String address = ''}) {
     _traVes.add(
       DanhSachNhapKho(
         type: "Trả về",
         realName: null,
         amount: 0,
         title: '',
+        address: address,
       ),
     );
 

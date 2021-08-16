@@ -4,6 +4,7 @@ class DanhSachNhapKho {
   late int amount;
   late String title;
   late String unit;
+  late String address;
   late bool isExpanded;
   late DanhSachNhapKhoValidator validator;
 
@@ -12,6 +13,7 @@ class DanhSachNhapKho {
     required this.realName,
     required this.amount,
     required this.title,
+    required this.address,
     this.unit = 'Bình',
     this.isExpanded = false,
   }) {
@@ -23,6 +25,7 @@ class DanhSachNhapKho {
     realName = json['real_name'] != null ? json['real_name'] : '';
     amount = json['amount'];
     title = json['title'];
+    address = json['address'];
     isExpanded = false;
     unit = "Bình";
   }
@@ -33,6 +36,7 @@ class DanhSachNhapKho {
     data['real_name'] = this.realName;
     data['amount'] = this.amount;
     data['title'] = this.title;
+    data['address'] = this.address;
     return data;
   }
 }
