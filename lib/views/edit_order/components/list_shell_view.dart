@@ -126,8 +126,8 @@ class _ListShellItemState extends State<ListShellItem> {
   List<Map<String, TextEditingController>> controllers = [];
   @override
   Widget build(BuildContext context) {
-    var total = values.fold<int>(0, (sum, item) => sum + item.amount);
     var expansionItems = _buildExpansionItems();
+    var total = values.fold<int>(0, (sum, item) => sum + item.amount);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -188,7 +188,10 @@ class _ListShellItemState extends State<ListShellItem> {
                                       FrappeIcons.delete,
                                       size: 16,
                                     ),
-                                    onTap: () {},
+                                    onTap: () {
+                                      values.removeAt(i);
+                                      widget.model.changeState();
+                                    },
                                   )
                                 : Row(
                                     children: [
@@ -197,7 +200,30 @@ class _ListShellItemState extends State<ListShellItem> {
                                           FrappeIcons.check,
                                           size: 16,
                                         ),
-                                        onTap: () {},
+                                        onTap: () {
+                                          if (values[i].realName == null ||
+                                              values[i].realName!.isEmpty) {
+                                            values[i]
+                                                .validator
+                                                .isMaterialRequired = true;
+                                          } else {
+                                            values[i]
+                                                .validator
+                                                .isMaterialRequired = false;
+                                          }
+
+                                          if (values[i].amount <= 0) {
+                                            values[i]
+                                                .validator
+                                                .isQuantityRequired = true;
+                                          } else {
+                                            values[i]
+                                                .validator
+                                                .isQuantityRequired = false;
+                                          }
+
+                                          widget.model.changeState();
+                                        },
                                       ),
                                       SizedBox(
                                         width: 20,
@@ -207,7 +233,12 @@ class _ListShellItemState extends State<ListShellItem> {
                                           FrappeIcons.close_x,
                                           size: 16,
                                         ),
-                                        onTap: () {},
+                                        onTap: () {
+                                          values[i].realName = null;
+                                          values[i].amount = 0;
+                                          values[i].unit = '';
+                                          widget.model.changeState();
+                                        },
                                       )
                                     ],
                                   ),
@@ -228,32 +259,51 @@ class _ListShellItemState extends State<ListShellItem> {
                     ),
                     Expanded(
                       flex: 5,
-                      child: !widget.realOnly
-                          ? FieldData(
-                              // value: 'Sản phẩm: ',
-                              fieldType: 0,
-                              values: widget.model.nguyenVatLieuVatTus
-                                  .map((e) => FieldValue(
-                                      text: e.realName, value: e.name))
-                                  .toList(),
-                              value: values[i].realName,
-                              selectionHandler: (value) {
-                                var firstItem = widget.model.nguyenVatLieuVatTus
-                                    .where((element) {
-                                      return element.realName == value;
-                                    })
-                                    .toList()
-                                    .first;
-                                setState(() {
-                                  values[i].realName = value;
-                                  values[i].unit = firstItem.unit;
-                                });
-                              },
-                            )
-                          : FieldData(
-                              value: '${values[i].realName}',
-                              fieldType: 3,
-                            ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          !widget.realOnly
+                              ? FieldData(
+                                  // value: 'Sản phẩm: ',
+                                  fieldType: 0,
+                                  values: widget.model.nguyenVatLieuVatTus
+                                      .map((e) => FieldValue(
+                                          text: e.realName, value: e.name))
+                                      .toList(),
+                                  value: values[i].realName,
+                                  selectionHandler: (value) {
+                                    var firstItem =
+                                        widget.model.nguyenVatLieuVatTus
+                                            .where((element) {
+                                              return element.realName == value;
+                                            })
+                                            .toList()
+                                            .first;
+                                    setState(() {
+                                      values[i].realName = value;
+                                      values[i].unit = firstItem.unit;
+                                      values[i].validator.isMaterialRequired =
+                                          false;
+                                    });
+                                  },
+                                )
+                              : FieldData(
+                                  value: '${values[i].realName}',
+                                  fieldType: 3,
+                                ),
+                          Visibility(
+                              visible: values[i].validator.isMaterialRequired,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  "Chọn vật tư",
+                                  style: TextStyle(
+                                      color: Colors.redAccent.shade700,
+                                      fontSize: 12.0),
+                                ),
+                              ))
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -267,28 +317,47 @@ class _ListShellItemState extends State<ListShellItem> {
                       flex: 2,
                     ),
                     Expanded(
-                      child: !widget.realOnly
-                          ? FieldData(
-                              // title: 'Đơn vị tính ',
-                              controller: controllers[i]['quantityController'],
-                              fieldType: 1,
-                              selectionHandler: (text) {
-                                if (["", null, false, 0].contains(controllers[i]
-                                        ['quantityController']!
-                                    .text)) {
-                                  // do sth
-                                  values[i].amount = 0;
-                                } else {
-                                  values[i].amount = int.parse(controllers[i]
-                                          ['quantityController']!
-                                      .text);
-                                }
-                                widget.model.changeState();
-                              })
-                          : FieldData(
-                              value: '${values[i].amount}',
-                              fieldType: 3,
-                            ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          !widget.realOnly
+                              ? FieldData(
+                                  // title: 'Đơn vị tính ',
+                                  controller: controllers[i]
+                                      ['quantityController'],
+                                  fieldType: 1,
+                                  selectionHandler: (text) {
+                                    if (["", null, false, 0].contains(
+                                        controllers[i]['quantityController']!
+                                            .text)) {
+                                      // do sth
+                                      values[i].amount = 0;
+                                    } else {
+                                      values[i].amount = int.parse(
+                                          controllers[i]['quantityController']!
+                                              .text);
+                                      values[i].validator.isQuantityRequired =
+                                          false;
+                                    }
+                                    widget.model.changeState();
+                                  })
+                              : FieldData(
+                                  value: '${values[i].amount}',
+                                  fieldType: 3,
+                                ),
+                          Visibility(
+                              visible: values[i].validator.isQuantityRequired,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 10),
+                                child: Text(
+                                  "Chọn sản phẩm",
+                                  style: TextStyle(
+                                      color: Colors.redAccent.shade700,
+                                      fontSize: 12.0),
+                                ),
+                              ))
+                        ],
+                      ),
                       flex: 2,
                     ),
                     Expanded(

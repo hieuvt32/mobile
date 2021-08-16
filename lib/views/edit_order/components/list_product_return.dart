@@ -91,8 +91,8 @@ class _ListProductReturnItemState extends State<ListProductReturnItem> {
   List<MapEntry<ProductReturnKey, List<Product>>> values = [];
   @override
   Widget build(BuildContext context) {
-    var total = values.fold<int>(0, (sum, item) => sum + item.key.total);
     var expansionItems = _buildExpansionItems();
+    var total = values.fold<int>(0, (sum, item) => sum + item.key.total);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

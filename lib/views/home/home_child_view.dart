@@ -9,7 +9,6 @@ import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/services/api/api.dart';
-import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
@@ -17,7 +16,6 @@ import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
 import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
-import 'package:frappe_app/views/edit_order/customer/customer_order_view.dart';
 import 'package:frappe_app/views/edit_order/transportation_views/transportation_list.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
@@ -428,8 +426,8 @@ class _HomeChildViewState extends State<HomeChildView> {
                                                 ),
                                                 boxShadow: [
                                                   BoxShadow(
-                                                    color: Colors.grey
-                                                        .withOpacity(0.5),
+                                                    color: Color.fromRGBO(
+                                                        255, 15, 0, 0.5),
                                                     spreadRadius: 1,
                                                     blurRadius: 7,
                                                     offset: Offset(0,
@@ -450,6 +448,7 @@ class _HomeChildViewState extends State<HomeChildView> {
                                               style: TextStyle(
                                                   fontSize: 16,
                                                   color: hexToColor('#FF0F00')),
+                                              textAlign: TextAlign.center,
                                             ),
                                           ),
                                           i > (maxIndex - 1)

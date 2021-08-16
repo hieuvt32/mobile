@@ -9,10 +9,12 @@ class FieldData extends StatefulWidget {
   final bool haveTextChange;
   final TextInputType keyboardType;
   final bool enabled;
+  final String? errorText;
   const FieldData({
     Key? key,
     this.fieldType = 0,
     this.value,
+    this.errorText,
     this.values = const [],
     this.controller,
     this.selectionHandler,
@@ -93,6 +95,7 @@ class _FieldDataState extends State<FieldData> {
             keyboardType: widget.keyboardType,
             decoration: InputDecoration(
               // suffixIcon: Icon(Icons.search),
+              errorText: widget.errorText,
               enabledBorder: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(4.0)),
                 borderSide: const BorderSide(

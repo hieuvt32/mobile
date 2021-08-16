@@ -5,6 +5,7 @@ class DanhSachNhapKho {
   late String title;
   late String unit;
   late bool isExpanded;
+  late DanhSachNhapKhoValidator validator;
 
   DanhSachNhapKho({
     required this.type,
@@ -13,7 +14,9 @@ class DanhSachNhapKho {
     required this.title,
     this.unit = 'Bình',
     this.isExpanded = false,
-  });
+  }) {
+    validator = DanhSachNhapKhoValidator();
+  }
 
   DanhSachNhapKho.fromJson(Map<String, dynamic> json) {
     type = json['type'];
@@ -32,4 +35,15 @@ class DanhSachNhapKho {
     data['title'] = this.title;
     return data;
   }
+}
+
+class DanhSachNhapKhoValidator {
+  late bool isMaterialRequired;
+  late bool isQuantityRequired;
+
+  bool get isSubmit => !isMaterialRequired && !isQuantityRequired;
+  DanhSachNhapKhoValidator({
+    this.isMaterialRequired = false,
+    this.isQuantityRequired = false,
+  });
 }

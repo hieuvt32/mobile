@@ -334,7 +334,10 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                             // ),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          widget.model.editAddresses.removeAt(i);
+                          widget.model.changeState();
+                        },
                         child: Text(
                           'Xóa địa chỉ',
                           style: TextStyle(
@@ -374,8 +377,8 @@ class _ListProductLocationItemViewState
   List<Map<String, TextEditingController>> controllers = [];
   @override
   Widget build(BuildContext context) {
-    var total = values.fold<int>(0, (sum, item) => sum + item.quantity);
     var expansionItems = _buildExpansionItems();
+    var total = values.fold<int>(0, (sum, item) => sum + item.quantity);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -427,7 +430,10 @@ class _ListProductLocationItemViewState
                                     FrappeIcons.delete,
                                     size: 16,
                                   ),
-                                  onTap: () {},
+                                  onTap: () {
+                                    values.removeAt(i);
+                                    widget.model.changeState();
+                                  },
                                 )
                               : Row(
                                   children: [
@@ -436,7 +442,51 @@ class _ListProductLocationItemViewState
                                         FrappeIcons.check,
                                         size: 16,
                                       ),
-                                      onTap: () {},
+                                      onTap: () {
+                                        if (values[i].product == null ||
+                                            values[i].product!.isEmpty) {
+                                          values[i]
+                                              .validator
+                                              .isProductRequired = true;
+                                        } else {
+                                          values[i]
+                                              .validator
+                                              .isProductRequired = false;
+                                        }
+
+                                        if ((values[i].material == null ||
+                                                values[i].material!.isEmpty) &&
+                                            values[i].enabledVatTu) {
+                                          values[i]
+                                              .validator
+                                              .isMaterialRequired = true;
+                                        } else {
+                                          values[i]
+                                              .validator
+                                              .isMaterialRequired = false;
+                                        }
+
+                                        if (values[i].kg <= 0 &&
+                                            values[i].enabledKG) {
+                                          values[i].validator.isKgRequired =
+                                              true;
+                                        } else {
+                                          values[i].validator.isKgRequired =
+                                              false;
+                                        }
+
+                                        if (values[i].quantity <= 0) {
+                                          values[i]
+                                              .validator
+                                              .isQuantityRequired = true;
+                                        } else {
+                                          values[i]
+                                              .validator
+                                              .isQuantityRequired = false;
+                                        }
+
+                                        widget.model.changeState();
+                                      },
                                     ),
                                     SizedBox(
                                       width: 20,
@@ -446,7 +496,18 @@ class _ListProductLocationItemViewState
                                         FrappeIcons.close_x,
                                         size: 16,
                                       ),
-                                      onTap: () {},
+                                      onTap: () {
+                                        values[i].product = null;
+                                        values[i].material = null;
+                                        values[i].unit = '';
+                                        values[i].quantity = 0;
+                                        values[i].kg = 0;
+                                        controllers[i]['quantityController']!
+                                            .text = "";
+                                        controllers[i]['kgController']!.text =
+                                            "";
+                                        widget.model.changeState();
+                                      },
                                     )
                                   ],
                                 ),
@@ -467,39 +528,57 @@ class _ListProductLocationItemViewState
                       flex: 2,
                     ),
                     Expanded(
-                      flex: 5,
-                      child: !widget.model.readOnlyView
-                          ? FieldData(
-                              // value: 'Sản phẩm: ',
-                              fieldType: 0,
-                              values: widget.model.nguyenVatLieuSanPhams
-                                  .map((e) => FieldValue(
-                                      text: e.realName, value: e.name))
-                                  .toList(),
-                              value: values[i].product,
-                              selectionHandler: (value) {
-                                var firstItem =
-                                    widget.model.nguyenVatLieuSanPhams
-                                        .where((element) {
-                                          return element.realName == value;
-                                        })
-                                        .toList()
-                                        .first;
-                                setState(() {
-                                  values[i].product = value;
-                                  values[i].unit = firstItem.unit;
+                        flex: 5,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            !widget.model.readOnlyView
+                                ? FieldData(
+                                    // value: 'Sản phẩm: ',
+                                    fieldType: 0,
+                                    values: widget.model.nguyenVatLieuSanPhams
+                                        .map((e) => FieldValue(
+                                            text: e.realName, value: e.name))
+                                        .toList(),
+                                    value: values[i].product,
+                                    selectionHandler: (value) {
+                                      var firstItem = widget
+                                          .model.nguyenVatLieuSanPhams
+                                          .where((element) {
+                                            return element.realName == value;
+                                          })
+                                          .toList()
+                                          .first;
+                                      setState(() {
+                                        values[i].product = value;
+                                        values[i].unit = firstItem.unit;
 
-                                  values[i].enabledVatTu =
-                                      firstItem.type != "Vật tư";
-                                  values[i].enabledKG = firstItem.unit == "Kg";
-                                });
-                              },
-                            )
-                          : FieldData(
-                              fieldType: 3,
-                              value: '${values[i].product}',
-                            ),
-                    )
+                                        values[i].enabledVatTu =
+                                            firstItem.type != "Vật tư";
+                                        values[i].enabledKG =
+                                            firstItem.unit == "Kg";
+                                        values[i].validator.isProductRequired =
+                                            false;
+                                      });
+                                    },
+                                  )
+                                : FieldData(
+                                    fieldType: 3,
+                                    value: '${values[i].product}',
+                                  ),
+                            Visibility(
+                                visible: values[i].validator.isProductRequired,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    "Chọn sản phẩm",
+                                    style: TextStyle(
+                                        color: Colors.redAccent.shade700,
+                                        fontSize: 12.0),
+                                  ),
+                                ))
+                          ],
+                        ))
                   ],
                 ),
                 Row(
@@ -512,37 +591,56 @@ class _ListProductLocationItemViewState
                       flex: 2,
                     ),
                     Expanded(
-                      flex: 2,
-                      child: !widget.model.readOnlyView
-                          ? FieldData(
-                              enabled: values[i].enabledVatTu,
-                              // value: 'Sản phẩm: ',
-                              fieldType: 0,
-                              values: widget.model.nguyenVatLieuVatTus
-                                  .map((e) => FieldValue(
-                                      text: e.realName, value: e.name))
-                                  .toList(),
-                              value: values[i].material,
-                              selectionHandler: (value) {
-                                var firstItem = widget.model.nguyenVatLieuVatTus
-                                    .where((element) {
-                                      return element.realName == value;
-                                    })
-                                    .toList()
-                                    .first;
-                                setState(() {
-                                  values[i].material = value;
-                                  values[i].unit = firstItem.unit;
+                        flex: 2,
+                        child: Column(
+                          children: [
+                            !widget.model.readOnlyView
+                                ? FieldData(
+                                    enabled: values[i].enabledVatTu,
+                                    // value: 'Sản phẩm: ',
+                                    fieldType: 0,
+                                    values: widget.model.nguyenVatLieuVatTus
+                                        .map((e) => FieldValue(
+                                            text: e.realName, value: e.name))
+                                        .toList(),
+                                    value: values[i].material,
+                                    selectionHandler: (value) {
+                                      var firstItem = widget
+                                          .model.nguyenVatLieuVatTus
+                                          .where((element) {
+                                            return element.realName == value;
+                                          })
+                                          .toList()
+                                          .first;
+                                      setState(() {
+                                        values[i].material = value;
+                                        values[i].unit = firstItem.unit;
+                                        values[i].enabledKG =
+                                            firstItem.unit == "Kg";
 
-                                  values[i].enabledKG = firstItem.unit == "Kg";
-                                });
-                              },
-                            )
-                          : FieldData(
-                              fieldType: 3,
-                              value: '${values[i].material}',
-                            ),
-                    ),
+                                        values[i].validator.isMaterialRequired =
+                                            false;
+                                      });
+                                    },
+                                  )
+                                : FieldData(
+                                    fieldType: 3,
+                                    value: '${values[i].material}',
+                                  ),
+                            Visibility(
+                                visible: values[i].validator.isMaterialRequired,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(left: 5),
+                                  child: Text(
+                                    "Chọn vật tư",
+                                    style: TextStyle(
+                                        color: Colors.redAccent.shade700,
+                                        fontSize: 12.0),
+                                  ),
+                                ))
+                          ],
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                        )),
                     Expanded(
                       child: FieldData(
                         value: 'Kg:',
@@ -551,27 +649,44 @@ class _ListProductLocationItemViewState
                       flex: 1,
                     ),
                     Expanded(
-                      child: !widget.model.readOnlyView
-                          ? FieldData(
-                              enabled: values[i].enabledKG,
-                              // title: 'Đơn vị tính ',
-                              controller: controllers[i]['kgController'],
-                              fieldType: 1,
-                              selectionHandler: (text) {
-                                if (["", null, false, 0].contains(
-                                    controllers[i]['kgController']!.text)) {
-                                  // do sth
-                                  values[i].kg = 0;
-                                } else {
-                                  values[i].kg = double.parse(
-                                      controllers[i]['kgController']!.text);
-                                }
-                                widget.model.changeState();
-                              })
-                          : FieldData(
-                              fieldType: 3,
-                              value: '${values[i].kg}',
-                            ),
+                      child: Column(
+                        children: [
+                          !widget.model.readOnlyView
+                              ? FieldData(
+                                  enabled: values[i].enabledKG,
+                                  // title: 'Đơn vị tính ',
+                                  controller: controllers[i]['kgController'],
+                                  fieldType: 1,
+                                  selectionHandler: (text) {
+                                    if (["", null, false, 0].contains(
+                                        controllers[i]['kgController']!.text)) {
+                                      // do sth
+                                      values[i].kg = 0;
+                                    } else {
+                                      values[i].kg = double.parse(
+                                          controllers[i]['kgController']!.text);
+
+                                      values[i].validator.isKgRequired = false;
+                                    }
+                                    widget.model.changeState();
+                                  })
+                              : FieldData(
+                                  fieldType: 3,
+                                  value: '${values[i].kg}',
+                                ),
+                          Visibility(
+                              visible: values[i].validator.isKgRequired,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Text(
+                                  "Nhập kg",
+                                  style: TextStyle(
+                                      color: Colors.redAccent.shade700,
+                                      fontSize: 12.0),
+                                ),
+                              ))
+                        ],
+                      ),
                       flex: 2,
                     ),
                   ],
@@ -586,28 +701,44 @@ class _ListProductLocationItemViewState
                       flex: 2,
                     ),
                     Expanded(
-                      child: !widget.model.readOnlyView
-                          ? FieldData(
-                              // title: 'Đơn vị tính ',
-                              controller: controllers[i]['quantityController'],
-                              fieldType: 1,
-                              selectionHandler: (text) {
-                                if (["", null, false, 0].contains(controllers[i]
-                                        ['quantityController']!
-                                    .text)) {
-                                  // do sth
-                                  values[i].quantity = 0;
-                                } else {
-                                  values[i].quantity = int.parse(controllers[i]
-                                          ['quantityController']!
-                                      .text);
-                                }
-                                widget.model.changeState();
-                              })
-                          : FieldData(
-                              fieldType: 3,
-                              value: '${values[i].quantity}',
-                            ),
+                      child: Column(
+                        children: [
+                          !widget.model.readOnlyView
+                              ? FieldData(
+                                  // title: 'Đơn vị tính ',
+                                  controller: controllers[i]
+                                      ['quantityController'],
+                                  fieldType: 1,
+                                  selectionHandler: (text) {
+                                    if (["", null, false, 0].contains(
+                                        controllers[i]['quantityController']!
+                                            .text)) {
+                                      // do sth
+                                      values[i].quantity = 0;
+                                    } else {
+                                      values[i].quantity = int.parse(
+                                          controllers[i]['quantityController']!
+                                              .text);
+                                    }
+                                    widget.model.changeState();
+                                  })
+                              : FieldData(
+                                  fieldType: 3,
+                                  value: '${values[i].quantity}',
+                                ),
+                          Visibility(
+                              visible: values[i].validator.isQuantityRequired,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 5),
+                                child: Text(
+                                  "Nhập số lượng",
+                                  style: TextStyle(
+                                      color: Colors.redAccent.shade700,
+                                      fontSize: 12.0),
+                                ),
+                              ))
+                        ],
+                      ),
                       flex: 2,
                     ),
                     Expanded(

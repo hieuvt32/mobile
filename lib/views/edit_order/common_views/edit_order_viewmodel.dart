@@ -748,6 +748,12 @@ class EditOrderViewModel extends BaseViewModel {
         } else {
           customerAttachmemts = null;
         }
+      } else {
+        FrappeAlert.errorAlert(
+            title: 'Tạo mới không thành công',
+            context: context,
+            subtitle: 'Bạn cần có chữ ký khách hàng trước khi hoàn thành đơn.');
+        return;
       }
 
       imgId = Uuid().v1().toString();
@@ -769,6 +775,13 @@ class EditOrderViewModel extends BaseViewModel {
         } else {
           supplierAttachments = null;
         }
+      } else {
+        FrappeAlert.errorAlert(
+            title: 'Tạo mới không thành công',
+            context: context,
+            subtitle:
+                'Bạn cần có chữ ký nhà cung cấp trước khi hoàn thành đơn.');
+        return;
       }
     }
     // if (!_sellInWarehouse) {
@@ -842,6 +855,8 @@ class EditOrderViewModel extends BaseViewModel {
             donNhapKhoResponse.donNhapKho != null) {
           _donNhapKho = donNhapKhoResponse.donNhapKho;
         }
+
+        notifyListeners();
       } else {
         FrappeAlert.errorAlert(
             title: 'Lỗi xảy ra',
@@ -949,6 +964,7 @@ class EditOrderViewModel extends BaseViewModel {
             await locator<Api>().updateDonNhapKho(_donNhapKho!);
         if (updateDonNhapKhoResponse != null &&
             updateDonNhapKhoResponse.responseData != null) {
+          notifyListeners();
           FrappeAlert.successAlert(
               title: 'Cập nhật thành công',
               context: context,

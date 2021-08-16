@@ -14,6 +14,7 @@ class Product {
   late bool enabledVatTu;
   late bool enabledKG;
   late bool isExpanded;
+  late ProductValidator validator;
   Product({
     required this.address,
     required this.product,
@@ -30,7 +31,9 @@ class Product {
     required this.enabledKG,
     required this.diaChi,
     this.isExpanded = false,
-  });
+  }) {
+    validator = new ProductValidator();
+  }
 
   Product.fromJson(Map<String, dynamic> json) {
     address = json['address'];
@@ -66,4 +69,24 @@ class Product {
     data['unit'] = this.unit;
     return data;
   }
+}
+
+class ProductValidator {
+  late bool isProductRequired;
+  late bool isMaterialRequired;
+  late bool isQuantityRequired;
+  late bool isKgRequired;
+
+  bool get isSubmit =>
+      !isProductRequired &&
+      !isMaterialRequired &&
+      !isQuantityRequired &&
+      !isKgRequired;
+
+  ProductValidator({
+    this.isProductRequired = false,
+    this.isMaterialRequired = false,
+    this.isQuantityRequired = false,
+    this.isKgRequired = false,
+  });
 }
