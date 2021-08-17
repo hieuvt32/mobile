@@ -7,6 +7,7 @@ class DonNhapKho {
   late List<DanhSachNhapKho> listShell;
   late String title;
   late String status;
+  late String? address;
 
   DonNhapKho({
     required this.codeOrders,
@@ -26,6 +27,7 @@ class DonNhapKho {
     listShell = (json['list_shell'] as List<dynamic>).map((item) {
       return DanhSachNhapKho.fromJson(item);
     }).toList();
+    address = json['address'];
   }
 
   Map<String, dynamic> toJson() {
