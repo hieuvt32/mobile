@@ -52,81 +52,25 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Báo nhầm lẫn"),
-      ),
-      body: SingleChildScrollView(
-        reverse: true, // add this line in scroll view
-        padding: const EdgeInsets.all(16),
-        child: Column(
+        appBar: AppBar(
+          title: Text("Báo nhầm lẫn"),
+        ),
+        body: Stack(
           children: [
-            SizedBox(
-              height: 24,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "Tên khách hàng:",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    "Phạm Văn Mạnh",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Text(
-                    "Mã khách hàng:",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    "KH - 01",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            FormBuilder(
-              key: _formKey,
+            SingleChildScrollView(
+              reverse: true, // add this line in scroll view
+              padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
+                  SizedBox(
+                    height: 24,
+                  ),
                   Row(
                     children: [
                       Expanded(
                         flex: 2,
                         child: Text(
-                          "Loại báo nhầm lẫn:",
+                          "Tên khách hàng:",
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -135,79 +79,142 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
                       ),
                       Expanded(
                         flex: 3,
-                        child: FormBuilderDropdown(
-                          name: 'reason',
-                          decoration: InputDecoration(
-                            contentPadding:
-                                const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.greenAccent)),
+                        child: Text(
+                          "Phạm Văn Mạnh",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
                           ),
-                          // initialValue: 'Male',
-                          allowClear: true,
-                          hint: Text(
-                            'Chọn lý do',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(context,
-                                errorText: "Hãy chọn lý do")
-                          ]),
-                          items: ["Nhầm lẫn chi tiêu", "Nhầm lẫn bình"]
-                              .map((reason) => DropdownMenuItem(
-                                    value: reason,
-                                    child: Text('$reason'),
-                                  ))
-                              .toList(),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(
-                    height: 40,
+                    height: 16,
                   ),
-                  FormBuilderTextField(
-                    validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(context,
-                          errorText: "Hãy nhập nội dung")
-                    ]),
-                    name: "content",
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 8,
-                    decoration: new InputDecoration(
-                      hintText: "Nhập nội dung",
-                      border: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.grey, width: 0.0),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          "Mã khách hàng:",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          "KH - 01",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  FormBuilder(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                "Loại báo nhầm lẫn:",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: FormBuilderDropdown(
+                                name: 'reason',
+                                decoration: InputDecoration(
+                                  contentPadding:
+                                      const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.greenAccent)),
+                                ),
+                                // initialValue: 'Male',
+                                allowClear: true,
+                                hint: Text(
+                                  'Chọn lý do',
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                validator: FormBuilderValidators.compose([
+                                  FormBuilderValidators.required(context,
+                                      errorText: "Hãy chọn lý do")
+                                ]),
+                                items: ["Nhầm lẫn chi tiêu", "Nhầm lẫn bình"]
+                                    .map((reason) => DropdownMenuItem(
+                                          value: reason,
+                                          child: Text('$reason'),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 40,
+                        ),
+                        FormBuilderTextField(
+                          validator: FormBuilderValidators.compose([
+                            FormBuilderValidators.required(context,
+                                errorText: "Hãy nhập nội dung")
+                          ]),
+                          name: "content",
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 8,
+                          decoration: new InputDecoration(
+                            hintText: "Nhập nội dung",
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                  color: Colors.grey, width: 0.0),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                  SizedBox(
+                    height: 64,
                   ),
                 ],
               ),
             ),
-            SizedBox(
-              height: 64,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: FrappeFlatButton(
-                  minWidth: 328,
-                  height: 48,
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _formKey.currentState!.save();
-                      String reason = _formKey.currentState!.value['reason'];
-                      String content = _formKey.currentState!.value['content'];
-                      createDonBaoLoi(reason: reason, content: content);
-                    } else {}
-                  },
-                  buttonType: ButtonType.primary,
-                  title: "Báo cáo nhầm lẫn"),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: FrappeFlatButton(
+                    minWidth: 328,
+                    height: 48,
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        String reason = _formKey.currentState!.value['reason'];
+                        String content =
+                            _formKey.currentState!.value['content'];
+                        createDonBaoLoi(reason: reason, content: content);
+                      } else {}
+                    },
+                    buttonType: ButtonType.primary,
+                    title: "Báo cáo nhầm lẫn"),
+              ),
             )
           ],
-        ),
-      ),
-    );
+        ));
   }
 }

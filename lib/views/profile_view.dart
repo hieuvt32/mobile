@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/config.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
@@ -40,7 +41,7 @@ class ProfileView extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {
-                        if (userRoles.contains("Khách Hàng")) {
+                        if (userRoles.contains(UserRole.KhachHang)) {
                           return PersonalPageView();
                         }
                         return ChangePasswordView();
@@ -59,7 +60,7 @@ class ProfileView extends StatelessWidget {
                       height: 25,
                     ),
                     Text(
-                      userRoles.contains("Khách Hàng")
+                      userRoles.contains(UserRole.KhachHang)
                           ? 'Trang cá nhân'
                           : 'Đổi mật khẩu',
                       style: TextStyle(

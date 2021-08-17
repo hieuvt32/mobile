@@ -19,10 +19,46 @@ class EditOrderBottom extends StatefulWidget {
 }
 
 class _EditOrderBottomState extends State<EditOrderBottom> {
+  bool _isButtonLoading = false;
+
+  Future onDeleteOrder() async {
+    ConfirmDialog.showConfirmDialog(context, onCancel: () {
+      Navigator.of(context, rootNavigator: true).pop();
+    }, onConfirm: () async {
+      setState(() {
+        _isButtonLoading = true;
+      });
+
+      Navigator.of(context, rootNavigator: true).pop();
+      await widget.model.deleteOrder(context, widget.model.order!.name);
+
+      setState(() {
+        _isButtonLoading = false;
+      });
+    }, content: "Bạn có chắc chắn muốn xóa đơn hàng này không?");
+  }
+
+  Future onCancelOrder() async {
+    setState(() {
+      _isButtonLoading = true;
+    });
+
+    ConfirmDialog.showConfirmDialog(context, onCancel: () {
+      Navigator.of(context, rootNavigator: true).pop();
+    }, onConfirm: () {
+      Navigator.of(context, rootNavigator: true).pop();
+      widget.model.cancelOrder(context);
+    }, content: "Bạn có chắc chắn muốn hủy đơn hàng đã đặt này không?");
+
+    setState(() {
+      _isButtonLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 2,
+      flex: 1,
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Visibility(
@@ -44,18 +80,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
             height: 48,
             width: double.infinity,
             child: TextButton(
-                onPressed: () {
-                  ConfirmDialog.showConfirmDialog(context, onCancel: () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                  }, onConfirm: () {
-                    Navigator.of(context, rootNavigator: true).pop();
-                    widget.model.cancelOrder(context);
-                  },
-                      content:
-                          "Bạn có chắc chắn muốn hủy đơn hàng đã đặt hay không?");
-                },
+                onPressed: _isButtonLoading ? null : onCancelOrder,
                 child: Text(
-                  "Hủy đơn hàng",
+                  _isButtonLoading ? '...Loading' : "Hủy đơn hàng",
                   style: TextStyle(color: hexToColor("#FF0F00"), fontSize: 16),
                 )),
           ),
@@ -304,6 +331,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                     ],
                   )
                 : SizedBox(),
+            SizedBox(
+              height: 24,
+            ),
             Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
@@ -311,11 +341,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
               height: 48,
               width: double.infinity,
               child: TextButton(
-                  onPressed: () {
-                    widget.model.deleteOrder(context, widget.model.order!.name);
-                  },
+                  onPressed: _isButtonLoading ? null : onDeleteOrder,
                   child: Text(
-                    "Xóa đơn hàng",
+                    _isButtonLoading ? "...Loading" : "Xóa đơn hàng",
                     style:
                         TextStyle(color: hexToColor("#FF0F00"), fontSize: 16),
                   )),
