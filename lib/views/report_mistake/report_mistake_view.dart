@@ -57,142 +57,159 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
         ),
         body: Stack(
           children: [
-            SingleChildScrollView(
-              reverse: true, // add this line in scroll view
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 24,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          "Tên khách hàng:",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Container(
+                    alignment: Alignment.topCenter,
+                    child: SingleChildScrollView(
+                      reverse: true, // add this line in scroll view
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: 24,
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          "Phạm Văn Mạnh",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          "Mã khách hàng:",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          "KH - 01",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  FormBuilder(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                "Loại báo nhầm lẫn:",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  "Tên khách hàng:",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: FormBuilderDropdown(
-                                name: 'reason',
-                                decoration: InputDecoration(
-                                  contentPadding:
-                                      const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.greenAccent)),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  "Phạm Văn Mạnh",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                                // initialValue: 'Male',
-                                allowClear: true,
-                                hint: Text(
-                                  'Chọn lý do',
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                validator: FormBuilderValidators.compose([
-                                  FormBuilderValidators.required(context,
-                                      errorText: "Hãy chọn lý do")
-                                ]),
-                                items: ["Nhầm lẫn chi tiêu", "Nhầm lẫn bình"]
-                                    .map((reason) => DropdownMenuItem(
-                                          value: reason,
-                                          child: Text('$reason'),
-                                        ))
-                                    .toList(),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 40,
-                        ),
-                        FormBuilderTextField(
-                          validator: FormBuilderValidators.compose([
-                            FormBuilderValidators.required(context,
-                                errorText: "Hãy nhập nội dung")
-                          ]),
-                          name: "content",
-                          keyboardType: TextInputType.multiline,
-                          maxLines: 8,
-                          decoration: new InputDecoration(
-                            hintText: "Nhập nội dung",
-                            border: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.grey, width: 0.0),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  "Mã khách hàng:",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  "KH - 01",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          FormBuilder(
+                            key: _formKey,
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "Loại báo nhầm lẫn:",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: FormBuilderDropdown(
+                                        name: 'reason',
+                                        decoration: InputDecoration(
+                                          contentPadding:
+                                              const EdgeInsets.fromLTRB(
+                                                  10, 0, 10, 0),
+                                          border: OutlineInputBorder(
+                                              borderSide: BorderSide(
+                                                  color: Colors.greenAccent)),
+                                        ),
+                                        // initialValue: 'Male',
+                                        allowClear: true,
+                                        hint: Text(
+                                          'Chọn lý do',
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        validator:
+                                            FormBuilderValidators.compose([
+                                          FormBuilderValidators.required(
+                                              context,
+                                              errorText: "Hãy chọn lý do")
+                                        ]),
+                                        items: [
+                                          "Nhầm lẫn chi tiêu",
+                                          "Nhầm lẫn bình"
+                                        ]
+                                            .map((reason) => DropdownMenuItem(
+                                                  value: reason,
+                                                  child: Text('$reason'),
+                                                ))
+                                            .toList(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 40,
+                                ),
+                                FormBuilderTextField(
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(context,
+                                        errorText: "Hãy nhập nội dung")
+                                  ]),
+                                  name: "content",
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: 8,
+                                  decoration: new InputDecoration(
+                                    hintText: "Nhập nội dung",
+                                    border: OutlineInputBorder(
+                                      borderSide: const BorderSide(
+                                          color: Colors.grey, width: 0.0),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  SizedBox(
-                    height: 64,
-                  ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: 80,
+                ),
+              ],
             ),
             Align(
               alignment: Alignment.bottomCenter,
