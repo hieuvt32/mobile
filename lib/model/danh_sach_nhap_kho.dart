@@ -28,6 +28,7 @@ class DanhSachNhapKho {
     address = json['address'];
     isExpanded = false;
     unit = "Bình";
+    validator = DanhSachNhapKhoValidator();
   }
 
   Map<String, dynamic> toJson() {

@@ -326,7 +326,7 @@ class _ListProductItemState extends State<ListProductItem> {
                                   },
                                 )
                               : FieldData(
-                                  value: values[i].material,
+                                  value: values[i].material ?? "",
                                   fieldType: 3,
                                 ),
                           Visibility(

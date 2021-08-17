@@ -339,8 +339,8 @@ class EditOrderViewModel extends BaseViewModel {
     // if (_name != null && _name!.length > 0) {
     _isLoading = true;
     // }
-    if (["", null, false, 0].contains(_name) &&
-        orderState == OrderState.PreNewOrder) return;
+    // if (["", null, false, 0].contains(_name) &&
+    //     orderState == OrderState.PreNewOrder) return;
     initState();
   }
 
@@ -403,6 +403,7 @@ class EditOrderViewModel extends BaseViewModel {
             _responseGetCustomers!.customers != null
         ? _responseGetCustomers!.customers!
         : [];
+
     notifyListeners();
   }
 
@@ -788,6 +789,7 @@ class EditOrderViewModel extends BaseViewModel {
         return;
       }
     }
+
     // if (!_sellInWarehouse) {
     //   for
     // }
@@ -1001,12 +1003,13 @@ class EditOrderViewModel extends BaseViewModel {
           context: context,
           subtitle: 'Hủy đơn hàng thành công.');
 
-      //Navigator.pop(context, true);
+      Navigator.pop(context, true);
     } catch (err) {
+      Navigator.pop(context, true);
       FrappeAlert.errorAlert(
         title: 'Error',
         context: context,
-        subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
+        subtitle: 'Có lỗi xảy ra, vui lòng thử lại sau!',
       );
     }
   }
