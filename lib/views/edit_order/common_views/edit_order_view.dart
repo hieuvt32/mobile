@@ -71,8 +71,7 @@ class _EditOrderViewState extends State<EditOrderView>
   }
 
   Widget _buidMainView(EditOrderViewModel model) {
-    if (model.sellInWarehouse &&
-        !model.isAvailableRoles([UserRole.KhachHang])) {
+    if (model.sellInWarehouse) {
       return EditOrderSellInWareHouse();
     }
     return EditOrderSellNotInWareHouse();

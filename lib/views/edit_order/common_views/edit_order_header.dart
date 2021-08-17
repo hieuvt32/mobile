@@ -28,9 +28,12 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
   @override
   Widget build(BuildContext context) {
     var isAvailableRoles = widget.model.isAvailableRoles;
-
+    print(widget.model.customers);
     var customerMap = Map.fromIterable(widget.model.customers,
-        key: (v) => v.code, value: (v) => v.realName);
+        key: (v) => v.code,
+        value: (v) => (v.realName == null || v.realName.length == 0)
+            ? v.name
+            : v.realName);
 
     return Container(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
@@ -126,7 +129,9 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                               ),
                               fillColor:
                                   MaterialStateProperty.resolveWith(getColor),
-                              value: widget.model.sellInWarehouse,
+                              value: isAvailableRoles([UserRole.KhachHang])
+                                  ? widget.model.saveTemplate
+                                  : widget.model.sellInWarehouse,
                               onChanged: onCheckboxChange),
                         ),
 

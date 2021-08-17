@@ -13,6 +13,7 @@ import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/product_location_detail_view.dart';
 import 'package:frappe_app/views/edit_order/components/field_data.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/tabs/receiving_shell_delivered_tab.dart';
 import 'package:frappe_app/views/expansion_custom_panel.dart';
 
 class ListProductLocationView extends StatefulWidget {

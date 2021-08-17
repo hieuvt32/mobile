@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_not_sell_in_warehouse_tab.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_not_sell_in_warehouse_normal.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
@@ -21,7 +22,8 @@ class _EditOrderSellNotInWareHouseState
   }
 
   Widget _buidStateView() {
-    if (widget.model.orderState == OrderState.Delivered) {
+    if (widget.model.orderState == OrderState.Delivered &&
+        !widget.model.isAvailableRoles([UserRole.KhachHang])) {
       return EditOrderSellNotInWareHouseTab();
     }
 

@@ -36,6 +36,7 @@ import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
+import 'package:frappe_app/model/rating_order_request.dart';
 import 'package:frappe_app/model/response_data.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
@@ -2259,7 +2260,6 @@ class DioApi implements Api {
   }
 
   Future deleteDonBaoBinhLoi(String name) async {
-    print(name);
     try {
       final response = await DioHelper.dio.post(
         '/method/deleteDonBaoLoiBinh',
@@ -2313,6 +2313,87 @@ class DioApi implements Api {
 
       if (response.statusCode == 200) {
         return GiaoViecSignatureResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  Future createRatingDonHang(request) async {
+    try {
+      dynamic json = request.toJson();
+
+      final response = await DioHelper.dio.post(
+        '/method/createRatingDVDonHang',
+        data: request.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  Future deleteDonMuaBan(order) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/deleteDonMuaBan',
+        data: {'order': order},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw ErrorResponse(
           statusCode: response.statusCode,

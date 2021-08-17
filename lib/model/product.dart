@@ -52,6 +52,7 @@ class Product {
     diaChi = json['dia_chi'];
     isExpanded = false;
     diaChi = json['dia_chi'];
+    validator = new ProductValidator();
   }
 
   Map<String, dynamic> toJson() {

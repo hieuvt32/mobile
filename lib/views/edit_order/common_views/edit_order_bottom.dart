@@ -2,10 +2,13 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/utils/dialog.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_not_confirm_modal.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/rating_view/rating_view.dart';
+import 'package:intl/intl.dart';
 
 class EditOrderBottom extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
@@ -16,6 +19,42 @@ class EditOrderBottom extends StatefulWidget {
 }
 
 class _EditOrderBottomState extends State<EditOrderBottom> {
+  bool _isButtonLoading = false;
+
+  Future onDeleteOrder() async {
+    ConfirmDialog.showConfirmDialog(context, onCancel: () {
+      Navigator.of(context, rootNavigator: true).pop();
+    }, onConfirm: () async {
+      setState(() {
+        _isButtonLoading = true;
+      });
+
+      Navigator.of(context, rootNavigator: true).pop();
+      await widget.model.deleteOrder(context, widget.model.order!.name);
+
+      setState(() {
+        _isButtonLoading = false;
+      });
+    }, content: "Bạn có chắc chắn muốn xóa đơn hàng này không?");
+  }
+
+  Future onCancelOrder() async {
+    setState(() {
+      _isButtonLoading = true;
+    });
+
+    ConfirmDialog.showConfirmDialog(context, onCancel: () {
+      Navigator.of(context, rootNavigator: true).pop();
+    }, onConfirm: () {
+      Navigator.of(context, rootNavigator: true).pop();
+      widget.model.cancelOrder(context);
+    }, content: "Bạn có chắc chắn muốn hủy đơn hàng đã đặt này không?");
+
+    setState(() {
+      _isButtonLoading = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Expanded(
@@ -41,11 +80,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
             height: 48,
             width: double.infinity,
             child: TextButton(
-                onPressed: () {
-                  widget.model.cancelOrder(context);
-                },
+                onPressed: _isButtonLoading ? null : onCancelOrder,
                 child: Text(
-                  "Hủy đơn hàng",
+                  _isButtonLoading ? '...Loading' : "Hủy đơn hàng",
                   style: TextStyle(color: hexToColor("#FF0F00"), fontSize: 16),
                 )),
           ),
@@ -154,8 +191,42 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
         );
 
       case OrderState.Delivering:
-        return Text('');
+        return Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              color: hexToColor("#0072BC")),
+          height: 48,
+          width: double.infinity,
+          child: TextButton(
+              onPressed: () {},
+              child: Text(
+                "Tracking đơn hàng",
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              )),
+        );
       case OrderState.Delivered:
+        if (widget.model.isAvailableRoles([UserRole.KhachHang])) {
+          return Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: hexToColor("#1BBD5C")),
+            height: 48,
+            width: double.infinity,
+            child: TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return RatingView(
+                      orderName: widget.model.order!.name,
+                    );
+                  }));
+                },
+                child: Text(
+                  "Đánh giá dịch vụ",
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                )),
+          );
+        }
         return widget.model.sellInWarehouse
             ? Text('')
             : Row(
@@ -232,7 +303,53 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                 ],
               );
       case OrderState.Cancelled:
-      // return Container(child: ,)
+        return Column(
+          children: [
+            Row(
+              children: [
+                Text("Người hủy: "),
+                Text(widget.model.order!.cancelPerson ?? "",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
+              ],
+            ),
+            Row(
+              children: [
+                Text("Thời gian hủy: "),
+                Text(
+                    "${DateFormat('dd/MM/yyyy').format(widget.model.order!.cancelDate ?? DateTime.now())}",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
+              ],
+            ),
+            widget.model.order!.cancelReason != null
+                ? Row(
+                    children: [
+                      Text("Lý do hủy: "),
+                      Text(widget.model.order!.cancelReason ?? "",
+                          style: TextStyle(
+                            fontSize: 16,
+                          ))
+                    ],
+                  )
+                : SizedBox(),
+            SizedBox(
+              height: 24,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: hexToColor("#FF0F00"))),
+              height: 48,
+              width: double.infinity,
+              child: TextButton(
+                  onPressed: _isButtonLoading ? null : onDeleteOrder,
+                  child: Text(
+                    _isButtonLoading ? "...Loading" : "Xóa đơn hàng",
+                    style:
+                        TextStyle(color: hexToColor("#FF0F00"), fontSize: 16),
+                  )),
+            ),
+          ],
+        );
       default:
         return Container();
     }

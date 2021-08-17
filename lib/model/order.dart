@@ -27,6 +27,9 @@ class Order {
   late String attachSignatureSupplierImage;
   late String attachSignatureCustomerImage;
 
+  late String? cancelPerson;
+  late DateTime? cancelDate;
+  late String? cancelReason;
   late String type;
 
   Order({
@@ -98,6 +101,13 @@ class Order {
         ? DateTime.tryParse(json['modified'])
         : DateTime.now();
     modified = modifiedDate != null ? modifiedDate : DateTime.now();
+
+    cancelDate = json['cancle_date'] != null
+        ? DateTime.tryParse(json['cancle_date'])
+        : DateTime.now();
+
+    cancelPerson = json['cancle_person'];
+    cancelReason = json['cancel_reason'];
   }
 
   Map<String, dynamic> toJson() {

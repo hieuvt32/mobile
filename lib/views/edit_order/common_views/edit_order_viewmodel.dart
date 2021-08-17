@@ -92,6 +92,8 @@ class EditOrderViewModel extends BaseViewModel {
   // bool _readOnlyView = false;
   bool _haveDelivery = false;
 
+  bool _saveTemplate = false;
+
   bool _isLoading = false;
 
   String? _name;
@@ -123,6 +125,8 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   bool get haveDelivery => _haveDelivery;
+
+  bool get saveTemplate => _saveTemplate;
 
   OrderState get orderState {
     return calculateState();
@@ -363,7 +367,7 @@ class EditOrderViewModel extends BaseViewModel {
     } else
       Config.remove(key);
 
-    _sellInWarehouse = enableToSave;
+    _saveTemplate = enableToSave;
     notifyListeners();
   }
 
@@ -511,6 +515,7 @@ class EditOrderViewModel extends BaseViewModel {
 
         if (response != null && response.donNhapKho != null) {
           _donNhapKho = response.donNhapKho;
+
           if (_donNhapKho!.listShell != null &&
               _donNhapKho!.listShell.length > 0) {
             for (var shell in _donNhapKho!.listShell) {
@@ -701,9 +706,7 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.vendor = customer.code;
       _order!.vendorName = customer.realName;
       _order!.type = 'M';
-
       _order!.vendorAddress = '';
-
       _order!.vendorName = customer.realName;
 
       var createOrderResponse =
@@ -713,8 +716,6 @@ class EditOrderViewModel extends BaseViewModel {
           title: 'Tạo đơn thành công',
           context: context,
           subtitle: 'Tạo đơn hàng thành công.');
-
-      initState();
     } catch (err) {
       FrappeAlert.errorAlert(
           title: 'Error',
@@ -1000,13 +1001,31 @@ class EditOrderViewModel extends BaseViewModel {
           context: context,
           subtitle: 'Hủy đơn hàng thành công.');
 
-      Navigator.pop(context, true);
+      //Navigator.pop(context, true);
     } catch (err) {
       FrappeAlert.errorAlert(
         title: 'Error',
         context: context,
         subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
       );
+    }
+  }
+
+  Future deleteOrder(BuildContext context, String orderName) async {
+    try {
+      await locator<Api>().deleteDonMuaBan(orderName);
+
+      FrappeAlert.successAlert(
+          title: "Success",
+          subtitle: "Xóa đơn hàng thành công.",
+          context: context);
+
+      Navigator.pop(context, true);
+    } catch (e) {
+      FrappeAlert.successAlert(
+          title: "Error",
+          subtitle: "Có lỗi xảy ra, vui lòng thử lại sau!",
+          context: context);
     }
   }
 

@@ -11,6 +11,7 @@ import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/base_view.dart';
+import 'package:frappe_app/views/change_password_view.dart';
 
 import 'package:frappe_app/widgets/frappe_button.dart';
 
@@ -96,14 +97,22 @@ class _PersonalPageViewState extends State<PersonalPageView> {
                       ),
                     ),
                     SizedBox(
-                      height: 24,
+                      height: 48,
                     ),
                     FrappeFlatButton(
                       title: "Đổi mật khẩu",
                       fullWidth: false,
                       minWidth: 328,
                       height: 52,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ChangePasswordView();
+                            },
+                          ),
+                        );
+                      },
                       buttonType: ButtonType.primary,
                     ),
                   ],
