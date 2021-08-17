@@ -117,23 +117,20 @@ class _TransportationEditState extends State<TransportationEdit>
                   ];
                 },
                 body: Container(
-                  child: Column(
+                  child: Stack(
                     children: [
-                      Expanded(
-                        flex: 9,
-                        child: TabBarView(
-                          physics: NeverScrollableScrollPhysics(),
-                          controller: _tabController,
-                          children: [
-                            OrderDetailTab(
-                              address: widget.address,
-                            ),
-                            TransportationSignatureTab(
-                              address: widget.address,
-                              isLatest: widget.isLatest,
-                            ),
-                          ],
-                        ),
+                      TabBarView(
+                        physics: NeverScrollableScrollPhysics(),
+                        controller: _tabController,
+                        children: [
+                          OrderDetailTab(
+                            address: widget.address,
+                          ),
+                          TransportationSignatureTab(
+                            address: widget.address,
+                            isLatest: widget.isLatest,
+                          ),
+                        ],
                       ),
                       // EditOrderBottom(),
                     ],

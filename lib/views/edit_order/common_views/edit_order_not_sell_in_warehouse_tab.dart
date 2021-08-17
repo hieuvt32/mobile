@@ -72,18 +72,27 @@ class _EditOrderSellNotInWareHouseTabState
             ];
           },
           body: Container(
-            child: Column(
+            child: Stack(
               children: [
-                Expanded(
-                  flex: 9,
-                  child: TabBarView(
-                    physics: NeverScrollableScrollPhysics(),
-                    controller: _tabController,
-                    children: [
-                      ListProductLocationView(),
-                      ReceivingShellDeliveredTab(),
-                    ],
-                  ),
+                Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        child: TabBarView(
+                          physics: NeverScrollableScrollPhysics(),
+                          controller: _tabController,
+                          children: [
+                            ListProductLocationView(),
+                            ReceivingShellDeliveredTab(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                    ),
+                  ],
                 ),
                 EditOrderBottom(),
               ],

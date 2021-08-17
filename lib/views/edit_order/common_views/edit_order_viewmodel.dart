@@ -15,6 +15,7 @@ import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_guyen_vat_lieu_san_pham_response.dart';
 import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/nguyen_vat_lieu_san_pham.dart';
+import 'package:frappe_app/model/offline_storage.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/services/api/api.dart';
@@ -339,8 +340,8 @@ class EditOrderViewModel extends BaseViewModel {
     // if (_name != null && _name!.length > 0) {
     _isLoading = true;
     // }
-    if (["", null, false, 0].contains(_name) &&
-        orderState == OrderState.PreNewOrder) return;
+    // if (["", null, false, 0].contains(_name) &&
+    //     orderState == OrderState.PreNewOrder) return;
     initState();
   }
 

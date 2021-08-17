@@ -73,17 +73,15 @@ class _TransportationListState extends State<TransportationList> {
 
             return GestureDetector(
               onTap: () {
-                if (item.status != "Đã đặt hàng") {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return TransportationDetail(
-                          name: item.name,
-                        );
-                      },
-                    ),
-                  );
-                }
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return TransportationDetail(
+                        name: item.name,
+                      );
+                    },
+                  ),
+                );
               },
               child: ItemCardOrder(
                 cartContent: buildCardContent(

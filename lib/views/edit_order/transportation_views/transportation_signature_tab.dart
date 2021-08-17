@@ -36,223 +36,229 @@ class _TransportationSignatureTabState
     var attachImageDeliver =
         giaoViewSig != null ? giaoViewSig.attachSignatureDeliverImage : '';
 
-    return Container(
-      child: Column(
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 4, 0, 16),
+      child: Stack(
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(0, 4, 0, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Text(
-                      'Khách hàng',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        // color: hexToColor('#00478B'),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 6,
-                    ),
-                    Container(
-                      height: 160,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: hexToColor('#B3D5EB'),
-                        ),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Visibility(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: GestureDetector(
-                                  child: FrappeIcon(
-                                    FrappeIcons.refresh,
-                                    size: 16,
-                                  ),
-                                  onTap: () {
-                                    widget.model.clearSignatureCustomer();
-                                  },
-                                ),
-                              ),
-                              visible: !readOnly,
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Container(
-                              width: double.infinity,
-                              child: readOnly
-                                  ? Image.network(
-                                      '${widget.model.config!.baseUrl}$attachImageCustomer')
-                                  : Signature(
-                                      controller: widget
-                                          .model.signatureCustomerController,
-                                      backgroundColor: Colors.white,
-                                      height: 110,
-                                      width: MediaQuery.of(context).size.width -
-                                          30,
-                                    ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Text(
-                      'Nhà cung cấp',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        // color: hexToColor('#00478B'),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 6,
-                    ),
-                    Container(
-                      height: 160,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: hexToColor('#B3D5EB'),
-                        ),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Visibility(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: GestureDetector(
-                                  child: FrappeIcon(
-                                    FrappeIcons.refresh,
-                                    size: 16,
-                                  ),
-                                  onTap: () {
-                                    widget.model.clearSignatureSupplier();
-                                  },
-                                ),
-                              ),
-                              visible: !readOnly,
-                            ),
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Container(
-                              width: double.infinity,
-                              child: readOnly
-                                  ? Image.network(
-                                      '${widget.model.config!.baseUrl}$attachImageDeliver')
-                                  : Signature(
-                                      controller: widget
-                                          .model.signatureSupplierController,
-                                      backgroundColor: Colors.white,
-                                      height: 110,
-                                      width: MediaQuery.of(context).size.width -
-                                          30,
-                                    ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 44,
-                    ),
-                    // _buildBottomButton(model),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
             children: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: hexToColor('#FF0F00'),
-                  // side: BorderSide(
-                  //   width: 1.0,
-                  // ),
-                  minimumSize: Size(120, 32),
-                  // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    // side: BorderSide(
-                    //   color: hexToColor('#0072BC'),
-                    // ),
-                  ),
-                ),
-                onPressed: () {},
-                child: Text(
-                  'Hủy',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+              SingleChildScrollView(
+                child: Container(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 12,
+                      ),
+                      Text(
+                        'Khách hàng',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          // color: hexToColor('#00478B'),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Container(
+                        height: 160,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: hexToColor('#B3D5EB'),
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Visibility(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: GestureDetector(
+                                    child: FrappeIcon(
+                                      FrappeIcons.refresh,
+                                      size: 16,
+                                    ),
+                                    onTap: () {
+                                      widget.model.clearSignatureCustomer();
+                                    },
+                                  ),
+                                ),
+                                visible: !readOnly,
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: readOnly
+                                    ? Image.network(
+                                        '${widget.model.config!.baseUrl}$attachImageCustomer')
+                                    : Signature(
+                                        controller: widget
+                                            .model.signatureCustomerController,
+                                        backgroundColor: Colors.white,
+                                        height: 110,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                30,
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        'Nhà cung cấp',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          // color: hexToColor('#00478B'),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Container(
+                        height: 160,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: hexToColor('#B3D5EB'),
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Visibility(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: GestureDetector(
+                                    child: FrappeIcon(
+                                      FrappeIcons.refresh,
+                                      size: 16,
+                                    ),
+                                    onTap: () {
+                                      widget.model.clearSignatureSupplier();
+                                    },
+                                  ),
+                                ),
+                                visible: !readOnly,
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              Container(
+                                width: double.infinity,
+                                child: readOnly
+                                    ? Image.network(
+                                        '${widget.model.config!.baseUrl}$attachImageDeliver')
+                                    : Signature(
+                                        controller: widget
+                                            .model.signatureSupplierController,
+                                        backgroundColor: Colors.white,
+                                        height: 110,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                30,
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: hexToColor('#0072BC'),
-                  // side: BorderSide(
-                  //   width: 1.0,
-                  // ),
-
-                  minimumSize: Size(120, 32),
-                  // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.0),
-                    // side: BorderSide(
-                    //   color: hexToColor('#FF0F00'),
-                    // ),
-                  ),
-                ),
-                onPressed: () async {
-                  await widget.model.updateOrder(context,
-                      status: widget.isLatest
-                          ? "Đã giao hàng"
-                          : widget.model.order!.status);
-                  await widget.model.updateGiaoViecSignature(context,
-                      address: widget.address.address, status: "Đã giao hàng");
-                },
-                child: Text(
-                  widget.model.sellInWarehouse
-                      ? 'Hoàn thành'
-                      : (widget.model.orderState == OrderState.PreNewOrder
-                          ? 'Tạo đơn'
-                          : 'Lưu'),
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
+              SizedBox(
+                height: 80,
               )
             ],
-          ))
+          ),
+          // _buildBottomButton(model),
+
+          Align(
+              alignment: Alignment.bottomCenter,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: hexToColor('#FF0F00'),
+                      // side: BorderSide(
+                      //   width: 1.0,
+                      // ),
+                      minimumSize: Size(120, 32),
+                      // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        // side: BorderSide(
+                        //   color: hexToColor('#0072BC'),
+                        // ),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: Text(
+                      'Hủy',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: hexToColor('#0072BC'),
+                      // side: BorderSide(
+                      //   width: 1.0,
+                      // ),
+
+                      minimumSize: Size(120, 32),
+                      // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        // side: BorderSide(
+                        //   color: hexToColor('#FF0F00'),
+                        // ),
+                      ),
+                    ),
+                    onPressed: () async {
+                      await widget.model.updateOrder(context,
+                          status: widget.isLatest
+                              ? "Đã giao hàng"
+                              : widget.model.order!.status);
+                      await widget.model.updateGiaoViecSignature(context,
+                          address: widget.address.address,
+                          status: "Đã giao hàng");
+                    },
+                    child: Text(
+                      widget.model.sellInWarehouse
+                          ? 'Hoàn thành'
+                          : (widget.model.orderState == OrderState.PreNewOrder
+                              ? 'Tạo đơn'
+                              : 'Lưu'),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  )
+                ],
+              ))
         ],
       ),
     );

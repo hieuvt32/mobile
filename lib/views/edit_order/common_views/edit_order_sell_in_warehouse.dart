@@ -87,19 +87,28 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
             ];
           },
           body: Container(
-            child: Column(
+            child: Stack(
               children: [
-                Expanded(
-                  flex: 9,
-                  child: TabBarView(
-                    physics: NeverScrollableScrollPhysics(),
-                    controller: _tabController,
-                    children: [
-                      ReceivingShellTab(),
-                      ProductTab(),
-                      SignatureTab(),
-                    ],
-                  ),
+                Column(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        alignment: Alignment.topCenter,
+                        child: TabBarView(
+                          physics: NeverScrollableScrollPhysics(),
+                          controller: _tabController,
+                          children: [
+                            ReceivingShellTab(),
+                            ProductTab(),
+                            SignatureTab(),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 80,
+                    ),
+                  ],
                 ),
                 EditOrderBottom(),
               ],

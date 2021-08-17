@@ -212,19 +212,28 @@ class _TransportationDetailState extends State<TransportationDetail> {
             ],
           ),
           body: !model.isLoading
-              ? Column(
+              ? Stack(
                   children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            TransportationHeader(),
-                            _buildTabContent(model),
-                          ],
+                    Column(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            alignment: Alignment.topCenter,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TransportationHeader(),
+                                  _buildTabContent(model),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                      flex: 9,
+                        SizedBox(
+                          height: 80,
+                        ),
+                      ],
                     ),
                     TransportationBottom()
                   ],

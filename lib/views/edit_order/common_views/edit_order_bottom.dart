@@ -57,14 +57,11 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 1,
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Visibility(
-          visible: true,
-          child: _buildBottomButton(),
-        ),
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Visibility(
+        visible: true,
+        child: _buildBottomButton(),
       ),
     );
   }
