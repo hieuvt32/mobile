@@ -123,7 +123,12 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
   _buildProductLocationDetailView() {
     return Column(
       children: [
-        ProductLocationDetailHeader(totalNhapKho: 0, totalTraVe: 0),
+        ProductLocationDetailHeader(
+          address: widget.address,
+        ),
+        SizedBox(
+          height: 24,
+        ),
         ListProductReturnView(
           'Danh sách hoàn trả',
           realOnly: true,
@@ -131,11 +136,13 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
         ListShellView(
           'Danh sách vỏ bình nhập kho',
           realOnly: true,
+          address: widget.address,
         ),
         ListShellView(
           'Danh sách vỏ bình trả lại khách',
           type: 1,
           realOnly: true,
+          address: widget.address,
         ),
       ],
     );
@@ -160,7 +167,7 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
           title: Text(products[0].diaChi),
         ),
         body: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+            padding: const EdgeInsets.all(16),
             child: _buildMainView(products)));
   }
 }

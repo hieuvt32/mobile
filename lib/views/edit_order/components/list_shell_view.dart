@@ -15,12 +15,11 @@ class ListShellView extends StatefulWidget {
   final String title;
   final int type;
   final bool realOnly;
-  ListShellView(
-    this.title, {
-    Key? key,
-    this.type = 0,
-    this.realOnly = false,
-  }) : super(key: key);
+  final String? address;
+
+  ListShellView(this.title,
+      {Key? key, this.type = 0, this.realOnly = false, this.address})
+      : super(key: key);
 
   @override
   _ListShellViewState createState() => _ListShellViewState();
@@ -55,6 +54,7 @@ class _ListShellViewState extends State<ListShellView> {
           ListShellItem(
             type: widget.type,
             realOnly: widget.realOnly,
+            address: widget.address,
           ),
           SizedBox(
             height: 10,
@@ -111,11 +111,9 @@ class ListShellItem extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
   final int type;
   final bool realOnly;
-  ListShellItem({
-    Key? key,
-    this.type = 0,
-    this.realOnly = false,
-  }) : super(key: key);
+  final String? address;
+  ListShellItem({Key? key, this.type = 0, this.realOnly = false, this.address})
+      : super(key: key);
 
   @override
   _ListShellItemState createState() => _ListShellItemState();
@@ -147,15 +145,36 @@ class _ListShellItemState extends State<ListShellItem> {
   List<ExpansionItem> _buildExpansionItems() {
     switch (widget.type) {
       case 0:
-        values = widget.model.nhapKhos;
+        if (widget.address == null || widget.address!.length == 0) {
+          values = widget.model.nhapKhos;
+        } else {
+          values = widget.model.nhapKhos
+              .where((element) => element.address == widget.address)
+              .toList();
+        }
+
         controllers = widget.model.donNhapKhoEditControllers;
         break;
       case 1:
-        values = widget.model.traVes;
+        if (widget.address == null || widget.address!.length == 0) {
+          values = widget.model.traVes;
+        } else {
+          values = widget.model.traVes
+              .where((element) => element.address == widget.address)
+              .toList();
+        }
+
         controllers = widget.model.donTraVeEditControllers;
         break;
       case 2:
-        values = widget.model.traVes;
+        if (widget.address == null || widget.address!.length == 0) {
+          values = widget.model.traVes;
+        } else {
+          values = widget.model.traVes
+              .where((element) => element.address == widget.address)
+              .toList();
+        }
+
         controllers = widget.model.donTraVeEditControllers;
         break;
       default:
