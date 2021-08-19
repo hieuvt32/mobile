@@ -13,6 +13,7 @@ class Order {
   late bool coGiaoVanVien;
 
   late int sellInWarehouse;
+  late int? isRated;
 
   late String company;
   // late String orderStatus;
@@ -27,33 +28,37 @@ class Order {
   late String attachSignatureSupplierImage;
   late String attachSignatureCustomerImage;
 
-  late String? cancelPerson;
+  late String cancelPerson;
   late DateTime? cancelDate;
-  late String? cancelReason;
+  late String cancelReason;
+
   late String type;
 
-  Order({
-    required this.vendorName,
-    // required this.creation,
-    required this.status,
-    required this.name,
-    required this.employeeName,
-    required this.plate,
-    required this.products,
-    required this.sellInWarehouse,
-    required this.company,
-    // required this.orderStatus,
-    required this.paymentStatus,
-    required this.vendor,
-    required this.phone,
-    required this.taxId,
-    required this.email,
-    required this.vendorAddress,
-    required this.totalCost,
-    required this.attachSignatureSupplierImage,
-    required this.attachSignatureCustomerImage,
-    required this.type,
-  }) {
+  Order(
+      {required this.vendorName,
+      // required this.creation,
+      required this.status,
+      required this.name,
+      required this.employeeName,
+      required this.plate,
+      required this.products,
+      required this.sellInWarehouse,
+      required this.company,
+      // required this.orderStatus,
+      required this.paymentStatus,
+      required this.vendor,
+      required this.phone,
+      required this.taxId,
+      required this.email,
+      required this.vendorAddress,
+      required this.totalCost,
+      required this.attachSignatureSupplierImage,
+      required this.attachSignatureCustomerImage,
+      required this.type,
+      this.cancelDate,
+      required this.cancelPerson,
+      required this.cancelReason,
+      this.isRated}) {
     coGiaoVanVien = false;
     creation = DateTime.now();
     modified = DateTime.now();
@@ -95,6 +100,9 @@ class Order {
         json['attach_signature_customer_image'] == null
             ? ''
             : json['attach_signature_customer_image'];
+
+    isRated = json['is_rating'] ?? 0;
+
     coGiaoVanVien = employeeName != '' && plate != '';
     type = json['type'] == null ? 'B' : json['type'];
     var modifiedDate = json['modified'] != null
@@ -102,11 +110,12 @@ class Order {
         : DateTime.now();
     modified = modifiedDate != null ? modifiedDate : DateTime.now();
 
-    cancelDate = json['cancle_date'] != null
-        ? DateTime.tryParse(json['cancle_date'])
-        : DateTime.now();
+    cancelDate = (json['cancle_date'] != null
+            ? DateTime.tryParse(json['cancle_date'])
+            : DateTime.now()) ??
+        DateTime.now();
 
-    cancelPerson = json['cancle_person'];
+    cancelPerson = json['cancel_person'];
     cancelReason = json['cancel_reason'];
   }
 
@@ -131,6 +140,11 @@ class Order {
     data['product_list'] = lstProduct;
     data['attach_signature_customer_image'] = attachSignatureCustomerImage;
     data['attach_signature_supplier_image'] = attachSignatureSupplierImage;
+
+    data['cancel_person'] = cancelPerson;
+    data['cancel_date'] = cancelDate.toString();
+    data['cancel_reason'] = cancelReason;
+
     // data['plate'] = this.plate;
     // data['employee_name'] = this.employeeName;
     return data;

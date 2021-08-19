@@ -58,7 +58,10 @@ class _RatingViewState extends State<RatingView> {
       });
 
       await locator<Api>().createRatingDonHang(CreateRatingRequest(
-          rating: rating, comments: comment, orderName: widget.orderName));
+          rating: rating,
+          comments: comment,
+          orderName: widget.orderName,
+          code: "Rating-${widget.orderName}"));
 
       setState(() {
         isButtonLoading = false;

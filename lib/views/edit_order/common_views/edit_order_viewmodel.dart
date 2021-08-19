@@ -93,6 +93,8 @@ class EditOrderViewModel extends BaseViewModel {
   // bool _readOnlyView = false;
   bool _haveDelivery = false;
 
+  int _isRated = 0;
+
   bool _saveTemplate = false;
 
   bool _isLoading = false;
@@ -126,6 +128,8 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   bool get haveDelivery => _haveDelivery;
+
+  int get isRated => _isRated;
 
   bool get saveTemplate => _saveTemplate;
 
@@ -298,6 +302,8 @@ class EditOrderViewModel extends BaseViewModel {
         vendorName: '',
         attachSignatureCustomerImage: '',
         attachSignatureSupplierImage: "",
+        cancelPerson: '',
+        cancelReason: '',
         type: "B");
 
     _donNhapKho = DonNhapKho(
@@ -308,6 +314,10 @@ class EditOrderViewModel extends BaseViewModel {
       status: '',
       listShell: [],
     );
+  }
+
+  setIsRated(int isRated) {
+    _isRated = isRated;
   }
 
   setHaveDelivery(bool haveDelivery) {
@@ -338,10 +348,11 @@ class EditOrderViewModel extends BaseViewModel {
 
   init() {
     // if (_name != null && _name!.length > 0) {
-    _isLoading = true;
+
     // }
     // if (["", null, false, 0].contains(_name) &&
     //     orderState == OrderState.PreNewOrder) return;
+    _isLoading = true;
     initState();
   }
 
@@ -707,7 +718,7 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.totalCost = 0;
       _order!.vendor = customer.code;
       _order!.vendorName = customer.realName;
-      _order!.type = 'M';
+      _order!.type = 'B';
       _order!.vendorAddress = '';
       _order!.vendorName = customer.realName;
 
@@ -996,6 +1007,8 @@ class EditOrderViewModel extends BaseViewModel {
   Future<void> cancelOrder(context) async {
     try {
       _order!.status = "Đã hủy";
+      _order!.cancelPerson = Config().customerCode;
+      _order!.cancelDate = DateTime.now();
 
       await locator<Api>().updateHoaDonMuaBan(_order!);
 

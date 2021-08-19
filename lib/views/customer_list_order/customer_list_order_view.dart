@@ -62,10 +62,16 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
   //   }
   // }
 
-  Widget buildCardContent(List<Product> products) {
+  Widget buildCardContent(List<Product> products, int sellInWarehouse) {
     Map<String, double> totalPriceByAddress = {};
 
+    int totalQuantity = 0;
+    double totalPrice = 0;
+
     products.forEach((product) {
+      totalQuantity += product.quantity;
+      totalPrice += product.unitPrice;
+
       totalPriceByAddress[product.diaChi] =
           totalPriceByAddress[product.diaChi] ?? 0 + product.unitPrice;
     });
@@ -78,48 +84,87 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
             borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(4),
                 bottomRight: Radius.circular(4))),
-        child: Column(
-          children: totalPriceByAddress.keys
-              .map((address) => Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 8),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                            flex: 8,
-                            child: Row(
-                              children: [
-                                Text("Địa chỉ:"),
-                                SizedBox(
-                                  width: 8,
-                                ),
-                                LimitTextLength(
-                                  text: address,
-                                ),
-                              ],
-                            )),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            "-",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontWeight: FontWeight.bold),
+        child: sellInWarehouse == 1
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                      flex: 8,
+                      child: Row(
+                        children: [
+                          Text("Số lượng"),
+                          SizedBox(
+                            width: 8,
                           ),
-                        ),
-                        Expanded(
-                            flex: 3,
-                            child: Text(
-                              totalPriceByAddress[address].toString(),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: hexToColor("#FF0F00")),
-                              textAlign: TextAlign.end,
-                            ))
-                      ],
+                          Text(
+                            totalQuantity.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      )),
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      "-",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                  ))
-              .toList(),
-        ));
+                  ),
+                  Expanded(
+                      flex: 3,
+                      child: Text(
+                        totalPrice.toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: hexToColor("#FF0F00")),
+                        textAlign: TextAlign.end,
+                      ))
+                ],
+              )
+            : Column(
+                children: totalPriceByAddress.keys
+                    .map((address) => Padding(
+                          padding: const EdgeInsets.only(top: 8, bottom: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                  flex: 8,
+                                  child: Row(
+                                    children: [
+                                      Text("Địa chỉ:"),
+                                      SizedBox(
+                                        width: 8,
+                                      ),
+                                      LimitTextLength(
+                                        text: address,
+                                      ),
+                                    ],
+                                  )),
+                              Expanded(
+                                flex: 1,
+                                child: Text(
+                                  "-",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    totalPriceByAddress[address].toString(),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: hexToColor("#FF0F00")),
+                                    textAlign: TextAlign.end,
+                                  ))
+                            ],
+                          ),
+                        ))
+                    .toList(),
+              ));
   }
 
   Widget _buildTabContent(OrderStatus status, List<Order> listOrder) {
@@ -137,7 +182,10 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                   MaterialPageRoute(
                     builder: (context) {
                       return EditOrderView(
-                          name: listOrder[index].name, haveDelivery: true);
+                        name: listOrder[index].name,
+                        haveDelivery: true,
+                        isRated: listOrder[index].isRated ?? 0,
+                      );
                     },
                   ),
                 ).then((refresh) =>
@@ -145,7 +193,8 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
               },
               child: ItemCardOrder(
                 headerColor: headerColor,
-                cartContent: buildCardContent(item.products),
+                cartContent:
+                    buildCardContent(item.products, item.sellInWarehouse),
                 leftHeaderText: item.name,
                 rightHeaderText: DateFormat('dd/MM/yyyy').format(item.creation),
               ),
@@ -183,27 +232,27 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
         locator<Api>().getListOrder(
           0,
           customer: customerCode,
-          type: "M",
+          type: "B",
         ),
         locator<Api>().getListOrder(
           1,
           customer: customerCode,
-          type: "M",
+          type: "B",
         ),
         locator<Api>().getListOrder(
           2,
           customer: customerCode,
-          type: "M",
+          type: "B",
         ),
         locator<Api>().getListOrder(
           3,
           customer: customerCode,
-          type: "M",
+          type: "B",
         ),
         locator<Api>().getListOrder(
           4,
           customer: customerCode,
-          type: "M",
+          type: "B",
         )
       ]);
 

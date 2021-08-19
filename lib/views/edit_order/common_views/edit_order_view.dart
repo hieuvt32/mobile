@@ -10,11 +10,10 @@ import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.da
 class EditOrderView extends StatefulWidget {
   final String name;
   final bool haveDelivery;
-  EditOrderView({
-    Key? key,
-    this.name = '',
-    this.haveDelivery = false,
-  }) : super(key: key);
+  final int isRated;
+  EditOrderView(
+      {Key? key, this.name = '', this.haveDelivery = false, this.isRated = 0})
+      : super(key: key);
 
   @override
   _EditOrderViewState createState() => _EditOrderViewState();
@@ -30,6 +29,7 @@ class _EditOrderViewState extends State<EditOrderView>
         model.init();
         await model.initPreData();
         model.setHaveDelivery(widget.haveDelivery);
+        model.setIsRated(widget.isRated);
         // this.initTab();
       },
       onModelClose: (model) {
@@ -71,9 +71,11 @@ class _EditOrderViewState extends State<EditOrderView>
   }
 
   Widget _buidMainView(EditOrderViewModel model) {
+    print(model.sellInWarehouse);
     if (model.sellInWarehouse) {
       return EditOrderSellInWareHouse();
     }
+
     return EditOrderSellNotInWareHouse();
   }
 }
