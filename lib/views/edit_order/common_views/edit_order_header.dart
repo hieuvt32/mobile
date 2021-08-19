@@ -28,7 +28,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
   @override
   Widget build(BuildContext context) {
     var isAvailableRoles = widget.model.isAvailableRoles;
-    print(widget.model.customers);
+
     var customerMap = Map.fromIterable(widget.model.customers,
         key: (v) => v.code,
         value: (v) => (v.realName == null || v.realName.length == 0)

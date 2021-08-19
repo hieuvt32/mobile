@@ -126,7 +126,7 @@ class _HomeChildViewState extends State<HomeChildView> {
         visible: true,
         roles: ["Khách Hàng"],
         view: (context) {
-          return EditOrderView();
+          return EditOrderView(haveDelivery: true);
         },
       )
     ]),

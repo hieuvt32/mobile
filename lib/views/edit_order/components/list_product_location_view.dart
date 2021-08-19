@@ -626,7 +626,7 @@ class _ListProductLocationItemViewState
                                   )
                                 : FieldData(
                                     fieldType: 3,
-                                    value: '${values[i].material}',
+                                    value: '${values[i].material ?? ""}',
                                   ),
                             Visibility(
                                 visible: values[i].validator.isMaterialRequired,

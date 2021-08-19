@@ -132,6 +132,7 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
         ListProductReturnView(
           'Danh sách hoàn trả',
           realOnly: true,
+          address: widget.address,
         ),
         ListShellView(
           'Danh sách vỏ bình nhập kho',

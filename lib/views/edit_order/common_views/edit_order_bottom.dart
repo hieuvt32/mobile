@@ -7,6 +7,7 @@ import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_not_confirm_modal.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/edit_order/common_views/tracking_order_view.dart';
 import 'package:frappe_app/views/rating_view/rating_view.dart';
 import 'package:intl/intl.dart';
 
@@ -198,7 +199,12 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
           height: 48,
           width: double.infinity,
           child: TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) {
+                  return TrackingOrderView();
+                }));
+              },
               child: Text(
                 "Tracking đơn hàng",
                 style: TextStyle(color: Colors.white, fontSize: 16),
@@ -206,6 +212,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
         );
       case OrderState.Delivered:
         if (widget.model.isAvailableRoles([UserRole.KhachHang])) {
+          if (widget.model.isRated == 1) {
+            return SizedBox();
+          }
           return Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
@@ -308,7 +317,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
             Row(
               children: [
                 Text("Người hủy: "),
-                Text(widget.model.order!.cancelPerson ?? "",
+                Text(widget.model.order!.cancelPerson,
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
               ],
             ),
@@ -324,16 +333,13 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                 ? Row(
                     children: [
                       Text("Lý do hủy: "),
-                      Text(widget.model.order!.cancelReason ?? "",
+                      Text(widget.model.order!.cancelReason,
                           style: TextStyle(
                             fontSize: 16,
                           ))
                     ],
                   )
                 : SizedBox(),
-            SizedBox(
-              height: 24,
-            ),
             Container(
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),

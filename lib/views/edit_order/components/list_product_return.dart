@@ -17,12 +17,11 @@ class ListProductReturnView extends StatefulWidget {
   final String title;
   final int type;
   final bool realOnly;
-  ListProductReturnView(
-    this.title, {
-    Key? key,
-    this.type = 0,
-    this.realOnly = false,
-  }) : super(key: key);
+  final String? address;
+
+  ListProductReturnView(this.title,
+      {Key? key, this.type = 0, this.realOnly = false, this.address})
+      : super(key: key);
 
   @override
   _ListProductReturnViewState createState() => _ListProductReturnViewState();
@@ -57,6 +56,7 @@ class _ListProductReturnViewState extends State<ListProductReturnView> {
           ListProductReturnItem(
             type: widget.type,
             realOnly: widget.realOnly,
+            address: widget.address,
           ),
         ],
         // Icon(Icons.image) // iconPic
@@ -77,11 +77,10 @@ class ListProductReturnItem extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
   final int type;
   final bool realOnly;
-  ListProductReturnItem({
-    Key? key,
-    this.type = 0,
-    this.realOnly = false,
-  }) : super(key: key);
+  final String? address;
+  ListProductReturnItem(
+      {Key? key, this.type = 0, this.realOnly = false, this.address})
+      : super(key: key);
 
   @override
   _ListProductReturnItemState createState() => _ListProductReturnItemState();
@@ -110,12 +109,20 @@ class _ListProductReturnItemState extends State<ListProductReturnItem> {
   }
 
   List<ExpansionItem> _buildExpansionItems() {
-    groupBy<Product, String>(
-        widget.model.productForLocations.where((element) =>
+    Iterable<Product> filteredList = widget.model.productForLocations.where(
+        (element) =>
             element.actualQuantity != null &&
             element.actualQuantity != 0 &&
-            element.actualQuantity != element.quantity),
-        (obj) => obj.product!).map((key, value) {
+            element.actualQuantity != element.quantity);
+    print(widget.address);
+    if (widget.address != null && widget.address!.length > 0) {
+      //print(widget.address);
+      filteredList =
+          filteredList.where((element) => element.address == widget.address);
+    }
+
+    groupBy<Product, String>(filteredList, (obj) => obj.product!)
+        .map((key, value) {
       var total = value.fold<int>(0, (sum, item) => sum + item.actualQuantity);
       values.add(MapEntry(ProductReturnKey(key, total, false), value));
       return MapEntry(key, value);
