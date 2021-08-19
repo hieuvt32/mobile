@@ -9,6 +9,8 @@ class DonNhapKho {
   late String status;
   late String? address;
 
+  late String? reasonEdit;
+
   DonNhapKho({
     required this.codeOrders,
     required this.name,
@@ -16,6 +18,7 @@ class DonNhapKho {
     required this.title,
     required this.status,
     required this.listShell,
+    required this.reasonEdit,
   });
 
   DonNhapKho.fromJson(Map<String, dynamic> json) {
@@ -28,6 +31,7 @@ class DonNhapKho {
       return DanhSachNhapKho.fromJson(item);
     }).toList();
     address = json['address'];
+    reasonEdit = json['reason_edit'];
   }
 
   Map<String, dynamic> toJson() {
@@ -41,6 +45,7 @@ class DonNhapKho {
     data['title'] = this.title;
     data['status'] = this.status;
     data['list_shell'] = listShell;
+    data['reason_edit'] = this.reasonEdit;
     return data;
   }
 }

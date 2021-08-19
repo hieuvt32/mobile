@@ -6,8 +6,10 @@ import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.da
 
 class EditOrderHeader extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
+  final bool isNhaCungCap;
   EditOrderHeader({
     Key? key,
+    this.isNhaCungCap = false,
   }) : super(key: key);
 
   @override
@@ -29,11 +31,21 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
   Widget build(BuildContext context) {
     var isAvailableRoles = widget.model.isAvailableRoles;
 
-    var customerMap = Map.fromIterable(widget.model.customers,
-        key: (v) => v.code,
-        value: (v) => (v.realName == null || v.realName.length == 0)
-            ? v.name
-            : v.realName);
+    var customerMap;
+
+    if (!widget.isNhaCungCap) {
+      customerMap = Map.fromIterable(widget.model.customers,
+          key: (v) => v.code,
+          value: (v) => (v.realName == null || v.realName.length == 0)
+              ? v.name
+              : v.realName);
+    } else {
+      customerMap = Map.fromIterable(widget.model.manufactures,
+          key: (v) => v.code,
+          value: (v) => (v.realName == null || v.realName.length == 0)
+              ? v.name
+              : v.realName);
+    }
 
     return Container(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
@@ -51,7 +63,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Tên khách hàng',
+                      widget.isNhaCungCap ? 'Nhà cung cấp' : 'Tên khách hàng',
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
@@ -72,7 +84,10 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton(
                                 isExpanded: true,
-                                items: widget.model.customers.map((e) {
+                                items: (widget.isNhaCungCap
+                                        ? widget.model.manufactures
+                                        : widget.model.customers)
+                                    .map((e) {
                                   return DropdownMenuItem<dynamic>(
                                     child: Text(e.realName),
                                     value: e.code,
@@ -110,48 +125,51 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                     SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        // SizedBox(
-                        //   height: 10,
-                        // ),
-                        SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: Checkbox(
-                              checkColor: Colors.white,
-                              splashRadius: 1,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(4),
+                    Visibility(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          // SizedBox(
+                          //   height: 10,
+                          // ),
+                          SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: Checkbox(
+                                checkColor: Colors.white,
+                                splashRadius: 1,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(4),
+                                  ),
                                 ),
-                              ),
-                              fillColor:
-                                  MaterialStateProperty.resolveWith(getColor),
-                              value: isAvailableRoles([UserRole.KhachHang])
-                                  ? widget.model.saveTemplate
-                                  : widget.model.sellInWarehouse,
-                              onChanged: onCheckboxChange),
-                        ),
-
-                        Text(
-                          isAvailableRoles(
-                                  [UserRole.KhachHang, UserRole.DieuPhoi])
-                              ? "Lưu đơn mẫu"
-                              : 'Bán Hàng Tại Kho',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: isAvailableRoles([UserRole.KhachHang])
-                                ? Color.fromRGBO(0, 0, 0, 0.75)
-                                : widget.model.orderState !=
-                                        OrderState.PreNewOrder
-                                    ? hexToColor('#AAAAAA')
-                                    : Color.fromRGBO(0, 0, 0, 0.75),
+                                fillColor:
+                                    MaterialStateProperty.resolveWith(getColor),
+                                value: isAvailableRoles([UserRole.KhachHang])
+                                    ? widget.model.saveTemplate
+                                    : widget.model.sellInWarehouse,
+                                onChanged: onCheckboxChange),
                           ),
-                        ),
-                      ],
+
+                          Text(
+                            isAvailableRoles(
+                                    [UserRole.KhachHang, UserRole.DieuPhoi])
+                                ? "Lưu đơn mẫu"
+                                : 'Bán Hàng Tại Kho',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: isAvailableRoles([UserRole.KhachHang])
+                                  ? Color.fromRGBO(0, 0, 0, 0.75)
+                                  : widget.model.orderState !=
+                                          OrderState.PreNewOrder
+                                      ? hexToColor('#AAAAAA')
+                                      : Color.fromRGBO(0, 0, 0, 0.75),
+                            ),
+                          ),
+                        ],
+                      ),
+                      visible: !widget.isNhaCungCap,
                     )
                   ],
                 ),

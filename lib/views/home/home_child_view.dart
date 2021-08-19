@@ -22,6 +22,8 @@ import 'package:frappe_app/views/inventory/inventory_view.dart';
 import 'package:frappe_app/views/liability_report/liability_report.dart';
 import 'package:frappe_app/views/list_broken_order/list_broken_order_view.dart';
 import 'package:frappe_app/views/list_order/list_order_view.dart';
+import 'package:frappe_app/views/mnvl/mnvl_edit.dart';
+import 'package:frappe_app/views/mnvl/mnvl_list.dart';
 import 'package:frappe_app/views/production_report/production_report_view.dart';
 import 'package:frappe_app/views/search/search_view.dart';
 
@@ -210,9 +212,26 @@ class _HomeChildViewState extends State<HomeChildView> {
     ),
     Item(
       icon: FrappeIcons.mua_hang,
-      childrens: [],
+      childrens: [
+        Item(
+          icon: FrappeIcons.danh_sach_don_loi,
+          visible: true,
+          text: "Danh sách đơn mua",
+          view: (context) {
+            return MnvlListView();
+          },
+        ),
+        Item(
+          icon: FrappeIcons.bao_binh_loi,
+          visible: true,
+          text: "Tạo đơn mua NVL",
+          view: (context) {
+            return MnvlEditView();
+          },
+        ),
+      ],
       // view: CreateOrderView(),
-      text: "Mua hàng",
+      text: "Mua nguyên vật liệu",
       roles: ["Giám Đốc"],
       visible: true,
     ),

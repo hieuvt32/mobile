@@ -13,7 +13,12 @@ import 'package:intl/intl.dart';
 
 class EditOrderBottom extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
-  EditOrderBottom({Key? key}) : super(key: key);
+
+  final bool isNhaCungCap;
+  EditOrderBottom({
+    Key? key,
+    this.isNhaCungCap = false,
+  }) : super(key: key);
 
   @override
   _EditOrderBottomState createState() => _EditOrderBottomState();
@@ -88,74 +93,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
 
       case OrderState.PreNewOrder:
       case OrderState.NewOrder:
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: hexToColor('#FF0F00'),
-                // side: BorderSide(
-                //   width: 1.0,
-                // ),
-                minimumSize: Size(120, 32),
-                // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  // side: BorderSide(
-                  //   color: hexToColor('#0072BC'),
-                  // ),
-                ),
-              ),
-              onPressed: () {},
-              child: Text(
-                'Hủy',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: hexToColor('#0072BC'),
-                // side: BorderSide(
-                //   width: 1.0,
-                // ),
-
-                minimumSize: Size(120, 32),
-                // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.0),
-                  // side: BorderSide(
-                  //   color: hexToColor('#FF0F00'),
-                  // ),
-                ),
-              ),
-              onPressed: () async {
-                if (widget.model.orderState == OrderState.PreNewOrder)
-                  await widget.model.createOrder(context);
-                else {
-                  await widget.model.updateOrder(context);
-                }
-              },
-              child: Text(
-                widget.model.userRoles.contains(UserRole.KhachHang)
-                    ? "Đặt hàng"
-                    : widget.model.sellInWarehouse
-                        ? 'Hoàn thành'
-                        : (widget.model.orderState == OrderState.PreNewOrder
-                            ? 'Tạo đơn'
-                            : 'Lưu'),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            )
-          ],
-        );
+        return generateButtons();
       case OrderState.WaitingForShipment:
         if (widget.model.isAvailableRoles([UserRole.KhachHang]))
           return SizedBox();
@@ -233,7 +171,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                 )),
           );
         }
-        return widget.model.sellInWarehouse
+        return widget.model.sellInWarehouse || widget.isNhaCungCap
             ? Text('')
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -356,5 +294,219 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
       default:
         return Container();
     }
+  }
+
+  String getTextButtonPrimary() {
+    if (!widget.isNhaCungCap) {
+      return widget.model.userRoles.contains(UserRole.KhachHang)
+          ? "Đặt hàng"
+          : widget.model.sellInWarehouse
+              ? 'Hoàn thành'
+              : (widget.model.orderState == OrderState.PreNewOrder
+                  ? 'Tạo đơn'
+                  : 'Lưu');
+    } else {
+      return "Tạo đơn mua";
+    }
+  }
+
+  Widget generateButtons() {
+    if (widget.isNhaCungCap) {
+      switch (widget.model.orderState) {
+        case OrderState.PreNewOrder:
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: hexToColor('#FF0F00'),
+                  // side: BorderSide(
+                  //   width: 1.0,
+                  // ),
+                  minimumSize: Size(120, 32),
+                  // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    // side: BorderSide(
+                    //   color: hexToColor('#0072BC'),
+                    // ),
+                  ),
+                ),
+                onPressed: () {},
+                child: Text(
+                  'Hủy',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: hexToColor('#0072BC'),
+                  // side: BorderSide(
+                  //   width: 1.0,
+                  // ),
+
+                  minimumSize: Size(120, 32),
+                  // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                    // side: BorderSide(
+                    //   color: hexToColor('#FF0F00'),
+                    // ),
+                  ),
+                ),
+                onPressed: () async {
+                  if (widget.isNhaCungCap) {
+                    if (widget.model.orderState == OrderState.PreNewOrder)
+                      await widget.model.createOrder(context,
+                          isNhaCungCap: widget.isNhaCungCap, type: "M");
+                    else {
+                      await widget.model.updateOrder(context,
+                          status: "Đã giao hàng",
+                          isNhaCungCap: widget.isNhaCungCap,
+                          type: "M");
+                    }
+                  } else {
+                    if (widget.model.orderState == OrderState.PreNewOrder)
+                      await widget.model.createOrder(context);
+                    else {
+                      await widget.model.updateOrder(context);
+                    }
+                  }
+                },
+                child: Text(
+                  getTextButtonPrimary(),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            ],
+          );
+        case OrderState.NewOrder:
+          return Container(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: hexToColor('#0072BC'),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                ),
+                // minimumSize: Size(double.infinity, 30),
+              ),
+              onPressed: () async {
+                if (widget.isNhaCungCap) {
+                  if (widget.model.orderState == OrderState.PreNewOrder)
+                    await widget.model.createOrder(context,
+                        isNhaCungCap: widget.isNhaCungCap, type: "M");
+                  else {
+                    await widget.model.updateOrder(context,
+                        status: "Đã giao hàng",
+                        isNhaCungCap: widget.isNhaCungCap,
+                        type: "M");
+                  }
+                } else {
+                  if (widget.model.orderState == OrderState.PreNewOrder)
+                    await widget.model.createOrder(context);
+                  else {
+                    await widget.model.updateOrder(context);
+                  }
+                }
+              },
+              child: Text(
+                "Đã nhận hàng",
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          );
+        default:
+          Text('');
+          break;
+      }
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: hexToColor('#FF0F00'),
+            // side: BorderSide(
+            //   width: 1.0,
+            // ),
+            minimumSize: Size(120, 32),
+            // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              // side: BorderSide(
+              //   color: hexToColor('#0072BC'),
+              // ),
+            ),
+          ),
+          onPressed: () {},
+          child: Text(
+            'Hủy',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: hexToColor('#0072BC'),
+            // side: BorderSide(
+            //   width: 1.0,
+            // ),
+
+            minimumSize: Size(120, 32),
+            // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4.0),
+              // side: BorderSide(
+              //   color: hexToColor('#FF0F00'),
+              // ),
+            ),
+          ),
+          onPressed: () async {
+            if (widget.isNhaCungCap) {
+              if (widget.model.orderState == OrderState.PreNewOrder)
+                await widget.model.createOrder(context,
+                    isNhaCungCap: widget.isNhaCungCap, type: "M");
+              else {
+                await widget.model.updateOrder(context,
+                    status: "Đã giao hàng",
+                    isNhaCungCap: widget.isNhaCungCap,
+                    type: "M");
+              }
+            } else {
+              if (widget.model.orderState == OrderState.PreNewOrder)
+                await widget.model.createOrder(context);
+              else {
+                await widget.model.updateOrder(context);
+              }
+            }
+          },
+          child: Text(
+            getTextButtonPrimary(),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+        )
+      ],
+    );
   }
 }

@@ -5,17 +5,18 @@ import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
+import 'package:frappe_app/views/mnvl/mnvl_edit.dart';
 import 'package:intl/intl.dart';
 
-class ListOrderView extends StatefulWidget {
+class MnvlListView extends StatefulWidget {
   final String type;
-  ListOrderView({Key? key, this.type = 'customer'}) : super(key: key);
+  MnvlListView({Key? key, this.type = 'customer'}) : super(key: key);
 
   @override
-  _ListOrderViewState createState() => _ListOrderViewState();
+  _MnvlListViewState createState() => _MnvlListViewState();
 }
 
-class _ListOrderViewState extends State<ListOrderView>
+class _MnvlListViewState extends State<MnvlListView>
     with SingleTickerProviderStateMixin {
   final bodyGlobalKey = GlobalKey();
   final List<Widget> myTabs = [
@@ -29,14 +30,8 @@ class _ListOrderViewState extends State<ListOrderView>
       ),
     ),
     Tab(
-        child: Text('Đang giao hàng',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ))),
-    Tab(
       child: Text(
-        'Đã giao hàng',
+        'Đã nhận hàng',
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w700,
@@ -57,13 +52,11 @@ class _ListOrderViewState extends State<ListOrderView>
   //   // Tab(text: 'fixed'),
   // ];
 
-  _ListOrderViewState() {
+  _MnvlListViewState() {
     _scrollController = ScrollController();
   }
 
   ListOrderResponse? _responseDaDatHang;
-
-  ListOrderResponse? _responseDangGiaoHang;
 
   ListOrderResponse? _responseDaGiaoHang;
 
@@ -71,7 +64,7 @@ class _ListOrderViewState extends State<ListOrderView>
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_smoothScrollToTop);
 
     // fixedScroll = true;
@@ -80,23 +73,15 @@ class _ListOrderViewState extends State<ListOrderView>
 
     _responseDaDatHang = null;
 
-    _responseDangGiaoHang = null;
-
     _responseDaGiaoHang = null;
 
-    locator<Api>().getListOrder(0).then((value) {
+    locator<Api>().getListOrder(0, type: 'M').then((value) {
       setState(() {
         _responseDaDatHang = value;
       });
     });
 
-    locator<Api>().getListOrder(1).then((value) {
-      setState(() {
-        _responseDangGiaoHang = value;
-      });
-    });
-
-    locator<Api>().getListOrder(2).then((value) {
+    locator<Api>().getListOrder(2, type: 'M').then((value) {
       setState(() {
         _responseDaGiaoHang = value;
       });
@@ -132,8 +117,6 @@ class _ListOrderViewState extends State<ListOrderView>
     switch (type) {
       case 0:
         return _buildContentTab(_responseDaDatHang, type);
-      case 1:
-        return _buildContentTab(_responseDangGiaoHang, type);
       case 2:
         return _buildContentTab(_responseDaGiaoHang, type);
       default:
@@ -151,123 +134,69 @@ class _ListOrderViewState extends State<ListOrderView>
   }
 
   Widget buildCardContent(String type, Order order) {
-    if (type == "customer") {
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(4),
-                bottomRight: Radius.circular(4))),
-        child: Column(
-          children: [
-            Row(
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(4), bottomRight: Radius.circular(4))),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text("Nhà cung cấp:"),
+                flex: 1,
+              ),
+              Flexible(
+                flex: 1,
+                child: buildLimitTextLength(order.vendorName),
+              ),
+              Flexible(
+                flex: 1,
+                child: buildLimitTextLength('-'),
+              ),
+              Text(
+                order.vendor,
+                style: TextStyle(
+                    color: hexToColor("#FF0F00"), fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+          Visibility(
+            child: SizedBox(height: 16),
+            visible: !["", null, false, 0].contains(order.employeeName),
+          ),
+          Visibility(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                  child: Text("Địa chỉ"),
-                  flex: 1,
-                ),
-                Flexible(
-                    flex: 1,
-                    child: buildLimitTextLength(
-                        "A very long text A very long textA very long textA very long textA very long text")),
-                Text(
-                  "5.200.000",
-                  style: TextStyle(
-                      color: hexToColor("#FF0F00"),
-                      fontWeight: FontWeight.bold),
-                )
-              ],
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text("Địa chỉ"),
-                  flex: 1,
-                ),
-                Flexible(
-                    flex: 1, child: buildLimitTextLength("Ngõ 59 Láng Hạ")),
-                Text(
-                  "5.200.000",
-                  style: TextStyle(
-                      color: hexToColor("#FF0F00"),
-                      fontWeight: FontWeight.bold),
-                )
-              ],
-            ),
-          ],
-        ),
-      );
-    } else {
-      return Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(4),
-                bottomRight: Radius.circular(4))),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Flexible(
-                  child: Text("Khách hàng:"),
+                  child: Text("Giao vận viên:"),
                   flex: 1,
                 ),
                 Flexible(
                   flex: 1,
-                  child: buildLimitTextLength(order.vendorName),
+                  child: buildLimitTextLength(order.employeeName),
                 ),
                 Flexible(
                   flex: 1,
                   child: buildLimitTextLength('-'),
                 ),
                 Text(
-                  order.vendor,
+                  order.plate,
                   style: TextStyle(
                       color: hexToColor("#FF0F00"),
                       fontWeight: FontWeight.bold),
                 )
               ],
             ),
-            Visibility(
-              child: SizedBox(height: 16),
-              visible: !["", null, false, 0].contains(order.employeeName),
-            ),
-            Visibility(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text("Giao vận viên:"),
-                    flex: 1,
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: buildLimitTextLength(order.employeeName),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: buildLimitTextLength('-'),
-                  ),
-                  Text(
-                    order.plate,
-                    style: TextStyle(
-                        color: hexToColor("#FF0F00"),
-                        fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
-              visible: !["", null, false, 0].contains(order.employeeName),
-            ),
-          ],
-        ),
-      );
-    }
+            visible: !["", null, false, 0].contains(order.employeeName),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildContentTab(ListOrderResponse? response, int type) {
@@ -331,10 +260,8 @@ class _ListOrderViewState extends State<ListOrderView>
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) {
-                          return EditOrderView(
+                          return MnvlEditView(
                             name: stores[index].name,
-                            haveDelivery: !["", null, false, 0]
-                                .contains(stores[index].employeeName),
                           );
                         },
                       ),
@@ -357,8 +284,6 @@ class _ListOrderViewState extends State<ListOrderView>
     switch (type) {
       case 0:
         return hexToColor('#0072BC');
-      case 1:
-        return hexToColor('#FF0F00');
       default:
         return hexToColor('#1BBD5C');
     }
@@ -368,8 +293,6 @@ class _ListOrderViewState extends State<ListOrderView>
     switch (type) {
       case 0:
         return 'Đã đặt hàng';
-      case 1:
-        return 'Đang giao hàng';
       default:
         return 'Đã giao hàng';
     }
@@ -378,7 +301,7 @@ class _ListOrderViewState extends State<ListOrderView>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -401,9 +324,7 @@ class _ListOrderViewState extends State<ListOrderView>
           // bottom: ,
         ),
         // body: AnswerButton(),
-        body: _responseDaDatHang != null &&
-                _responseDangGiaoHang != null &&
-                _responseDaDatHang != null
+        body: _responseDaDatHang != null && _responseDaDatHang != null
             ? Padding(
                 padding: const EdgeInsets.only(top: 12, bottom: 12),
                 child: NestedScrollView(
@@ -432,11 +353,7 @@ class _ListOrderViewState extends State<ListOrderView>
                   body: Container(
                       child: TabBarView(
                     controller: _tabController,
-                    children: [
-                      _buildTabContext(0),
-                      _buildTabContext(1),
-                      _buildTabContext(2)
-                    ],
+                    children: [_buildTabContext(0), _buildTabContext(2)],
                   )),
                 ),
               )

@@ -55,6 +55,10 @@ abstract class Api {
     String company,
   });
 
+  Future<GetCustomerByCompanyResponse> getManufactureByCompany({
+    String company,
+  });
+
   Future<GetDeliveryAddressResponse> getDeliveryAddress({
     String customer,
   });

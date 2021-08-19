@@ -11,8 +11,12 @@ import 'package:frappe_app/views/expansion_custom_panel.dart';
 
 class ListProductView extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
+  final bool isNhaCungCap;
   // final int type;
-  ListProductView({Key? key}) : super(key: key);
+  ListProductView({
+    Key? key,
+    this.isNhaCungCap = false,
+  }) : super(key: key);
 
   @override
   _ListProductViewState createState() => _ListProductViewState();
@@ -35,7 +39,9 @@ class _ListProductViewState extends State<ListProductView> {
               borderRadius: BorderRadius.circular(4)),
           child: Column(
             children: [
-              ListProductItem(),
+              ListProductItem(
+                isNhaCungCap: widget.isNhaCungCap,
+              ),
               SizedBox(
                 height: 10,
               ),
@@ -62,7 +68,19 @@ class _ListProductViewState extends State<ListProductView> {
                     },
                   ),
                 ),
-                visible: !widget.model.readOnlyView,
+                visible: !widget.model.readOnlyView && !widget.isNhaCungCap,
+              ),
+              Visibility(
+                child: ElevatedButton(
+                  child: Text(
+                    'Thêm sản phẩm',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  onPressed: () {
+                    widget.model.addSanPham();
+                  },
+                ),
+                visible: !widget.model.readOnlyView && widget.isNhaCungCap,
               ),
             ],
           ),
@@ -75,7 +93,12 @@ class _ListProductViewState extends State<ListProductView> {
 
 class ListProductItem extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
-  ListProductItem({Key? key}) : super(key: key);
+
+  final bool isNhaCungCap;
+  ListProductItem({
+    Key? key,
+    this.isNhaCungCap = false,
+  }) : super(key: key);
 
   @override
   _ListProductItemState createState() => _ListProductItemState();
@@ -284,120 +307,129 @@ class _ListProductItemState extends State<ListProductItem> {
                         ))
                   ],
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: FieldData(
-                        value: 'Vật tư: ',
-                        fieldType: 3,
-                      ),
-                      flex: 2,
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        children: [
-                          !widget.model.readOnlyView
-                              ? FieldData(
-                                  // value: 'Sản phẩm: ',
-                                  enabled: values[i].enabledVatTu,
-                                  fieldType: 0,
-                                  values: widget.model.nguyenVatLieuVatTus
-                                      .map((e) => FieldValue(
-                                          text: e.realName, value: e.name))
-                                      .toList(),
-                                  value: values[i].material,
-                                  selectionHandler: (value) {
-                                    var firstItem =
-                                        widget.model.nguyenVatLieuVatTus
+                Visibility(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: FieldData(
+                            value: 'Vật tư: ',
+                            fieldType: 3,
+                          ),
+                          flex: 2,
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Column(
+                            children: [
+                              !widget.model.readOnlyView
+                                  ? FieldData(
+                                      // value: 'Sản phẩm: ',
+                                      enabled: values[i].enabledVatTu,
+                                      fieldType: 0,
+                                      values: widget.model.nguyenVatLieuVatTus
+                                          .map((e) => FieldValue(
+                                              text: e.realName, value: e.name))
+                                          .toList(),
+                                      value: values[i].material,
+                                      selectionHandler: (value) {
+                                        var firstItem = widget
+                                            .model.nguyenVatLieuVatTus
                                             .where((element) {
                                               return element.realName == value;
                                             })
                                             .toList()
                                             .first;
-                                    setState(() {
-                                      values[i].material = value;
-                                      values[i].unit = firstItem.unit;
-                                      values[i].enabledKG =
-                                          firstItem.unit == "Kg";
-                                      values[i].validator.isMaterialRequired =
-                                          false;
-                                    });
-                                  },
-                                )
-                              : FieldData(
-                                  value: values[i].material ?? "",
-                                  fieldType: 3,
-                                ),
-                          Visibility(
-                              visible: values[i].validator.isMaterialRequired,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "Chọn vật tư",
-                                  style: TextStyle(
-                                      color: Colors.redAccent.shade700,
-                                      fontSize: 12.0),
-                                ),
-                              ))
-                        ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                      ),
-                    ),
-                    Expanded(
-                      child: FieldData(
-                        value: 'Kg:',
-                        fieldType: 3,
-                      ),
-                      flex: 1,
-                    ),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          !widget.model.readOnlyView
-                              ? FieldData(
-                                  // title: 'Đơn vị tính ',
-                                  errorText: values[i].validator.isKgRequired
-                                      ? "Nhập Kg"
-                                      : null,
-                                  enabled: false,
-                                  controller: controllers[i]['kgController'],
-                                  fieldType: 1,
-                                  selectionHandler: (text) {
-                                    if (["", null, false, 0].contains(
-                                        controllers[i]['kgController']!.text)) {
-                                      // do sth
-                                      values[i].kg = 0;
-                                    } else {
-                                      values[i].kg = double.parse(
-                                          controllers[i]['kgController']!.text);
+                                        setState(() {
+                                          values[i].material = value;
+                                          values[i].unit = firstItem.unit;
+                                          values[i].enabledKG =
+                                              firstItem.unit == "Kg";
+                                          values[i]
+                                              .validator
+                                              .isMaterialRequired = false;
+                                        });
+                                      },
+                                    )
+                                  : FieldData(
+                                      value: values[i].material ?? "",
+                                      fieldType: 3,
+                                    ),
+                              Visibility(
+                                  visible:
+                                      values[i].validator.isMaterialRequired,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Text(
+                                      "Chọn vật tư",
+                                      style: TextStyle(
+                                          color: Colors.redAccent.shade700,
+                                          fontSize: 12.0),
+                                    ),
+                                  ))
+                            ],
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                          ),
+                        ),
+                        Expanded(
+                          child: FieldData(
+                            value: 'Kg:',
+                            fieldType: 3,
+                          ),
+                          flex: 1,
+                        ),
+                        Expanded(
+                          child: Column(
+                            children: [
+                              !widget.model.readOnlyView
+                                  ? FieldData(
+                                      // title: 'Đơn vị tính ',
+                                      errorText:
+                                          values[i].validator.isKgRequired
+                                              ? "Nhập Kg"
+                                              : null,
+                                      enabled: false,
+                                      controller: controllers[i]
+                                          ['kgController'],
+                                      fieldType: 1,
+                                      selectionHandler: (text) {
+                                        if (["", null, false, 0].contains(
+                                            controllers[i]['kgController']!
+                                                .text)) {
+                                          // do sth
+                                          values[i].kg = 0;
+                                        } else {
+                                          values[i].kg = double.parse(
+                                              controllers[i]['kgController']!
+                                                  .text);
 
-                                      values[i].validator.isKgRequired = false;
-                                    }
-                                    widget.model.changeState();
-                                  })
-                              : FieldData(
-                                  value: '${values[i].kg}',
-                                  fieldType: 3,
-                                ),
-                          Visibility(
-                              visible: values[i].validator.isKgRequired,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 5),
-                                child: Text(
-                                  "Nhập kg",
-                                  style: TextStyle(
-                                      color: Colors.redAccent.shade700,
-                                      fontSize: 12.0),
-                                ),
-                              ))
-                        ],
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                      ),
-                      flex: 2,
+                                          values[i].validator.isKgRequired =
+                                              false;
+                                        }
+                                        widget.model.changeState();
+                                      })
+                                  : FieldData(
+                                      value: '${values[i].kg}',
+                                      fieldType: 3,
+                                    ),
+                              Visibility(
+                                  visible: values[i].validator.isKgRequired,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 5),
+                                    child: Text(
+                                      "Nhập kg",
+                                      style: TextStyle(
+                                          color: Colors.redAccent.shade700,
+                                          fontSize: 12.0),
+                                    ),
+                                  ))
+                            ],
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                          ),
+                          flex: 2,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                    visible: !widget.isNhaCungCap),
                 Row(
                   children: [
                     Expanded(

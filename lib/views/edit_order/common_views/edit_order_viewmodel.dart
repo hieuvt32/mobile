@@ -38,11 +38,11 @@ class EditOrderViewModel extends BaseViewModel {
 
   GetCustomerByCompanyResponse? _responseGetCustomers;
 
+  GetCustomerByCompanyResponse? _responseGetManufactures;
+
   GetNguyenVatLieuSanPhamResponse? _responseGetSanPhams;
 
   GetNguyenVatLieuSanPhamResponse? _responseGetVatTus;
-
-  CreateNewDeliveryAddressResponse? _responseCreateNewDeliveryAddress;
 
   GetDeliveryAddressResponse? _responseGetDeliveryAddress;
 
@@ -71,6 +71,9 @@ class EditOrderViewModel extends BaseViewModel {
   late List<Address> _editAddresses;
 
   late List<Customer> _customers;
+
+  late List<Customer> _manufactures;
+
   late List<NguyenVatLieuSanPham> _nguyenVatLieuVatTus;
 
   late List<NguyenVatLieuSanPham> _nguyenVatLieuSanPhams;
@@ -80,6 +83,8 @@ class EditOrderViewModel extends BaseViewModel {
   late List<GiaoViecSignature> _giaoViecSignatures;
 
   late double _totalOrderPrice = 0;
+
+  late bool _isNhaCungCap = false;
 
   double get totalOrderPrice => _totalOrderPrice;
 
@@ -116,6 +121,8 @@ class EditOrderViewModel extends BaseViewModel {
 
       if (_order!.status == "Đã đặt hàng" &&
           isAvailableRoles([UserRole.KhachHang])) return true;
+
+      if (_order!.status == "Đã đặt hàng" && _isNhaCungCap) return true;
 
       // if (_order!.status == 'Đã giao hàng') {
       //   return true;
@@ -175,6 +182,8 @@ class EditOrderViewModel extends BaseViewModel {
   Config? get config => _config;
 
   List<Customer> get customers => _customers;
+
+  List<Customer> get manufactures => _manufactures;
 
   List<Address> get addresses => _addresses;
 
@@ -313,6 +322,7 @@ class EditOrderViewModel extends BaseViewModel {
       title: '',
       status: '',
       listShell: [],
+      reasonEdit: '',
     );
   }
 
@@ -324,10 +334,16 @@ class EditOrderViewModel extends BaseViewModel {
     _haveDelivery = haveDelivery;
   }
 
+  setIsNhaCungCap(bool isNhaCungCap) {
+    _isNhaCungCap = isNhaCungCap;
+  }
+
   initPreData() async {
     if (!_userRoles.contains(UserRole.KhachHang)) {
       await getCustomerByCompany();
     }
+
+    await getManufactureByCompany();
 
     await getNguyenVatLieuSanPham();
     await getVatTuSanPham();
@@ -419,6 +435,17 @@ class EditOrderViewModel extends BaseViewModel {
     notifyListeners();
   }
 
+  Future getManufactureByCompany() async {
+    _responseGetManufactures = await locator<Api>().getManufactureByCompany();
+
+    _manufactures = _responseGetManufactures != null &&
+            _responseGetManufactures!.customers != null
+        ? _responseGetManufactures!.customers!
+        : [];
+
+    notifyListeners();
+  }
+
   Future getGiaoViecSignature() async {
     if (!["", null, false, 0].contains(_name)) {
       _giaoViecSignatureResponse =
@@ -474,7 +501,7 @@ class EditOrderViewModel extends BaseViewModel {
                   _responseGetDeliveryAddress!.addresses != null
               ? _responseGetDeliveryAddress!.addresses!
               : [];
-          if (_order!.sellInWarehouse != 0) {
+          if (_order!.sellInWarehouse != 0 || _isNhaCungCap) {
             for (var product in _order!.products) {
               _products.add(product);
               _productEditControllers.add({
@@ -737,7 +764,11 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
-  Future createOrder(context, {String type = 'B'}) async {
+  Future createOrder(
+    context, {
+    String type = 'B',
+    bool isNhaCungCap = false,
+  }) async {
     if (_userRoles.contains(UserRole.KhachHang)) {
       await customerCreateOrder(context);
       return;
@@ -806,10 +837,19 @@ class EditOrderViewModel extends BaseViewModel {
     //   for
     // }
 
-    List<Customer>? customers = _responseGetCustomers != null &&
-            _responseGetCustomers!.customers != null
-        ? _responseGetCustomers!.customers
-        : [];
+    List<Customer>? customers = [];
+
+    if (isNhaCungCap) {
+      customers = _responseGetManufactures != null &&
+              _responseGetManufactures!.customers != null
+          ? _responseGetManufactures!.customers
+          : [];
+    } else {
+      customers = _responseGetCustomers != null &&
+              _responseGetCustomers!.customers != null
+          ? _responseGetCustomers!.customers
+          : [];
+    }
 
     var elements =
         customers!.where((element) => element.code == _customerValue).toList();
@@ -818,7 +858,11 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.email = elements[0].email;
       _order!.paymentStatus = 'Chưa thanh toán';
       _order!.phone = elements[0].phone;
-      _order!.products = _sellInWarehouse ? _products : _productForLocations;
+      if (_isNhaCungCap) {
+        _order!.products = products;
+      } else {
+        _order!.products = _sellInWarehouse ? _products : _productForLocations;
+      }
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
       _order!.taxId = elements[0].taxId;
@@ -846,6 +890,7 @@ class EditOrderViewModel extends BaseViewModel {
         _donNhapKho!.listShell = [...nhapKhos, ...traVes];
         _name = createOrderResponse.responseData.data;
         _title = createOrderResponse.responseData.data;
+        _order!.name = createOrderResponse.responseData.data;
 
         var createDonNhapKhoResponse =
             await locator<Api>().createDonNhapKho(_donNhapKho!);
@@ -890,7 +935,12 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
-  Future updateOrder(context, {String status = '', String type = 'B'}) async {
+  Future updateOrder(
+    context, {
+    String status = '',
+    String type = 'B',
+    bool isNhaCungCap = false,
+  }) async {
     Attachments? customerAttachmemts;
     Attachments? supplierAttachments;
     if (order!.sellInWarehouse == 1) {
@@ -937,10 +987,19 @@ class EditOrderViewModel extends BaseViewModel {
       }
     }
 
-    List<Customer>? customers = _responseGetCustomers != null &&
-            _responseGetCustomers!.customers != null
-        ? _responseGetCustomers!.customers
-        : [];
+    List<Customer>? customers = [];
+
+    if (isNhaCungCap) {
+      customers = _responseGetManufactures != null &&
+              _responseGetManufactures!.customers != null
+          ? _responseGetManufactures!.customers
+          : [];
+    } else {
+      customers = _responseGetCustomers != null &&
+              _responseGetCustomers!.customers != null
+          ? _responseGetCustomers!.customers
+          : [];
+    }
 
     var elements =
         customers!.where((element) => element.code == _order!.vendor).toList();
@@ -949,7 +1008,11 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.email = elements[0].email;
       _order!.paymentStatus = 'Chưa thanh toán';
       _order!.phone = elements[0].phone;
-      _order!.products = _sellInWarehouse ? _products : _productForLocations;
+      if (_isNhaCungCap) {
+        _order!.products = products;
+      } else {
+        _order!.products = _sellInWarehouse ? _products : _productForLocations;
+      }
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = ["", null, false, 0].contains(status)
           ? !_sellInWarehouse
