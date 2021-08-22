@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/base_view.dart';
+import 'package:frappe_app/views/customize_app_bar.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
-import 'package:frappe_app/views/edit_order/transportation_views/order_detail_tab.dart';
-import 'package:frappe_app/views/edit_order/transportation_views/transportation_detail.dart';
-
-import '../../base_view.dart';
-import '../../customize_app_bar.dart';
+import 'package:frappe_app/views/transportation_views/order_detail_tab.dart';
+import 'package:frappe_app/views/transportation_views/transportation_detail.dart';
 import 'transportation_signature_tab.dart';
 
 class TransportationEdit extends StatefulWidget {

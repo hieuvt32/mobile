@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
+import 'package:frappe_app/views/expansion_custom_panel.dart';
 
-import '../../expansion_custom_panel.dart';
 import 'product_view.dart';
 
 class TransportationProductList extends StatefulWidget {

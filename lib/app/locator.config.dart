@@ -14,8 +14,7 @@ import '../views/change_password_viewmodel.dart' as _i7;
 import '../views/desk/desk_viewmodel.dart' as _i9;
 import '../views/edit_gas_broken/list_broken_gas_adress_model.dart' as _i11;
 import '../views/edit_order/common_views/edit_order_viewmodel.dart' as _i12;
-import '../views/edit_order/transportation_views/transportation_viewmodel.dart'
-    as _i21;
+import '../views/transportation_views/transportation_viewmodel.dart' as _i21;
 import '../views/form_view/bottom_sheets/assignees/assignees_bottom_sheet_viewmodel.dart'
     as _i5;
 import '../views/form_view/bottom_sheets/attachments/add_attachments_bottom_sheet_viewmodel.dart'

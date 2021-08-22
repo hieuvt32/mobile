@@ -3,7 +3,7 @@ import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:frappe_app/views/edit_order/components/list_product_view.dart';
 import 'package:frappe_app/views/edit_order/components/list_shell_view.dart';
-import 'package:frappe_app/views/edit_order/transportation_views/transportation_detail.dart';
+import 'package:frappe_app/views/transportation_views/transportation_detail.dart';
 
 import 'transportation_product_list.dart';
 

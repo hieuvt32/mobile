@@ -13,10 +13,12 @@ import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
+import 'package:frappe_app/views/coordination_views/coordination_edit.dart';
+import 'package:frappe_app/views/coordination_views/coordination_list.dart';
 import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
-import 'package:frappe_app/views/edit_order/transportation_views/transportation_list.dart';
+import 'package:frappe_app/views/transportation_views/transportation_list.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
 import 'package:frappe_app/views/liability_report/liability_report.dart';
@@ -232,6 +234,31 @@ class _HomeChildViewState extends State<HomeChildView> {
       ],
       // view: CreateOrderView(),
       text: "Mua nguyên vật liệu",
+      roles: ["Giám Đốc"],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.mua_hang,
+      childrens: [
+        Item(
+          icon: FrappeIcons.danh_sach_don_loi,
+          visible: true,
+          text: "Điều phối",
+          view: (context) {
+            return CoordinationListView();
+          },
+        ),
+        Item(
+          icon: FrappeIcons.bao_binh_loi,
+          visible: true,
+          text: "Danh sách đơn điều phối",
+          view: (context) {
+            return CoordinationEditView();
+          },
+        ),
+      ],
+      // view: CreateOrderView(),
+      text: "Điều phối",
       roles: ["Giám Đốc"],
       visible: true,
     ),

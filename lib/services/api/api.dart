@@ -95,6 +95,8 @@ abstract class Api {
   Future<ListOrderResponse> getListOrder(int status,
       {customer, type, int? sellInWareHouse});
 
+  Future<ListOrderResponse> getListOrderDieuPhois(int isDieuPhoi);
+
   Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
       String customerCode, String status);
 

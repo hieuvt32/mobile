@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
+import 'package:frappe_app/views/base_view.dart';
+import 'package:frappe_app/views/customize_app_bar.dart';
+import 'package:frappe_app/views/item_cart_order.dart';
 import 'package:frappe_app/widgets/limit_text_length.dart';
 import 'package:intl/intl.dart';
 
-import '../../base_view.dart';
-import '../../customize_app_bar.dart';
-import '../../item_cart_order.dart';
 import 'transportation_detail.dart';
 import 'transportation_viewmodel.dart';
 

@@ -5,12 +5,12 @@ import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/base_view.dart';
+import 'package:frappe_app/views/customize_app_bar.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:intl/intl.dart';
 
-import '../../base_view.dart';
-import '../../customize_app_bar.dart';
 import 'transportation_bottom.dart';
 import 'transportation_edit.dart';
 import 'transportation_header.dart';

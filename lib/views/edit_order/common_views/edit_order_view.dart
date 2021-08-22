@@ -71,7 +71,6 @@ class _EditOrderViewState extends State<EditOrderView>
   }
 
   Widget _buidMainView(EditOrderViewModel model) {
-    print(model.sellInWarehouse);
     if (model.sellInWarehouse) {
       return EditOrderSellInWareHouse();
     }
