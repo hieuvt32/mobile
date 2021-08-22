@@ -151,9 +151,13 @@ class _CoordinationListViewState extends State<CoordinationListView>
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(child: Text("Địa chỉ:")),
                           Expanded(
-                            child: Text(value.key),
+                            child: Text("Địa chỉ:"),
+                            flex: 3,
+                          ),
+                          Expanded(
+                            child: Text(value.key != null ? value.key : ""),
+                            flex: 7,
                           ),
                           // Expanded(
                           //     child: LimitTextLength(
