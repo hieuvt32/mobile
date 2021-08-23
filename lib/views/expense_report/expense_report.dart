@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/expansion_custom_panel.dart';
 import 'package:frappe_app/views/expense_report/components/simpleChart.dart';
+import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 class ExpenseReportView extends StatefulWidget {
   @override
@@ -9,6 +11,8 @@ class ExpenseReportView extends StatefulWidget {
 }
 
 class _ExpenseReportViewState extends State<ExpenseReportView> {
+  DateTime? _date;
+
   ExpansionItem buildOverviewReport(BuildContext context) {
     return ExpansionItem(
         true,
@@ -28,17 +32,23 @@ class _ExpenseReportViewState extends State<ExpenseReportView> {
                   style: TextStyle(fontSize: 14),
                 ),
               ),
-              Text("Tháng 6/2021"),
+              Text(DateFormat('MM/yyyy').format(_date ?? DateTime.now())),
               IconButton(
                 icon: const Icon(Icons.arrow_drop_down_outlined),
                 onPressed: () async {
-                  var date = await showDatePicker(
+                  showMonthPicker(
                     context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(1999),
+                    firstDate: DateTime(DateTime.now().year - 1, 5),
                     lastDate: DateTime.now(),
-                  );
-                  print("date $date");
+                    initialDate: DateTime.now(),
+                    locale: Locale("vi"),
+                  ).then((date) {
+                    if (date != null) {
+                      setState(() {
+                        _date = date;
+                      });
+                    }
+                  });
                 },
               ),
             ],

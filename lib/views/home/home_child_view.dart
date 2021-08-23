@@ -146,12 +146,11 @@ class _HomeChildViewState extends State<HomeChildView> {
     ),
     Item(
       icon: FrappeIcons.chart_pie_slice,
-      childrens: [],
       view: (context) {
         return LiabilityReportView();
       },
       text: "Báo cáo",
-      roles: ["Giám Đốc", "Khách Hàng"],
+      roles: ["Khách Hàng"],
       visible: true,
     ),
     Item(
@@ -184,7 +183,9 @@ class _HomeChildViewState extends State<HomeChildView> {
         return ListOrderView();
       },
       text: "Điều phối",
-      roles: ["Giám Đốc"],
+      roles: [
+        "Giám Đốc",
+      ],
       visible: true,
     ),
     Item(
@@ -260,6 +261,104 @@ class _HomeChildViewState extends State<HomeChildView> {
       // view: CreateOrderView(),
       text: "Điều phối",
       roles: ["Giám Đốc"],
+      visible: true,
+    ),
+    Item(
+        view: (context) {
+          return CustomerListOrderView();
+        },
+        icon: FrappeIcons.don_hang,
+        visible: true,
+        text: "Đơn hàng",
+        roles: ["Điều Phối Viên"],
+        childrens: []),
+    Item(
+      icon: FrappeIcons.users,
+      childrens: [],
+      view: (context) {
+        return ListOrderView();
+      },
+      text: "Điều phối",
+      roles: [
+        "Điều Phối Viên",
+      ],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.chart_pie_slice,
+      childrens: [
+        Item(
+          icon: FrappeIcons.hexagon,
+          text: "Báo cáo sản xuất",
+          roles: [
+            "Giám Đốc",
+          ],
+          visible: true,
+        ),
+        Item(
+          icon: FrappeIcons.line_chart,
+          text: "Báo cáo lợi nhuận",
+          roles: [
+            "Giám Đốc",
+          ],
+          visible: true,
+        ),
+        Item(
+          icon: FrappeIcons.column_chart,
+          text: "Báo cáo thu chi",
+          roles: [
+            "Giám Đốc",
+          ],
+          visible: true,
+        ),
+        Item(
+          icon: FrappeIcons.gas,
+          text: "Báo cáo tài sản",
+          roles: [
+            "Giám Đốc",
+          ],
+          visible: true,
+        ),
+        Item(
+          icon: FrappeIcons.note_book,
+          text: "Báo cáo kho",
+          roles: [
+            "Giám Đốc",
+          ],
+          visible: true,
+        ),
+      ],
+      view: (context) {
+        return LiabilityReportView();
+      },
+      text: "Báo cáo",
+      roles: [
+        "Giám Đốc",
+      ],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.book,
+      childrens: [],
+      view: (context) {
+        return ListOrderView();
+      },
+      text: "Danh sách trả lại",
+      roles: [
+        "Điều Phối Viên",
+      ],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.binh_loi,
+      childrens: [],
+      view: (context) {
+        return ListOrderView();
+      },
+      text: "Đơn bình báo lỗi",
+      roles: [
+        "Điều Phối Viên",
+      ],
       visible: true,
     ),
   ];

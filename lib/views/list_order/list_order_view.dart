@@ -416,7 +416,7 @@ class _ListOrderViewState extends State<ListOrderView>
                           automaticIndicatorColorAdjustment: true,
                           controller: _tabController,
                           labelColor: hexToColor('#FF0F00'),
-                          // isScrollable: true,
+                          isScrollable: true,
                           labelStyle: TextStyle(
                             color: hexToColor('#FF0F00'),
                             fontSize: 20,

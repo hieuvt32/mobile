@@ -26,6 +26,7 @@ class EditOrderBottom extends StatefulWidget {
 
 class _EditOrderBottomState extends State<EditOrderBottom> {
   bool _isButtonLoading = false;
+  TextEditingController dialogTextEditcontroller = TextEditingController();
 
   Future onDeleteOrder() async {
     ConfirmDialog.showConfirmDialog(context, onCancel: () {
@@ -49,12 +50,24 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
       _isButtonLoading = true;
     });
 
-    ConfirmDialog.showConfirmDialog(context, onCancel: () {
-      Navigator.of(context, rootNavigator: true).pop();
-    }, onConfirm: () {
-      Navigator.of(context, rootNavigator: true).pop();
-      widget.model.cancelOrder(context);
-    }, content: "Bạn có chắc chắn muốn hủy đơn hàng đã đặt này không?");
+    if (widget.model.isAvailableRoles([UserRole.KhachHang])) {
+      ConfirmDialog.showConfirmDialog(context, onCancel: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      }, onConfirm: () {
+        Navigator.of(context, rootNavigator: true).pop();
+
+        widget.model.cancelOrder(context: context);
+      }, content: "Bạn có chắc chắn muốn hủy đơn hàng đã đặt này không?");
+    } else if (widget.model.isAvailableRoles([UserRole.DieuPhoi])) {
+      ConfirmDialog.showEditingDialog(context, onCancel: () {
+        Navigator.of(context, rootNavigator: true).pop();
+      }, onConfirm: () {
+        Navigator.of(context, rootNavigator: true).pop();
+
+        widget.model.cancelOrder(
+            context: context, reason: dialogTextEditcontroller.value.text);
+      }, title: "Lý do từ chối.", controller: dialogTextEditcontroller);
+    }
 
     setState(() {
       _isButtonLoading = false;
@@ -75,27 +88,77 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
   _buildBottomButton() {
     switch (widget.model.orderState) {
       case OrderState.WaitForComfirm:
-        return Container(
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: hexToColor("#FF0F00"))),
-            height: 48,
-            width: double.infinity,
-            child: TextButton(
-                onPressed: _isButtonLoading ? null : onCancelOrder,
+        if (widget.model.isAvailableRoles([UserRole.KhachHang])) {
+          return Container(
+            child: Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  border: Border.all(color: hexToColor("#FF0F00"))),
+              height: 48,
+              width: double.infinity,
+              child: TextButton(
+                  onPressed: _isButtonLoading ? null : onCancelOrder,
+                  child: Text(
+                    _isButtonLoading ? '...Loading' : "Hủy đơn hàng",
+                    style:
+                        TextStyle(color: hexToColor("#FF0F00"), fontSize: 16),
+                  )),
+            ),
+          );
+        } else if (widget.model.isAvailableRoles([UserRole.DieuPhoi])) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: hexToColor('#FF0F00'),
+                  minimumSize: Size(120, 32),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                ),
+                onPressed: onCancelOrder,
                 child: Text(
-                  _isButtonLoading ? '...Loading' : "Hủy đơn hàng",
-                  style: TextStyle(color: hexToColor("#FF0F00"), fontSize: 16),
-                )),
-          ),
-        );
+                  'Từ chối',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: hexToColor('#0072BC'),
+                  minimumSize: Size(120, 32),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.0),
+                  ),
+                ),
+                onPressed: () async {
+                  widget.model.confirmOrder(context);
+                },
+                child: Text(
+                  "Xác nhận",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              )
+            ],
+          );
+        }
+
+        return SizedBox();
 
       case OrderState.PreNewOrder:
       case OrderState.NewOrder:
         return generateButtons();
       case OrderState.WaitingForShipment:
-        if (widget.model.isAvailableRoles([UserRole.KhachHang]))
+        if (widget.model
+            .isAvailableRoles([UserRole.KhachHang, UserRole.DieuPhoi]))
           return SizedBox();
 
         return ElevatedButton(
@@ -170,6 +233,26 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                   style: TextStyle(color: Colors.white, fontSize: 16),
                 )),
           );
+        } else if (widget.model.isAvailableRoles([UserRole.DieuPhoi])) {
+          if (widget.model.donNhapKho!.reasonEdit != null &&
+              widget.model.donNhapKho!.reasonEdit!.length > 0) {
+            return Container(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: hexToColor("#0072BC")),
+              height: 48,
+              width: double.infinity,
+              child: TextButton(
+                  onPressed: () {
+                    widget.model.confirmEditingRequest(context);
+                  },
+                  child: Text(
+                    "Xác nhận yêu cầu chỉnh sửa",
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  )),
+            );
+          }
+          return SizedBox();
         }
         return widget.model.sellInWarehouse || widget.isNhaCungCap
             ? Text('')
@@ -248,6 +331,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
               );
       case OrderState.Cancelled:
         return Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Row(
               children: [
@@ -256,6 +340,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
               ],
             ),
+            SizedBox(
+              height: 8,
+            ),
             Row(
               children: [
                 Text("Thời gian hủy: "),
@@ -263,6 +350,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                     "${DateFormat('dd/MM/yyyy').format(widget.model.order!.cancelDate ?? DateTime.now())}",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
               ],
+            ),
+            SizedBox(
+              height: 8,
             ),
             widget.model.order!.cancelReason != null
                 ? Row(
@@ -276,6 +366,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                   )
                 : SizedBox(),
             Container(
+              margin: const EdgeInsets.only(top: 8),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: hexToColor("#FF0F00"))),
@@ -291,6 +382,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
             ),
           ],
         );
+
       default:
         return Container();
     }

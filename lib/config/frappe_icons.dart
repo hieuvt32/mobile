@@ -74,4 +74,11 @@ class FrappeIcons {
   static const users = '$_basePath/users.svg';
   static const chart_pie_slice = '$_basePath/chart_pie_slice.svg';
   static const shopping_bag = '$_basePath/shopping_bag.svg';
+  static const binh_loi = '$_basePath/binh_loi.svg';
+  static const book = '$_basePath/book.svg';
+  static const gas = '$_basePath/gas.svg';
+  static const hexagon = '$_basePath/hexagon.svg';
+  static const line_chart = '$_basePath/line_chart.svg';
+  static const note_book = '$_basePath/note_book.svg';
+  static const column_chart = '$_basePath/column_chart.svg';
 }

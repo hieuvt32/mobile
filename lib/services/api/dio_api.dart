@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:frappe_app/model/address.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
+import 'package:frappe_app/model/bao_cao_chi_tieu_kh_response.dart';
 import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
@@ -2364,7 +2365,6 @@ class DioApi implements Api {
         throw ErrorResponse();
       }
     } catch (e) {
-      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {
@@ -2420,13 +2420,14 @@ class DioApi implements Api {
     }
   }
 
-  @override
-  Future<GetCustomerByCompanyResponse> getManufactureByCompany(
-      {String company}) async {
+  Future createTrackingLocation(locations) async {
     try {
-      final response = await DioHelper.dio.get(
-        '/method/getManufactureByCompany',
-        queryParameters: {},
+      List<Map<String, dynamic>> locationsJson =
+          locations.map((e) => e.toJson()).toList();
+      print(locationsJson);
+      final response = await DioHelper.dio.post(
+        '/method/createTrackingLocation',
+        data: {"locations": locationsJson},
         options: Options(
           validateStatus: (status) {
             return status < 500;
@@ -2435,7 +2436,7 @@ class DioApi implements Api {
       );
 
       if (response.statusCode == 200) {
-        return GetCustomerByCompanyResponse.fromJson(response.data);
+        return response.data;
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw ErrorResponse(
           statusCode: response.statusCode,
@@ -2445,7 +2446,6 @@ class DioApi implements Api {
         throw ErrorResponse();
       }
     } catch (e) {
-      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {
@@ -2462,16 +2462,12 @@ class DioApi implements Api {
     }
   }
 
-  @override
-  Future<ListOrderResponse> getListOrderDieuPhois(int isDieuPhoi) async {
+  Future<BaoCaoChiTieuKhachHang> getBaoCaoChiTietKH(
+      {reportDate, customer}) async {
     try {
-      Map<String, dynamic> data = {
-        "is_dieu_phoi": isDieuPhoi,
-      };
-
       final response = await DioHelper.dio.get(
-        '/method/getDonDieuPhoi',
-        queryParameters: data,
+        '/method/getBaoCaoChiTieuKH',
+        queryParameters: {'reportDate': reportDate, 'customer': customer},
         options: Options(
           validateStatus: (status) {
             return status < 500;
@@ -2480,7 +2476,7 @@ class DioApi implements Api {
       );
 
       if (response.statusCode == 200) {
-        return ListOrderResponse.fromJson(response.data);
+        return BaoCaoChiTieuKhachHang.fromJson(response.data);
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw ErrorResponse(
           statusCode: response.statusCode,
@@ -2490,7 +2486,6 @@ class DioApi implements Api {
         throw ErrorResponse();
       }
     } catch (e) {
-      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {

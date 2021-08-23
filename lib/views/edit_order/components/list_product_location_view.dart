@@ -56,6 +56,26 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
           backgroundTitleColor: Colors.white,
           backgroundIconColor: Color.fromRGBO(0, 0, 0, 0.1),
         ),
+        Visibility(
+            visible: widget.model.donNhapKho!.reasonEdit != null &&
+                widget.model.donNhapKho!.reasonEdit!.length > 0,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lý do yêu cầu chỉnh sửa',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
+                      child: Text(
+                        widget.model.donNhapKho!.reasonEdit ?? "",
+                      ))
+                ],
+              ),
+            ))
       ],
     );
     // return Container();
@@ -248,10 +268,10 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                   height: 10,
                 ),
                 Visibility(
-                    visible:
-                        widget.model.isAvailableRoles([UserRole.KhachHang]) &&
-                            [OrderState.Delivering, OrderState.Delivered]
-                                .contains(widget.model.orderState),
+                    visible: widget.model.isAvailableRoles(
+                            [UserRole.KhachHang, UserRole.DieuPhoi]) &&
+                        [OrderState.Delivering, OrderState.Delivered]
+                            .contains(widget.model.orderState),
                     child: Container(
                       alignment: Alignment.center,
                       child: ElevatedButton(

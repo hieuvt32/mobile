@@ -23,6 +23,6 @@ class Constants {
     "Thủ Kho": UserRole.ThuKho,
     "Giám Đốc": UserRole.GiamDoc,
     "Giao Vận": UserRole.GiaoVan,
-    "Điều Phối": UserRole.DieuPhoi,
+    "Điều Phối Viên": UserRole.DieuPhoi,
   };
 }

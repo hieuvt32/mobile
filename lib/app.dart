@@ -46,6 +46,14 @@ class _FrappeAppState extends State<FrappeApp> {
           create: (context) =>
               ConnectivityService().connectionStatusController.stream,
           child: MaterialApp(
+            supportedLocales: [
+              Locale(
+                'en',
+              ),
+              Locale(
+                'vi',
+              ),
+            ],
             builder: EasyLoading.init(),
             debugShowCheckedModeBanner: false,
             title: 'Frappe',

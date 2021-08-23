@@ -24,6 +24,7 @@ class ProductLocationDetailHeader extends StatelessWidget {
               0, (currentTotal, element) => currentTotal + element.amount);
 
       return Container(
+        padding: const EdgeInsets.only(left: 8, right: 8),
         child: Column(
           children: [
             Row(

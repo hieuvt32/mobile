@@ -12,6 +12,7 @@ import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/navigation_helper.dart';
 import 'package:frappe_app/views/session_expired.dart';
 import 'package:frappe_app/widgets/frappe_button.dart';
+import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -351,4 +352,9 @@ noInternetAlert(
 
 Color hexToColor(String code) {
   return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
+}
+
+String formatCurrency(double value) {
+  final oCcy = new NumberFormat("#,##0", "en_US");
+  return oCcy.format(value);
 }
