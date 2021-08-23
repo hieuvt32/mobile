@@ -282,4 +282,13 @@ abstract class Api {
 
   Future<BaoCaoChiTieuKhachHang> getBaoCaoChiTietKH(
       {required String reportDate, required String customer});
+  Future<dynamic> updateGiaoViec(
+    String order,
+    String employee,
+    String supportEmployee,
+    String plate,
+    String deliverDate,
+  );
+
+  Future<GiaoViecResponse> getGiaoViec(String order);
 }

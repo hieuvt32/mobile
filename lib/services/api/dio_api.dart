@@ -2207,12 +2207,14 @@ class DioApi implements Api {
     }
   }
 
+  @override
   Future<dynamic> updateGiaoViecSignature(
-      String order,
-      String status,
-      String address,
-      String attachSignatureCustomerImage,
-      String attachSignatureDeliverImage) async {
+    String order,
+    String status,
+    String address,
+    String attachSignatureCustomerImage,
+    String attachSignatureDeliverImage,
+  ) async {
     var data = {
       'order': order,
       'status': status,
@@ -2224,6 +2226,62 @@ class DioApi implements Api {
     try {
       var response = await DioHelper.dio.post(
         '/method/updateGiaoViecSignature',
+        data: data,
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response;
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<dynamic> updateGiaoViec(
+    String order,
+    String employee,
+    String supportEmployee,
+    String plate,
+    String deliverDate,
+  ) async {
+    var data = {
+      'order': order,
+      'employee': employee,
+      'support_employee': supportEmployee,
+      'plate': plate,
+      'deliver_date': deliverDate,
+    };
+
+    try {
+      var response = await DioHelper.dio.post(
+        '/method/updatePhanCong',
         data: data,
         options: Options(
           contentType: Headers.formUrlEncodedContentType,
@@ -2340,9 +2398,50 @@ class DioApi implements Api {
     }
   }
 
+  @override
+  Future<GiaoViecResponse> getGiaoViec(String order) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getPhanCong',
+        queryParameters: {'order': order},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return GiaoViecResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
   Future createRatingDonHang(request) async {
     try {
-      dynamic json = request.toJson();
+      // dynamic json = request.toJson();
 
       final response = await DioHelper.dio.post(
         '/method/createRatingDVDonHang',

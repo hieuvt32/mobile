@@ -56,3 +56,54 @@ class GiaoViecSignatureResponse {
     return data;
   }
 }
+
+class GiaoViec {
+  late String deliverDate;
+  late String plate;
+  late String supportEmployee;
+  late String order;
+  late String employee;
+
+  GiaoViec({
+    required this.deliverDate,
+    required this.plate,
+    required this.supportEmployee,
+    required this.order,
+    required this.employee,
+  });
+
+  GiaoViec.fromJson(Map<String, dynamic> json) {
+    deliverDate = json['deliver_date'];
+    plate = json['plate'] != null ? json['plate'] : '';
+    supportEmployee =
+        json['support_employee'] != null ? json['support_employee'] : '';
+    order = json['order'];
+    employee = json['employee'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['deliver_date'] = this.deliverDate;
+    data['order'] = this.order;
+    data['plate'] = this.plate;
+    data['support_employee'] = this.supportEmployee;
+    data['employee'] = this.employee;
+    return data;
+  }
+}
+
+class GiaoViecResponse {
+  late GiaoViec message;
+
+  GiaoViecResponse({required this.message});
+
+  GiaoViecResponse.fromJson(Map<String, dynamic> json) {
+    message = new GiaoViec.fromJson(json);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['message'] = this.message.toJson();
+    return data;
+  }
+}

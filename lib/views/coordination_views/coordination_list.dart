@@ -24,7 +24,7 @@ class _CoordinationListViewState extends State<CoordinationListView>
   final List<Widget> myTabs = [
     Tab(
       child: Text(
-        'Đã đặt hàng',
+        'Chờ điều phối',
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w700,
@@ -33,7 +33,7 @@ class _CoordinationListViewState extends State<CoordinationListView>
     ),
     Tab(
       child: Text(
-        'Đã nhận hàng',
+        'Đã điều phối',
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w700,

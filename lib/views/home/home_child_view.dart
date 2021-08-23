@@ -244,7 +244,7 @@ class _HomeChildViewState extends State<HomeChildView> {
         Item(
           icon: FrappeIcons.danh_sach_don_loi,
           visible: true,
-          text: "Điều phối",
+          text: "Danh sách đơn điều phối",
           view: (context) {
             return CoordinationListView();
           },
@@ -264,6 +264,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
+<<<<<<< Updated upstream
         view: (context) {
           return CustomerListOrderView();
         },
@@ -361,6 +362,32 @@ class _HomeChildViewState extends State<HomeChildView> {
       ],
       visible: true,
     ),
+=======
+      icon: FrappeIcons.mua_hang,
+      childrens: [
+        Item(
+          icon: FrappeIcons.danh_sach_don_loi,
+          visible: true,
+          text: "Danh sách báo bình lỗi",
+          view: (context) {
+            return CoordinationListView();
+          },
+        ),
+        Item(
+          icon: FrappeIcons.bao_binh_loi,
+          visible: true,
+          text: "Xem bình lỗi",
+          view: (context) {
+            return CoordinationEditView();
+          },
+        ),
+      ],
+      // view: CreateOrderView(),
+      text: "Báo bình lỗi",
+      roles: ["Giám Đốc"],
+      visible: true,
+    )
+>>>>>>> Stashed changes
   ];
 
   Future<void> startBarcodeScanStream() async {
