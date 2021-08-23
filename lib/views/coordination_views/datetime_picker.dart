@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:date_format/date_format.dart';
 
 class DateTimePicker extends StatefulWidget {
+  Function(String) changeSelection;
+  DateTimePicker(this.changeSelection);
   @override
   _DateTimePickerState createState() => _DateTimePickerState();
 }
@@ -35,6 +37,8 @@ class _DateTimePickerState extends State<DateTimePicker> {
       setState(() {
         selectedDate = picked;
         _dateController.text = DateFormat.yMd().format(selectedDate);
+
+        widget.changeSelection(_dateController.text);
       });
   }
 
@@ -53,6 +57,8 @@ class _DateTimePickerState extends State<DateTimePicker> {
         _timeController.text = formatDate(
             DateTime(2019, 08, 1, selectedTime.hour, selectedTime.minute),
             [hh, ':', nn, " ", am]).toString();
+
+        widget.changeSelection(_timeController.text);
       });
   }
 

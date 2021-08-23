@@ -9,7 +9,7 @@ import 'package:frappe_app/model/create_bao_binh_loi_request.dart';
 import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
-import 'package:frappe_app/model/create_tracking_reuqest.dart';
+import 'package:frappe_app/model/create_tracking_request.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/get_bien_ban_kiem_kho_response.dart';
@@ -31,6 +31,7 @@ import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/model/rating_order_request.dart';
+import 'package:frappe_app/model/response_data.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
 import 'package:frappe_app/model/update_trang_thai_quy_chuan_response.dart';
@@ -286,12 +287,16 @@ abstract class Api {
     required String customer,
   });
   Future<dynamic> updateGiaoViec(
-    String order,
-    String employee,
-    String supportEmployee,
-    String plate,
+    String? order,
+    String? employee,
+    String? supportEmployee,
+    String? plate,
     String deliverDate,
   );
 
   Future<GiaoViecResponse> getGiaoViec(String order);
+
+  Future<ResponseData> getDSEmployeeByCompany();
+
+  Future<ResponseData> getDSBienSoXe();
 }

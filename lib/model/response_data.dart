@@ -23,3 +23,42 @@ class ResponseData {
     return data;
   }
 }
+
+class BienSoXe {
+  late String name;
+  BienSoXe({
+    required this.name,
+  });
+
+  BienSoXe.fromJson(Map<dynamic, dynamic> json) {
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    return data;
+  }
+}
+
+class Employee {
+  late String name;
+
+  late String employeeName;
+  Employee({
+    required this.name,
+    required this.employeeName,
+  });
+
+  Employee.fromJson(Map<dynamic, dynamic> json) {
+    name = json['name'];
+    employeeName = json['employee_name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['name'] = this.name;
+    data['employee_name'] = this.employeeName;
+    return data;
+  }
+}

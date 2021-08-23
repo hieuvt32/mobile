@@ -6,7 +6,7 @@ import 'package:frappe_app/model/address.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
-import 'package:frappe_app/model/create_tracking_reuqest.dart';
+import 'package:frappe_app/model/create_tracking_request.dart';
 import 'package:frappe_app/model/customer.dart';
 import 'package:frappe_app/model/danh_sach_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
@@ -19,6 +19,7 @@ import 'package:frappe_app/model/nguyen_vat_lieu_san_pham.dart';
 import 'package:frappe_app/model/offline_storage.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
+import 'package:frappe_app/model/response_data.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
@@ -84,6 +85,10 @@ class EditOrderViewModel extends BaseViewModel {
 
   late List<GiaoViecSignature> _giaoViecSignatures;
 
+  late List<BienSoXe> _bienSoXes;
+
+  late List<Employee> _employees;
+
   late double _totalOrderPrice = 0;
 
   late bool _isNhaCungCap = false;
@@ -91,6 +96,12 @@ class EditOrderViewModel extends BaseViewModel {
   double get totalOrderPrice => _totalOrderPrice;
 
   List<GiaoViecSignature> get giaoViecSignatures => _giaoViecSignatures;
+
+  List<BienSoXe> get bienSoXes => _bienSoXes;
+
+  List<Employee> get employees => _employees;
+
+  late GiaoViec giaoViec;
 
   // Object? _diaChiSelect;
 
@@ -254,6 +265,13 @@ class EditOrderViewModel extends BaseViewModel {
       customerSelect(customerCode);
     }
 
+    giaoViec = GiaoViec(
+        deliverDate: DateTime.now().toString(),
+        plate: null,
+        supportEmployee: null,
+        order: _name,
+        employee: null);
+
     _giaoViecSignatures = [];
 
     _signatureSupplierController = SignatureController(
@@ -350,8 +368,10 @@ class EditOrderViewModel extends BaseViewModel {
     await getVatTuSanPham();
     await getChiTietDonHang();
     await getChiTietDonNhapKho();
-
     await getGiaoViecSignature();
+
+    await getDSBienSoXe();
+    await getDSEmployeeByCompany();
 
     _isLoading = false;
     notifyListeners();
@@ -521,6 +541,26 @@ class EditOrderViewModel extends BaseViewModel {
     _nguyenVatLieuVatTus = _responseGetVatTus != null &&
             _responseGetVatTus!.nguyenVatLieuSanPhams != null
         ? _responseGetVatTus!.nguyenVatLieuSanPhams!
+        : [];
+    notifyListeners();
+  }
+
+  Future getDSBienSoXe() async {
+    var responseData = await locator<Api>().getDSBienSoXe();
+    _bienSoXes = responseData != null && responseData.data != null
+        ? (responseData.data as List<dynamic>)
+            .map((e) => BienSoXe.fromJson(e))
+            .toList()
+        : [];
+    notifyListeners();
+  }
+
+  Future getDSEmployeeByCompany() async {
+    var responseData = await locator<Api>().getDSEmployeeByCompany();
+    _employees = responseData != null && responseData.data != null
+        ? (responseData.data as List<dynamic>)
+            .map((e) => Employee.fromJson(e))
+            .toList()
         : [];
     notifyListeners();
   }
@@ -979,6 +1019,11 @@ class EditOrderViewModel extends BaseViewModel {
           context: context,
           subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!');
     }
+  }
+
+  Future updatePhanCong() async {
+    await locator<Api>().updateGiaoViec(_name, giaoViec.employee,
+        giaoViec.supportEmployee, giaoViec.plate, giaoViec.deliverDate);
   }
 
   Future updateOrder(

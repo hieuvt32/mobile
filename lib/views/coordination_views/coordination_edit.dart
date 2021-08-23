@@ -156,14 +156,28 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                                       ? FieldData(
                                                           // value: 'Sản phẩm: ',
                                                           fieldType: 0,
-                                                          values: [],
-                                                          value: null,
+                                                          values: model
+                                                              .employees
+                                                              .map((e) => FieldValue(
+                                                                  text: e
+                                                                      .employeeName,
+                                                                  value:
+                                                                      e.name))
+                                                              .toList(),
+                                                          value: model.giaoViec
+                                                              .employee,
                                                           selectionHandler:
-                                                              (value) {},
+                                                              (value) {
+                                                            model.giaoViec
+                                                                    .employee =
+                                                                value;
+                                                            model.changeState();
+                                                          },
                                                         )
                                                       : FieldData(
                                                           fieldType: 3,
-                                                          value: 'Lái xe 12',
+                                                          value: model.giaoViec
+                                                              .employee,
                                                         ),
                                                   // Visibility(
                                                   //     visible: false,
@@ -203,14 +217,28 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                                           //     .enabledVatTu,
                                                           // value: 'Sản phẩm:s ',
                                                           fieldType: 0,
-                                                          values: [],
-                                                          value: null,
+                                                          values: model
+                                                              .employees
+                                                              .map((e) => FieldValue(
+                                                                  text: e
+                                                                      .employeeName,
+                                                                  value:
+                                                                      e.name))
+                                                              .toList(),
+                                                          value: model.giaoViec
+                                                              .supportEmployee,
                                                           selectionHandler:
-                                                              (value) {},
+                                                              (value) {
+                                                            model.giaoViec
+                                                                    .supportEmployee =
+                                                                value;
+                                                            model.changeState();
+                                                          },
                                                         )
                                                       : FieldData(
                                                           fieldType: 3,
-                                                          value: 'Phụ xe',
+                                                          value: model.giaoViec
+                                                              .supportEmployee,
                                                         ),
                                                   // Visibility(
                                                   //     visible: false,
@@ -252,14 +280,28 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                                           //     .enabledVatTu,
                                                           // value: 'Sản phẩm:s ',
                                                           fieldType: 0,
-                                                          values: [],
-                                                          value: null,
+                                                          values: model
+                                                              .bienSoXes
+                                                              .map((e) =>
+                                                                  FieldValue(
+                                                                      text: e
+                                                                          .name,
+                                                                      value: e
+                                                                          .name))
+                                                              .toList(),
+                                                          value: model
+                                                              .giaoViec.plate,
                                                           selectionHandler:
-                                                              (value) {},
+                                                              (value) {
+                                                            model.giaoViec
+                                                                .plate = value;
+                                                            model.changeState();
+                                                          },
                                                         )
                                                       : FieldData(
                                                           fieldType: 3,
-                                                          value: 'Phụ xe',
+                                                          value: model
+                                                              .giaoViec.plate,
                                                         ),
                                                   // Visibility(
                                                   //     visible: false,
@@ -296,10 +338,15 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                               child: Column(
                                                 children: [
                                                   !widget.isReadOnly
-                                                      ? DateTimePicker()
+                                                      ? DateTimePicker((value) {
+                                                          model.giaoViec
+                                                                  .deliverDate =
+                                                              value;
+                                                        })
                                                       : FieldData(
                                                           fieldType: 3,
-                                                          value: 'Thời gian',
+                                                          value: model.giaoViec
+                                                              .deliverDate,
                                                         ),
                                                   // Visibility(
                                                   //     visible: false,
@@ -334,7 +381,7 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                         )
                       ],
                     ),
-                    EditOrderBottom()
+                    EditOrderBottom(isDieuPhoi: true),
                   ],
                 ),
               ),

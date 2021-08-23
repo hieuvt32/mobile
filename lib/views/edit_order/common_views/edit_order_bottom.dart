@@ -14,10 +14,12 @@ import 'package:intl/intl.dart';
 class EditOrderBottom extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
 
+  final bool isDieuPhoi;
   final bool isNhaCungCap;
   EditOrderBottom({
     Key? key,
     this.isNhaCungCap = false,
+    this.isDieuPhoi = false,
   }) : super(key: key);
 
   @override
@@ -389,6 +391,8 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
   }
 
   String getTextButtonPrimary() {
+    if (widget.isDieuPhoi) return "Lưu";
+
     if (!widget.isNhaCungCap) {
       return widget.model.userRoles.contains(UserRole.KhachHang)
           ? "Đặt hàng"
@@ -588,6 +592,8 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                 await widget.model.updateOrder(context);
               }
             }
+
+            if (widget.isDieuPhoi) await widget.model.updatePhanCong();
           },
           child: Text(
             getTextButtonPrimary(),

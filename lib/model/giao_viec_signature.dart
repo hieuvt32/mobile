@@ -59,10 +59,10 @@ class GiaoViecSignatureResponse {
 
 class GiaoViec {
   late String deliverDate;
-  late String plate;
-  late String supportEmployee;
-  late String order;
-  late String employee;
+  late String? plate;
+  late String? supportEmployee;
+  late String? order;
+  late String? employee;
 
   GiaoViec({
     required this.deliverDate,
