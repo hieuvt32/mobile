@@ -264,7 +264,6 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
-<<<<<<< Updated upstream
         view: (context) {
           return CustomerListOrderView();
         },
@@ -362,7 +361,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       ],
       visible: true,
     ),
-=======
+    Item(
       icon: FrappeIcons.mua_hang,
       childrens: [
         Item(
@@ -387,7 +386,6 @@ class _HomeChildViewState extends State<HomeChildView> {
       roles: ["Giám Đốc"],
       visible: true,
     )
->>>>>>> Stashed changes
   ];
 
   Future<void> startBarcodeScanStream() async {

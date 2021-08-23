@@ -8,9 +8,11 @@ import 'package:intl/intl.dart';
 class EditOrderHeader extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
   final bool isNhaCungCap;
+  final bool isDieuPhoi;
   EditOrderHeader({
     Key? key,
     this.isNhaCungCap = false,
+    this.isDieuPhoi = false,
   }) : super(key: key);
 
   @override
@@ -129,50 +131,53 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                       height: 20,
                     ),
                     Visibility(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          // SizedBox(
-                          //   height: 10,
-                          // ),
-                          SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: Checkbox(
-                                checkColor: Colors.white,
-                                splashRadius: 1,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(4),
+                      visible: !widget.isDieuPhoi,
+                      child: Visibility(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            // SizedBox(
+                            //   height: 10,
+                            // ),
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Checkbox(
+                                  checkColor: Colors.white,
+                                  splashRadius: 1,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(4),
+                                    ),
                                   ),
-                                ),
-                                fillColor:
-                                    MaterialStateProperty.resolveWith(getColor),
-                                value: isAvailableRoles([UserRole.KhachHang])
-                                    ? widget.model.saveTemplate
-                                    : widget.model.sellInWarehouse,
-                                onChanged: onCheckboxChange),
-                          ),
-
-                          Text(
-                            isAvailableRoles(
-                                    [UserRole.KhachHang, UserRole.DieuPhoi])
-                                ? "Lưu đơn mẫu"
-                                : 'Bán Hàng Tại Kho',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: isAvailableRoles([UserRole.KhachHang])
-                                  ? Color.fromRGBO(0, 0, 0, 0.75)
-                                  : widget.model.orderState !=
-                                          OrderState.PreNewOrder
-                                      ? hexToColor('#AAAAAA')
-                                      : Color.fromRGBO(0, 0, 0, 0.75),
+                                  fillColor: MaterialStateProperty.resolveWith(
+                                      getColor),
+                                  value: isAvailableRoles([UserRole.KhachHang])
+                                      ? widget.model.saveTemplate
+                                      : widget.model.sellInWarehouse,
+                                  onChanged: onCheckboxChange),
                             ),
-                          ),
-                        ],
+
+                            Text(
+                              isAvailableRoles(
+                                      [UserRole.KhachHang, UserRole.DieuPhoi])
+                                  ? "Lưu đơn mẫu"
+                                  : 'Bán Hàng Tại Kho',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: isAvailableRoles([UserRole.KhachHang])
+                                    ? Color.fromRGBO(0, 0, 0, 0.75)
+                                    : widget.model.orderState !=
+                                            OrderState.PreNewOrder
+                                        ? hexToColor('#AAAAAA')
+                                        : Color.fromRGBO(0, 0, 0, 0.75),
+                              ),
+                            ),
+                          ],
+                        ),
+                        visible: !widget.isNhaCungCap,
                       ),
-                      visible: !widget.isNhaCungCap,
                     )
                   ],
                 ),

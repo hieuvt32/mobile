@@ -265,10 +265,11 @@ abstract class Api {
 
   Future<ListBaoCaoCongNoKH> getBaoCaoCongNoChoKH(String key);
 
-  Future<ListBaoCaoCongNoDetail> getBaoCaoCongNoDetail(
-      {required String key,
-      required String previouskey,
-      required String assetname});
+  Future<ListBaoCaoCongNoDetail> getBaoCaoCongNoDetail({
+    required String key,
+    required String previouskey,
+    required String assetname,
+  });
 
   Future<dynamic> createBaoNhamLan(CreateBaoNhamLanRequest request);
 
@@ -280,8 +281,10 @@ abstract class Api {
 
   Future createTrackingLocation(List<CreateTrackingLocationRequest> locations);
 
-  Future<BaoCaoChiTieuKhachHang> getBaoCaoChiTietKH(
-      {required String reportDate, required String customer});
+  Future<BaoCaoChiTieuKhachHang> getBaoCaoChiTietKH({
+    required String reportDate,
+    required String customer,
+  });
   Future<dynamic> updateGiaoViec(
     String order,
     String employee,

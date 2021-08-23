@@ -81,7 +81,9 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  EditOrderHeader(),
+                                  EditOrderHeader(
+                                    isDieuPhoi: true,
+                                  ),
                                   ListProductLocationView(),
                                   SizedBox(
                                     height: 8,
