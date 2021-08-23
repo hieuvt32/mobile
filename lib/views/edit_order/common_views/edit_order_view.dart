@@ -21,6 +21,24 @@ class EditOrderView extends StatefulWidget {
 
 class _EditOrderViewState extends State<EditOrderView>
     with TickerProviderStateMixin {
+  Color getColorByStatus(String status) {
+    switch (status) {
+      case "Chờ xác nhận":
+        return hexToColor("#FFEC44");
+      case "Đã đặt hàng":
+        return hexToColor("#0072BC");
+      case "Đang giao hàng":
+        return hexToColor("#FF0F00");
+      case "Đã giao hàng":
+        return hexToColor("#1BBD5C");
+      case "Đã hủy":
+        return hexToColor("#000000");
+
+      default:
+        return hexToColor("#000000");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseView<EditOrderViewModel>(
@@ -52,7 +70,7 @@ class _EditOrderViewState extends State<EditOrderView>
                 child: Text(
                   model.orderStatus,
                   style: TextStyle(
-                    color: hexToColor('#0072BC'),
+                    color: getColorByStatus(model.orderStatus),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),

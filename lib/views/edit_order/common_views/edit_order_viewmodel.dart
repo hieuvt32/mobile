@@ -6,6 +6,7 @@ import 'package:frappe_app/model/address.dart';
 import 'package:frappe_app/model/common.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
+import 'package:frappe_app/model/create_tracking_reuqest.dart';
 import 'package:frappe_app/model/customer.dart';
 import 'package:frappe_app/model/danh_sach_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
@@ -24,6 +25,7 @@ import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/views/base_viewmodel.dart';
 import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:injectable/injectable.dart';
+import 'package:location/location.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
 
@@ -108,6 +110,8 @@ class EditOrderViewModel extends BaseViewModel {
 
   String? _title;
 
+  DonNhapKho? get donNhapKho => _donNhapKho;
+
   bool get isLoading => _isLoading;
 
   String get title => _title ?? '';
@@ -120,7 +124,8 @@ class EditOrderViewModel extends BaseViewModel {
           .contains(_order!.status)) return true;
 
       if (_order!.status == "Đã đặt hàng" &&
-          isAvailableRoles([UserRole.KhachHang])) return true;
+          isAvailableRoles([UserRole.KhachHang, UserRole.DieuPhoi]))
+        return true;
 
       if (_order!.status == "Đã đặt hàng" && _isNhaCungCap) return true;
 
@@ -228,11 +233,7 @@ class EditOrderViewModel extends BaseViewModel {
 
   String get orderStatus {
     if (_order != null) {
-      switch (_order!.status) {
-        case "Đã đặt hàng":
-          return 'Đã đặt';
-        default:
-      }
+      return _order!.status;
     }
 
     return '';
@@ -372,6 +373,49 @@ class EditOrderViewModel extends BaseViewModel {
     initState();
   }
 
+  Future confirmEditingRequest(BuildContext context) async {
+    try {
+      _donNhapKho!.status = "Đã xác nhận";
+      _donNhapKho!.reasonEdit = "";
+      await locator<Api>().updateDonNhapKho(_donNhapKho!);
+
+      FrappeAlert.successAlert(
+          title: "Thông báo",
+          subtitle: "Có lỗi xảy ra, vui lòng thử lại sau!",
+          context: context);
+
+      notifyListeners();
+    } catch (err) {
+      FrappeAlert.errorAlert(
+          title: "Thông báo",
+          subtitle: "Có lỗi xảy ra, vui lòng thử lại sau!",
+          context: context);
+    }
+  }
+
+  Future confirmOrder(BuildContext context) async {
+    try {
+      if (_order!.status == "Chờ xác nhận") {
+        _order!.status = "Đã đặt hàng";
+        await locator<Api>().updateHoaDonMuaBan(order!);
+
+        FrappeAlert.successAlert(
+            title: "Thông báo",
+            subtitle: "Xác nhận đơn hàng thành công",
+            context: context);
+
+        notifyListeners();
+      } else {
+        throw Error();
+      }
+    } catch (err) {
+      FrappeAlert.errorAlert(
+          title: "Thông báo",
+          subtitle: "Có lỗi xảy ra, vui lòng thử lại sau",
+          context: context);
+    }
+  }
+
   saveTemplateOrder(bool enableToSave) {
     final String key = "order_template";
 
@@ -410,6 +454,8 @@ class EditOrderViewModel extends BaseViewModel {
       }
     });
   }
+
+  Future refuseOrder(String reason) async {}
 
   GiaoViecSignature? getGiaoViecSignatureByAddress(String address) {
     var giaoViecSignatureByAddress = _giaoViecSignatures
@@ -749,9 +795,9 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.vendorAddress = '';
       _order!.vendorName = customer.realName;
 
-      var createOrderResponse =
-          await locator<Api>().createHoaDonMuaBan(_order!);
+      await locator<Api>().createHoaDonMuaBan(_order!);
 
+      notifyListeners();
       FrappeAlert.successAlert(
           title: 'Tạo đơn thành công',
           context: context,
@@ -1036,11 +1082,28 @@ class EditOrderViewModel extends BaseViewModel {
 
       var uploadHoaDonMuaBan = await locator<Api>().updateHoaDonMuaBan(_order!);
 
+      if (status == "Đang giao hàng") {
+        List<CreateTrackingLocationRequest> locations = _order!.products
+            .map((e) => CreateTrackingLocationRequest(
+                address: e.diaChi, order: order!.name))
+            .toList();
+
+        LocationData currentLocation = await Location().getLocation();
+        locations.add(CreateTrackingLocationRequest(
+            address: "Xe",
+            order: _order!.name,
+            latitude: currentLocation.latitude,
+            longitude: currentLocation.longitude));
+
+        await locator<Api>().createTrackingLocation(locations);
+      }
+
       if (uploadHoaDonMuaBan != null &&
           uploadHoaDonMuaBan.responseData != null) {
         _donNhapKho!.codeOrders = _name!;
         _donNhapKho!.status = _order!.status;
         _donNhapKho!.listShell = [...nhapKhos, ...traVes];
+
         var updateDonNhapKhoResponse =
             await locator<Api>().updateDonNhapKho(_donNhapKho!);
         if (updateDonNhapKhoResponse != null &&
@@ -1067,11 +1130,13 @@ class EditOrderViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  Future<void> cancelOrder(context) async {
+  Future<void> cancelOrder(
+      {required BuildContext context, String? reason}) async {
     try {
       _order!.status = "Đã hủy";
       _order!.cancelPerson = Config().customerCode;
       _order!.cancelDate = DateTime.now();
+      _order!.cancelReason = reason ?? "";
 
       await locator<Api>().updateHoaDonMuaBan(_order!);
 

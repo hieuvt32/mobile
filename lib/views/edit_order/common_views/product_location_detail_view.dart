@@ -115,7 +115,9 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             );
           }, [
-            SignatureView(),
+            SignatureView(
+              address: widget.address,
+            ),
           ])
         ]);
   }
@@ -145,6 +147,21 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
           realOnly: true,
           address: widget.address,
         ),
+        ExpansionCustomPanel(
+            backgroundIconColor: hexToColor("#000000").withOpacity(0.1),
+            backgroundBodyColor: hexToColor("#0072BC").withOpacity(0.3),
+            items: [
+              ExpansionItem(true, (isExpanded) {
+                return Text(
+                  "Ký xác nhận",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                );
+              }, [
+                SignatureView(
+                  address: widget.address,
+                ),
+              ])
+            ])
       ],
     );
   }

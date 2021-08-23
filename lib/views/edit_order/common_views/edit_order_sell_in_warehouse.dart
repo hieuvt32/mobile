@@ -106,7 +106,7 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
                       ),
                     ),
                     SizedBox(
-                      height: 80,
+                      height: 2000,
                     ),
                   ],
                 ),

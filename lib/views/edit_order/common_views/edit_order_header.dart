@@ -3,6 +3,7 @@ import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
+import 'package:intl/intl.dart';
 
 class EditOrderHeader extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
@@ -46,6 +47,8 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
               ? v.name
               : v.realName);
     }
+
+    final oCcy = new NumberFormat("#,##0.00", "en_US");
 
     return Container(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
@@ -204,7 +207,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                         color: Color.fromRGBO(0, 0, 0, 0.75),
                       ),
                     ),
-                    isAvailableRoles([UserRole.KhachHang])
+                    isAvailableRoles([UserRole.KhachHang, UserRole.DieuPhoi])
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -223,7 +226,7 @@ class _EditOrderHeaderState extends State<EditOrderHeader> {
                                 height: 8,
                               ),
                               Text(
-                                widget.model.totalOrderPrice.toString(),
+                                formatCurrency(widget.model.totalOrderPrice),
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

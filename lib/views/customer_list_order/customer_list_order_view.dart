@@ -7,6 +7,7 @@ import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
@@ -115,7 +116,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                   Expanded(
                       flex: 3,
                       child: Text(
-                        totalPrice.toString(),
+                        formatCurrency(totalPrice),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: hexToColor("#FF0F00")),
@@ -154,7 +155,8 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                               Expanded(
                                   flex: 3,
                                   child: Text(
-                                    totalPriceByAddress[address].toString(),
+                                    formatCurrency(
+                                        totalPriceByAddress[address]),
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: hexToColor("#FF0F00")),
@@ -225,8 +227,11 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
         isLoading = true;
       });
 
-      String? userId = Config().userId;
-      String customerCode = userId!.split("@")[0];
+      String? customerCode;
+      if (Config().roles.contains(UserRole.KhachHang)) {
+        String? userId = Config().userId;
+        customerCode = userId!.split("@")[0];
+      }
 
       List<ListOrderResponse> listResponse = await Future.wait([
         locator<Api>().getListOrder(

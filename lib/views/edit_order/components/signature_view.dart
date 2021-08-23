@@ -8,7 +8,9 @@ import 'package:signature/signature.dart';
 
 class SignatureView extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
-  SignatureView({Key? key}) : super(key: key);
+  final String? address;
+
+  SignatureView({Key? key, this.address}) : super(key: key);
 
   @override
   _SignatureViewState createState() => _SignatureViewState();
@@ -17,6 +19,22 @@ class SignatureView extends StatefulWidget {
 class _SignatureViewState extends State<SignatureView> {
   @override
   Widget build(BuildContext context) {
+    String attachImageCustomer;
+    String attachImage;
+
+    if (widget.address != null && widget.address!.length > 0) {
+      var giaoViewSig =
+          widget.model.getGiaoViecSignatureByAddress(widget.address!);
+      attachImageCustomer =
+          giaoViewSig != null ? giaoViewSig.attachSignatureCustomerImage : '';
+
+      attachImage =
+          giaoViewSig != null ? giaoViewSig.attachSignatureDeliverImage : '';
+    } else {
+      attachImageCustomer = widget.model.order!.attachSignatureCustomerImage;
+      attachImage = widget.model.order!.attachSignatureSupplierImage;
+    }
+
     return Container(
       child: SingleChildScrollView(
         child: Padding(
@@ -73,7 +91,7 @@ class _SignatureViewState extends State<SignatureView> {
                       ),
                       widget.model.readOnlyView
                           ? Image.network(
-                              '${widget.model.config!.baseUrl}${widget.model.order!.attachSignatureCustomerImage}')
+                              '${widget.model.config!.baseUrl}${attachImageCustomer}')
                           : Signature(
                               controller:
                                   widget.model.signatureCustomerController,
@@ -89,7 +107,9 @@ class _SignatureViewState extends State<SignatureView> {
                 height: 8,
               ),
               Text(
-                'Nhà cung cấp',
+                widget.address != null && widget.address!.length > 0
+                    ? "Giao vận viên"
+                    : "'Nhà cung cấp'",
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -134,7 +154,7 @@ class _SignatureViewState extends State<SignatureView> {
                       ),
                       widget.model.readOnlyView
                           ? Image.network(
-                              '${widget.model.config!.baseUrl}${widget.model.order!.attachSignatureSupplierImage}')
+                              '${widget.model.config!.baseUrl}${attachImage}')
                           : Signature(
                               controller:
                                   widget.model.signatureSupplierController,

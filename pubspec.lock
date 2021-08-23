@@ -478,7 +478,7 @@ packages:
     source: hosted
     version: "3.0.0"
   flutter_localizations:
-    dependency: transitive
+    dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -744,6 +744,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  location:
+    dependency: "direct main"
+    description:
+      name: location
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.3.0"
+  location_platform_interface:
+    dependency: transitive
+    description:
+      name: location_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.3.0"
+  location_web:
+    dependency: transitive
+    description:
+      name: location_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.1.1"
   logging:
     dependency: transitive
     description:
@@ -772,6 +793,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.9.7"
+  month_picker_dialog:
+    dependency: "direct main"
+    description:
+      name: month_picker_dialog
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.4.0"
   nested:
     dependency: transitive
     description:

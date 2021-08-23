@@ -23,7 +23,8 @@ class _EditOrderSellNotInWareHouseState
 
   Widget _buidStateView() {
     if (widget.model.orderState == OrderState.Delivered &&
-        !widget.model.isAvailableRoles([UserRole.KhachHang])) {
+        !widget.model
+            .isAvailableRoles([UserRole.KhachHang, UserRole.DieuPhoi])) {
       return EditOrderSellNotInWareHouseTab();
     }
 
