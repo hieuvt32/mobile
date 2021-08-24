@@ -281,7 +281,7 @@ class _ListOrderViewState extends State<ListOrderView>
         response != null && response.orders != null ? response.orders! : [];
 
     return Container(
-      padding: const EdgeInsets.only(left: 24, right: 24, top: 12),
+      padding: const EdgeInsets.only(left: 24, right: 24),
       child: Column(
         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -295,10 +295,11 @@ class _ListOrderViewState extends State<ListOrderView>
           Expanded(
             child: ListView.builder(
               itemBuilder: (ctx, index) {
+                double paddingTop = index == 0 ? 12 : 0;
                 return GestureDetector(
                   child: Container(
                     color: hexToColor("#B3D5EB"),
-                    padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+                    padding: EdgeInsets.fromLTRB(8, paddingTop, 8, 12),
                     child: Container(
                       child: Column(
                         children: [
@@ -422,14 +423,14 @@ class _ListOrderViewState extends State<ListOrderView>
                           automaticIndicatorColorAdjustment: true,
                           controller: _tabController,
                           labelColor: hexToColor('#FF0F00'),
-                          isScrollable: true,
+                          // isScrollable: true,
                           labelStyle: TextStyle(
                             color: hexToColor('#FF0F00'),
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                           ),
                           unselectedLabelColor: hexToColor('#00478B'),
-                          indicatorColor: hexToColor("#FF2D1F"),
+                          indicatorColor: Colors.transparent,
                           tabs: myTabs,
                         ),
                       ),

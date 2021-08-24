@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
+import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
@@ -191,73 +192,80 @@ class _TransportationSignatureTabState
 
           Align(
               alignment: Alignment.bottomCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: hexToColor('#FF0F00'),
-                      // side: BorderSide(
-                      //   width: 1.0,
-                      // ),
-                      minimumSize: Size(120, 32),
-                      // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.0),
+              child: Visibility(
+                visible: !readOnly,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: hexToColor('#FF0F00'),
                         // side: BorderSide(
-                        //   color: hexToColor('#0072BC'),
+                        //   width: 1.0,
                         // ),
+                        minimumSize: Size(120, 32),
+                        // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                          // side: BorderSide(
+                          //   color: hexToColor('#0072BC'),
+                          // ),
+                        ),
+                      ),
+                      onPressed: () {},
+                      child: Text(
+                        'Hủy',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                    onPressed: () {},
-                    child: Text(
-                      'Hủy',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: hexToColor('#0072BC'),
-                      // side: BorderSide(
-                      //   width: 1.0,
-                      // ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: hexToColor('#0072BC'),
+                        // side: BorderSide(
+                        //   width: 1.0,
+                        // ),
 
-                      minimumSize: Size(120, 32),
-                      // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.0),
-                        // side: BorderSide(
-                        //   color: hexToColor('#FF0F00'),
-                        // ),
+                        minimumSize: Size(120, 32),
+                        // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4.0),
+                          // side: BorderSide(
+                          //   color: hexToColor('#FF0F00'),
+                          // ),
+                        ),
                       ),
-                    ),
-                    onPressed: () async {
-                      await widget.model.updateOrder(context,
-                          status: widget.isLatest
-                              ? "Đã giao hàng"
-                              : widget.model.order!.status);
-                      await widget.model.updateGiaoViecSignature(context,
-                          address: widget.address.address,
-                          status: "Đã giao hàng");
-                    },
-                    child: Text(
-                      widget.model.sellInWarehouse
-                          ? 'Hoàn thành'
-                          : (widget.model.orderState == OrderState.PreNewOrder
-                              ? 'Tạo đơn'
-                              : 'Lưu'),
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                      onPressed: () async {
+                        await widget.model.updateOrder(context,
+                            status: widget.isLatest
+                                ? "Đã giao hàng"
+                                : widget.model.order!.status);
+                        var model = await widget.model.updateGiaoViecSignature(
+                            context,
+                            address: widget.address.address,
+                            status: "Đã giao hàng");
+
+                        widget.model.addGiaoViecSignature(model);
+                        widget.model.changeState();
+                      },
+                      child: Text(
+                        widget.model.sellInWarehouse
+                            ? 'Hoàn thành'
+                            : (widget.model.orderState == OrderState.PreNewOrder
+                                ? 'Tạo đơn'
+                                : 'Lưu'),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ))
         ],
       ),

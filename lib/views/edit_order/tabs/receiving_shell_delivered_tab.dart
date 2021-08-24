@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/components/list_product_return.dart';
 import 'package:frappe_app/views/edit_order/components/list_shell_view.dart';
@@ -18,10 +19,19 @@ class _ReceivingShellDeliveredTabState
     extends State<ReceivingShellDeliveredTab> {
   @override
   Widget build(BuildContext context) {
+    Iterable<Product> filteredList = widget.model.productForLocations.where(
+        (element) =>
+            element.actualQuantity != null &&
+            element.actualQuantity != 0 &&
+            element.actualQuantity != element.quantity);
+    var totalHoanTra =
+        filteredList.fold<int>(0, (sum, item) => sum + item.actualQuantity);
     var totalNhapKho =
         widget.model.nhapKhos.fold<int>(0, (sum, item) => sum + item.amount);
     var totalTraVe =
         widget.model.traVes.fold<int>(0, (sum, item) => sum + item.amount);
+
+    var totalXe = (totalHoanTra + totalNhapKho) - totalTraVe;
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -46,7 +56,7 @@ class _ReceivingShellDeliveredTabState
                             height: 10,
                           ),
                           Text(
-                            '$totalNhapKho',
+                            '$totalXe',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -74,7 +84,7 @@ class _ReceivingShellDeliveredTabState
                             height: 10,
                           ),
                           Text(
-                            '$totalTraVe',
+                            '$totalHoanTra',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -197,6 +207,7 @@ class _ReceivingShellDeliveredTabState
           ListShellView(
             'Danh sách vỏ bình trả lại khách',
             type: 1,
+            realOnly: ["Hoàn thành"].contains(widget.model.donNhapKho!.status),
           ),
         ],
       ),

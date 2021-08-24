@@ -413,6 +413,27 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
+  Future confirmKhongXacNhan(BuildContext context,
+      {String status = "", String reasonEdit = ""}) async {
+    try {
+      _donNhapKho!.status = status;
+      _donNhapKho!.reasonEdit = reasonEdit;
+      await locator<Api>().updateDonNhapKho(_donNhapKho!);
+
+      FrappeAlert.successAlert(
+          title: "Thông báo",
+          subtitle: "Có lỗi xảy ra, vui lòng thử lại sau!",
+          context: context);
+
+      notifyListeners();
+    } catch (err) {
+      FrappeAlert.errorAlert(
+          title: "Thông báo",
+          subtitle: "Có lỗi xảy ra, vui lòng thử lại sau!",
+          context: context);
+    }
+  }
+
   Future confirmOrder(BuildContext context) async {
     try {
       if (_order!.status == "Chờ xác nhận") {
@@ -476,6 +497,10 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   Future refuseOrder(String reason) async {}
+
+  void addGiaoViecSignature(GiaoViecSignature giaoViecSignature) {
+    _giaoViecSignatures.add(giaoViecSignature);
+  }
 
   GiaoViecSignature? getGiaoViecSignatureByAddress(String address) {
     var giaoViecSignatureByAddress = _giaoViecSignatures
@@ -982,7 +1007,7 @@ class EditOrderViewModel extends BaseViewModel {
       if (createOrderResponse != null &&
           createOrderResponse.responseData != null) {
         _donNhapKho!.codeOrders = createOrderResponse.responseData.data;
-        _donNhapKho!.status = _order!.status;
+        _donNhapKho!.status = "Chờ nhập hàng";
         _donNhapKho!.listShell = [...nhapKhos, ...traVes];
         _name = createOrderResponse.responseData.data;
         _title = createOrderResponse.responseData.data;
@@ -1041,6 +1066,7 @@ class EditOrderViewModel extends BaseViewModel {
     String status = '',
     String type = 'B',
     bool isNhaCungCap = false,
+    String statusDonNhapKho = 'Chờ nhập hàng',
   }) async {
     Attachments? customerAttachmemts;
     Attachments? supplierAttachments;
@@ -1165,7 +1191,7 @@ class EditOrderViewModel extends BaseViewModel {
       if (uploadHoaDonMuaBan != null &&
           uploadHoaDonMuaBan.responseData != null) {
         _donNhapKho!.codeOrders = _name!;
-        _donNhapKho!.status = _order!.status;
+        _donNhapKho!.status = statusDonNhapKho;
         _donNhapKho!.listShell = [...nhapKhos, ...traVes];
 
         var updateDonNhapKhoResponse =
@@ -1238,7 +1264,7 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
-  Future updateGiaoViecSignature(context,
+  Future<GiaoViecSignature> updateGiaoViecSignature(context,
       {String status = '', String address = ''}) async {
     Attachments? customerAttachmemts;
     Attachments? supplierAttachments;
@@ -1294,6 +1320,15 @@ class EditOrderViewModel extends BaseViewModel {
     // if(updateGiaoViecSignatureResponse != null) {
 
     // }
+
+    return GiaoViecSignature(
+        address: address,
+        attachSignatureCustomerImage:
+            customerAttachmemts != null ? customerAttachmemts.fileUrl : '',
+        attachSignatureDeliverImage:
+            supplierAttachments != null ? supplierAttachments.fileUrl : '',
+        order: _order!.name,
+        status: status != null && status != '' ? status : _order!.status);
 
     notifyListeners();
   }

@@ -67,7 +67,8 @@ class _TransportationListState extends State<TransportationList> {
             List<MapEntry<String, int>> addresses = [];
             groupBy<Product, String>(item.products, (obj) => obj.diaChi)
                 .map((key, value) {
-              addresses.add(MapEntry(key, value.length));
+              addresses.add(MapEntry(
+                  key, value.fold<int>(0, (sum, item) => sum + item.quantity)));
               return MapEntry(key, value);
             });
 

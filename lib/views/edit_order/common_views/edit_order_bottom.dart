@@ -317,7 +317,9 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                       if (widget.model.orderState == OrderState.PreNewOrder)
                         await widget.model.createOrder(context);
                       else {
-                        await widget.model.updateOrder(context);
+                        await widget.model.updateOrder(context,
+                            status: "Đã giao hàng",
+                            statusDonNhapKho: "Hoàn thành");
                       }
                     },
                     child: Text(

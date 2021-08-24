@@ -155,12 +155,19 @@ class _ProductItemState extends State<ProductItem> {
                       flex: 2,
                     ),
                     Expanded(
-                      flex: 5,
+                      flex: 2,
                       child: FieldData(
                         value: values[i].product,
                         fieldType: 3,
                       ),
-                    )
+                    ),
+                    Expanded(
+                      child: FieldData(
+                        value: 'Đơn vị tính: ${values[i].unit}',
+                        fieldType: 3,
+                      ),
+                      flex: 3,
+                    ),
                   ],
                 ),
                 Row(
@@ -173,65 +180,11 @@ class _ProductItemState extends State<ProductItem> {
                       flex: 2,
                     ),
                     Expanded(
-                      flex: 2,
+                      flex: 5,
                       child: FieldData(
                         value: values[i].material ?? '',
                         fieldType: 3,
                       ),
-                    ),
-                    Expanded(
-                      child: FieldData(
-                        value: 'Kg:',
-                        fieldType: 3,
-                      ),
-                      flex: 1,
-                    ),
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: !widget.isReadOnly
-                                ? FieldData(
-                                    // title: 'Đơn vị tính ',
-                                    // enabled: false,
-                                    controller: controllers[i]['kgController'],
-                                    fieldType: 1,
-                                    selectionHandler: (text) {
-                                      if (["", null, false, 0].contains(
-                                          controllers[i]['kgController']!
-                                              .text)) {
-                                        // do sth
-                                        values[i].actualKg = 0;
-                                      } else {
-                                        values[i].actualKg = double.parse(
-                                            controllers[i]['kgController']!
-                                                .text);
-                                      }
-                                      widget.model.changeState();
-                                    })
-                                : FieldData(
-                                    value: '${values[i].actualKg}',
-                                    fieldType: 3,
-                                  ),
-                            flex: 5,
-                          ),
-                          Expanded(
-                            child: FieldData(
-                              value: '/',
-                              fieldType: 3,
-                            ),
-                            flex: 1,
-                          ),
-                          Expanded(
-                            child: FieldData(
-                              value: '${values[i].kg}',
-                              fieldType: 3,
-                            ),
-                            flex: 4,
-                          )
-                        ],
-                      ),
-                      flex: 2,
                     ),
                   ],
                 ),
@@ -291,14 +244,65 @@ class _ProductItemState extends State<ProductItem> {
                           )
                         ],
                       ),
+                      flex: 5,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FieldData(
+                        value: 'Kg:',
+                        fieldType: 3,
+                      ),
                       flex: 2,
                     ),
                     Expanded(
-                      child: FieldData(
-                        value: 'Đơn vị tính: ${values[i].unit}',
-                        fieldType: 3,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: !widget.isReadOnly
+                                ? FieldData(
+                                    // title: 'Đơn vị tính ',
+                                    // enabled: false,
+                                    controller: controllers[i]['kgController'],
+                                    fieldType: 1,
+                                    selectionHandler: (text) {
+                                      if (["", null, false, 0].contains(
+                                          controllers[i]['kgController']!
+                                              .text)) {
+                                        // do sth
+                                        values[i].actualKg = 0;
+                                      } else {
+                                        values[i].actualKg = double.parse(
+                                            controllers[i]['kgController']!
+                                                .text);
+                                      }
+                                      widget.model.changeState();
+                                    })
+                                : FieldData(
+                                    value: '${values[i].actualKg}',
+                                    fieldType: 3,
+                                  ),
+                            flex: 5,
+                          ),
+                          Expanded(
+                            child: FieldData(
+                              value: '/',
+                              fieldType: 3,
+                            ),
+                            flex: 1,
+                          ),
+                          Expanded(
+                            child: FieldData(
+                              value: '${values[i].kg}',
+                              fieldType: 3,
+                            ),
+                            flex: 4,
+                          )
+                        ],
                       ),
-                      flex: 3,
+                      flex: 5,
                     ),
                   ],
                 )

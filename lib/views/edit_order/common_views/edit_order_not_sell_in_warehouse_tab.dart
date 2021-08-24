@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:frappe_app/views/edit_order/components/list_product_location_view.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_bottom.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_header.dart';
 import 'package:frappe_app/views/edit_order/tabs/receiving_shell_delivered_tab.dart';
 
 class EditOrderSellNotInWareHouseTab extends StatefulWidget {
-  const EditOrderSellNotInWareHouseTab({Key? key}) : super(key: key);
+  final EditOrderViewModel model = locator<EditOrderViewModel>();
+  EditOrderSellNotInWareHouseTab({Key? key}) : super(key: key);
 
   @override
   _EditOrderSellNotInWareHouseTabState createState() =>
@@ -94,7 +97,11 @@ class _EditOrderSellNotInWareHouseTabState
                     ),
                   ],
                 ),
-                EditOrderBottom(),
+                Visibility(
+                  child: EditOrderBottom(),
+                  visible: !["Chờ xác nhận", "Hoàn thành"]
+                      .contains(widget.model.donNhapKho!.status),
+                ),
               ],
             ),
           ),

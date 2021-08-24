@@ -123,11 +123,15 @@ class _TransportationDetailState extends State<TransportationDetail> {
                               ),
                               Expanded(
                                 child: Text(
-                                    "${giaoViewSig != null ? giaoViewSig.status : model.order!.status}",
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(0, 71, 139, 1),
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700)),
+                                  "${giaoViewSig != null ? giaoViewSig.status : model.order!.status}",
+                                  style: TextStyle(
+                                    color: getColor(giaoViewSig != null
+                                        ? giaoViewSig.status
+                                        : model.order!.status),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                                 flex: 8,
                               )
                             ],
@@ -144,7 +148,7 @@ class _TransportationDetailState extends State<TransportationDetail> {
                     ),
                   ),
                   onTap: () {
-                    if (model.order!.status != "Đã giao hàng") {
+                    if (model.order!.status != "Đã đặt hàng") {
                       var length = model.giaoViecSignatures
                           .where(
                               (element) => element.status == "Đang giao hàng")
@@ -172,6 +176,19 @@ class _TransportationDetailState extends State<TransportationDetail> {
     );
   }
 
+  Color getColor(String status) {
+    switch (status) {
+      case "Đã giao hàng":
+        return Color.fromRGBO(27, 189, 92, 1);
+      case "Đang giao hàng":
+        return Color.fromRGBO(255, 15, 0, 1);
+      case "Đã đặt hàng":
+        return Color.fromRGBO(0, 71, 139, 1);
+      default:
+    }
+    return Color.fromRGBO(0, 71, 139, 1);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseView<EditOrderViewModel>(
@@ -196,19 +213,19 @@ class _TransportationDetailState extends State<TransportationDetail> {
               Navigator.pop(context);
             },
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 24),
-                child: Center(
-                  child: Text(
-                    model.orderStatus,
-                    style: TextStyle(
-                      color: hexToColor('#0072BC'),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              )
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 24),
+              //   child: Center(
+              //     child: Text(
+              //       model.orderStatus,
+              //       style: TextStyle(
+              //         color: hexToColor('#0072BC'),
+              //         fontSize: 14,
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     ),
+              //   ),
+              // )
             ],
           ),
           body: !model.isLoading

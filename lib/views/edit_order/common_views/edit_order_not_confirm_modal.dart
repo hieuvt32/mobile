@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 
 class EditOrderNotConfirmModal extends StatefulWidget {
-  const EditOrderNotConfirmModal({Key? key}) : super(key: key);
+  final EditOrderViewModel model = locator<EditOrderViewModel>();
+  EditOrderNotConfirmModal({Key? key}) : super(key: key);
 
   @override
   _EditOrderNotConfirmModalState createState() =>
@@ -14,10 +17,23 @@ class _EditOrderNotConfirmModalState extends State<EditOrderNotConfirmModal> {
     Navigator.of(context).pop();
   }
 
+  late final TextEditingController titleController;
+
+  @override
+  void initState() {
+    super.initState();
+    titleController = TextEditingController();
+    titleController.text = widget.model.donNhapKho!.reasonEdit!;
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final titleController = TextEditingController();
-
     return Card(
       elevation: 5,
       child: Padding(
@@ -70,19 +86,20 @@ class _EditOrderNotConfirmModalState extends State<EditOrderNotConfirmModal> {
                       ),
                     ),
                     onPressed: () {
-                      showModalBottomSheet(
-                        context: context,
-                        builder: (_) {
-                          return GestureDetector(
-                            onTap: () {},
-                            child: EditOrderNotConfirmModal(),
-                            behavior: HitTestBehavior.opaque,
-                          );
-                        },
-                      );
+                      // showModalBottomSheet(
+                      //   context: context,
+                      //   builder: (_) {
+                      //     return GestureDetector(
+                      //       onTap: () {},
+                      //       child: EditOrderNotConfirmModal(),
+                      //       behavior: HitTestBehavior.opaque,
+                      //     );
+                      //   },
+                      // );
+                      Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Không xác nhận',
+                      'Hủy',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -106,7 +123,13 @@ class _EditOrderNotConfirmModalState extends State<EditOrderNotConfirmModal> {
                         // ),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      widget.model.confirmKhongXacNhan(context,
+                          status: "Chờ xác nhận",
+                          reasonEdit: titleController.text);
+                      widget.model.changeState();
+                      Navigator.of(context).pop();
+                    },
                     child: Text(
                       'Lưu',
                       style: TextStyle(
