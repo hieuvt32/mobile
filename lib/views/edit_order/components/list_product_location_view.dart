@@ -452,7 +452,8 @@ class _ListProductLocationItemViewState
                                     size: 16,
                                   ),
                                   onTap: () {
-                                    values.removeAt(i);
+                                    widget.model.productForLocations
+                                        .removeAt(i);
                                     widget.model.changeState();
                                   },
                                 )

@@ -949,6 +949,16 @@ class EditOrderViewModel extends BaseViewModel {
       } else {
         _order!.products = _sellInWarehouse ? _products : _productForLocations;
       }
+
+      var quantity = _order!.products.fold<int>(
+          0, (previousValue, element) => previousValue + element.quantity);
+      if (_order!.products.length <= 0 || quantity <= 0) {
+        FrappeAlert.errorAlert(
+            title: 'Lỗi xảy ra',
+            context: context,
+            subtitle: 'bạn chưa có sản phẩm nào!');
+        return;
+      }
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
       _order!.taxId = elements[0].taxId;
@@ -1103,6 +1113,15 @@ class EditOrderViewModel extends BaseViewModel {
         _order!.products = products;
       } else {
         _order!.products = _sellInWarehouse ? _products : _productForLocations;
+      }
+      var quantity = _order!.products.fold<int>(
+          0, (previousValue, element) => previousValue + element.quantity);
+      if (_order!.products.length <= 0 || quantity <= 0) {
+        FrappeAlert.errorAlert(
+            title: 'Lỗi xảy ra',
+            context: context,
+            subtitle: 'bạn chưa có sản phẩm nào!');
+        return;
       }
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = ["", null, false, 0].contains(status)
