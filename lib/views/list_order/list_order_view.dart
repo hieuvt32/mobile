@@ -26,14 +26,19 @@ class _ListOrderViewState extends State<ListOrderView>
           fontSize: 14,
           fontWeight: FontWeight.w700,
         ),
+        textAlign: TextAlign.center,
       ),
     ),
     Tab(
-        child: Text('Đang giao hàng',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ))),
+      child: Text(
+        'Đang giao hàng',
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    ),
     Tab(
       child: Text(
         'Đã giao hàng',
@@ -41,6 +46,7 @@ class _ListOrderViewState extends State<ListOrderView>
           fontSize: 14,
           fontWeight: FontWeight.w700,
         ),
+        textAlign: TextAlign.center,
       ),
     ),
   ];
@@ -419,7 +425,7 @@ class _ListOrderViewState extends State<ListOrderView>
                           isScrollable: true,
                           labelStyle: TextStyle(
                             color: hexToColor('#FF0F00'),
-                            fontSize: 20,
+                            fontSize: 18,
                             fontWeight: FontWeight.w700,
                           ),
                           unselectedLabelColor: hexToColor('#00478B'),

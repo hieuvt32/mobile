@@ -290,19 +290,19 @@ class _InventoryViewState extends State<InventoryView>
                                           onChanged: (text) {
                                             setState(() {
                                               stores[index].actualCount =
-                                                  int.parse(text);
+                                                  int.tryParse(text) ?? 0;
                                             });
                                           },
                                           onSubmitted: (text) {
                                             setState(() {
                                               stores[index].actualCount =
-                                                  int.parse(text);
+                                                  int.tryParse(text) ?? 0;
                                             });
                                           },
                                         ),
                                       )
                                     : Text(
-                                        "${bienBanKiemKho != null ? bienBanKiemKho.actualCount : 0}",
+                                        "${bienBanKiemKho != null ? bienBanKiemKho.actualCount : stores[index].actualCount}",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                                 color: hexToColor('#14142B'))
