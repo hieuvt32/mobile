@@ -31,7 +31,7 @@ class _ReceivingShellDeliveredTabState
     var totalTraVe =
         widget.model.traVes.fold<int>(0, (sum, item) => sum + item.amount);
 
-    var totalXe = (totalHoanTra + totalNhapKho) - totalTraVe;
+    var totalXe = totalHoanTra + totalNhapKho;
     return SingleChildScrollView(
       child: Column(
         children: [
