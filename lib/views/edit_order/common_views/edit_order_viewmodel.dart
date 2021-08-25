@@ -369,6 +369,7 @@ class EditOrderViewModel extends BaseViewModel {
     await getChiTietDonHang();
     await getChiTietDonNhapKho();
     await getGiaoViecSignature();
+    await getGiaoViec();
 
     await getDSBienSoXe();
     await getDSEmployeeByCompany();
@@ -577,6 +578,16 @@ class EditOrderViewModel extends BaseViewModel {
             .map((e) => BienSoXe.fromJson(e))
             .toList()
         : [];
+    notifyListeners();
+  }
+
+  Future getGiaoViec() async {
+    if (!["", null, false, 0].contains(_order!.name)) {
+      var responseData = await locator<Api>().getGiaoViec(_order!.name);
+      giaoViec = responseData != null && responseData.message != null
+          ? responseData.message!
+          : giaoViec;
+    }
     notifyListeners();
   }
 
@@ -1057,8 +1068,10 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   Future updatePhanCong() async {
-    await locator<Api>().updateGiaoViec(_name, giaoViec.employee,
+    var response = await locator<Api>().updateGiaoViec(_name, giaoViec.employee,
         giaoViec.supportEmployee, giaoViec.plate, giaoViec.deliverDate);
+    giaoViec.name = response['message']["name"];
+    notifyListeners();
   }
 
   Future updateOrder(

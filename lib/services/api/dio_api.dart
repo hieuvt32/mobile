@@ -2371,7 +2371,7 @@ class DioApi implements Api {
       );
 
       if (response.statusCode == 200) {
-        return response;
+        return response.data;
       } else {
         throw Exception('Something went wrong');
       }

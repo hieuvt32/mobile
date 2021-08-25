@@ -1,6 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/base_view.dart';
@@ -152,7 +153,8 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  !widget.isReadOnly
+                                                  checkNullEmpty(
+                                                          model.giaoViec.name)
                                                       ? FieldData(
                                                           // value: 'Sản phẩm: ',
                                                           fieldType: 0,
@@ -177,7 +179,8 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                                       : FieldData(
                                                           fieldType: 3,
                                                           value: model.giaoViec
-                                                              .employee,
+                                                                  .employee ??
+                                                              '',
                                                         ),
                                                   // Visibility(
                                                   //     visible: false,
@@ -211,7 +214,8 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                               flex: 8,
                                               child: Column(
                                                 children: [
-                                                  !widget.isReadOnly
+                                                  checkNullEmpty(
+                                                          model.giaoViec.name)
                                                       ? FieldData(
                                                           // enabled: values[i]
                                                           //     .enabledVatTu,
@@ -274,7 +278,8 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                               flex: 8,
                                               child: Column(
                                                 children: [
-                                                  !widget.isReadOnly
+                                                  checkNullEmpty(
+                                                          model.giaoViec.name)
                                                       ? FieldData(
                                                           // enabled: values[i]
                                                           //     .enabledVatTu,
@@ -289,8 +294,12 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                                                       value: e
                                                                           .name))
                                                               .toList(),
-                                                          value: model
-                                                              .giaoViec.plate,
+                                                          value: model.giaoViec
+                                                                      .plate ==
+                                                                  ""
+                                                              ? null
+                                                              : model.giaoViec
+                                                                  .plate,
                                                           selectionHandler:
                                                               (value) {
                                                             model.giaoViec
@@ -337,7 +346,8 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                               flex: 8,
                                               child: Column(
                                                 children: [
-                                                  !widget.isReadOnly
+                                                  checkNullEmpty(
+                                                          model.giaoViec.name)
                                                       ? DateTimePicker((value) {
                                                           model.giaoViec
                                                                   .deliverDate =
@@ -381,11 +391,63 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                         )
                       ],
                     ),
-                    EditOrderBottom(isDieuPhoi: true),
+                    Visibility(
+                      visible: checkNullEmpty(model.giaoViec.name),
+                      child: EditOrderBottom(
+                        isDieuPhoi: true,
+                      ),
+                    ),
+                    Visibility(
+                      visible: !checkNullEmpty(model.giaoViec.name),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Visibility(
+                          visible: true,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: hexToColor('#FF0F00'),
+                              // side: BorderSide(
+                              //   width: 1.0,
+                              // ),
+                              minimumSize: Size(double.infinity, 48),
+                              // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                // side: BorderSide(
+                                //   color: hexToColor('#0072BC'),
+                                // ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              model.giaoViec = GiaoViec(
+                                  deliverDate: DateTime.now().toString(),
+                                  plate: null,
+                                  supportEmployee: null,
+                                  order: model.giaoViec.order,
+                                  employee: null);
+                              model.updateOrder(context, status: "Đã đặt hàng");
+                              model.changeState();
+                            },
+                            child: Text(
+                              'Hủy giao hàng',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
       ),
     );
+  }
+
+  bool checkNullEmpty(value) {
+    return ["", null, false, 0].contains(value);
   }
 }

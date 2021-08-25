@@ -63,13 +63,14 @@ class GiaoViec {
   late String? supportEmployee;
   late String? order;
   late String? employee;
-
+  late String? name;
   GiaoViec({
     required this.deliverDate,
     required this.plate,
     required this.supportEmployee,
     required this.order,
     required this.employee,
+    this.name = '',
   });
 
   GiaoViec.fromJson(Map<String, dynamic> json) {
@@ -79,6 +80,7 @@ class GiaoViec {
         json['support_employee'] != null ? json['support_employee'] : '';
     order = json['order'];
     employee = json['employee'];
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
@@ -88,22 +90,27 @@ class GiaoViec {
     data['plate'] = this.plate;
     data['support_employee'] = this.supportEmployee;
     data['employee'] = this.employee;
+    data['name'] = this.name;
     return data;
   }
 }
 
 class GiaoViecResponse {
-  late GiaoViec message;
+  late GiaoViec? message;
 
   GiaoViecResponse({required this.message});
 
   GiaoViecResponse.fromJson(Map<String, dynamic> json) {
-    message = new GiaoViec.fromJson(json);
+    if (json["message"] == null) {
+      message = null;
+      return;
+    }
+    message = new GiaoViec.fromJson(json["message"]);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['message'] = this.message.toJson();
+    data['message'] = this.message!.toJson();
     return data;
   }
 }

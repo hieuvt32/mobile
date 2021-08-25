@@ -30,9 +30,12 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
 
   late Timer _debounce;
 
+  late TextEditingController addressController;
+
   @override
   void initState() {
     _debounce = Timer(const Duration(milliseconds: 0), () {});
+    addressController = TextEditingController();
     super.initState();
   }
 
@@ -84,6 +87,7 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
   @override
   void dispose() {
     if (_debounce != null) _debounce.cancel();
+    if (addressController != null) addressController.dispose();
     super.dispose();
   }
 
@@ -109,7 +113,7 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
 
       widget.model.editAddresses[i].diaChi = text;
       // widget.model.editAddresses[i].isEnable = true;
-      widget.model.changeState();
+      // widget.model.changeState();
     } else {
       var response = await locator<Api>().updateDeliveryAddress(
         text,
@@ -122,7 +126,7 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
               : "";
       widget.model.editAddresses[i].diaChi = text;
       // widget.model.editAddresses[i].isEnable = true;
-      widget.model.changeState();
+      // widget.model.changeState();
     }
   }
 
@@ -139,6 +143,8 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                 var total = widget.model.productForLocations
                     .where((element) => element.address == values[i].name)
                     .fold<int>(0, (sum, item) => sum + item.quantity);
+
+                addressController.text = values[i].diaChi;
                 return Container(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -184,8 +190,7 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                                       )
                                     : FieldData(
                                         // title: 'Đơn vị tính ',
-                                        controller: TextEditingController(
-                                            text: values[i].diaChi),
+                                        controller: addressController,
                                         //     ['kgController'],
                                         fieldType: 1,
                                         // haveTextChange: false,

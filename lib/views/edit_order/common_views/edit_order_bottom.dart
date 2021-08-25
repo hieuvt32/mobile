@@ -596,6 +596,8 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
             }
 
             if (widget.isDieuPhoi) await widget.model.updatePhanCong();
+
+            widget.model.changeState();
           },
           child: Text(
             getTextButtonPrimary(),
