@@ -17,6 +17,7 @@ import 'package:frappe_app/model/create_bao_binh_loi_request.dart';
 import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
+import 'package:frappe_app/model/don_gia_mua_ban.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/get_bien_ban_kiem_kho_response.dart';
@@ -1444,6 +1445,47 @@ class DioApi implements Api {
 
       if (response.statusCode == 200) {
         var data = ListDonBaoBinhLoiRespone.fromJson(response.data);
+        return data;
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<ListDonGiaMuaBanResponse> getDonGiaMuaBans() async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getDonGiaMuaBans',
+        queryParameters: {},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        var data = ListDonGiaMuaBanResponse.fromJson(response.data["message"]);
         return data;
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw ErrorResponse(

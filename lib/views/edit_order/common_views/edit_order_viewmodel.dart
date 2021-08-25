@@ -9,6 +9,7 @@ import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/create_tracking_request.dart';
 import 'package:frappe_app/model/customer.dart';
 import 'package:frappe_app/model/danh_sach_nhap_kho.dart';
+import 'package:frappe_app/model/don_gia_mua_ban.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
@@ -39,16 +40,6 @@ class EditOrderViewModel extends BaseViewModel {
 
   List<UserRole> _userRoles = [];
 
-  GetCustomerByCompanyResponse? _responseGetCustomers;
-
-  GetCustomerByCompanyResponse? _responseGetManufactures;
-
-  GetNguyenVatLieuSanPhamResponse? _responseGetSanPhams;
-
-  GetNguyenVatLieuSanPhamResponse? _responseGetVatTus;
-
-  GetDeliveryAddressResponse? _responseGetDeliveryAddress;
-
   late List<Map<String, TextEditingController>> _productEditControllers;
   late List<Map<String, TextEditingController>>
       _productForLocationEditControllers;
@@ -77,11 +68,11 @@ class EditOrderViewModel extends BaseViewModel {
 
   late List<Customer> _manufactures;
 
+  late List<DonGiaMuaBan> _donGiaMuaBans;
+
   late List<NguyenVatLieuSanPham> _nguyenVatLieuVatTus;
 
   late List<NguyenVatLieuSanPham> _nguyenVatLieuSanPhams;
-
-  GiaoViecSignatureResponse? _giaoViecSignatureResponse;
 
   late List<GiaoViecSignature> _giaoViecSignatures;
 
@@ -100,6 +91,8 @@ class EditOrderViewModel extends BaseViewModel {
   List<BienSoXe> get bienSoXes => _bienSoXes;
 
   List<Employee> get employees => _employees;
+
+  List<DonGiaMuaBan> get donGiaMuaBans => _donGiaMuaBans;
 
   late GiaoViec giaoViec;
 
@@ -274,6 +267,8 @@ class EditOrderViewModel extends BaseViewModel {
 
     _giaoViecSignatures = [];
 
+    _donGiaMuaBans = [];
+
     _signatureSupplierController = SignatureController(
       penStrokeWidth: 5,
       penColor: Colors.black,
@@ -306,7 +301,6 @@ class EditOrderViewModel extends BaseViewModel {
     _customers = [];
     _haveDelivery = false;
 
-    _responseGetCustomers = null;
     _customerValue = null;
     _nguyenVatLieuVatTus = [];
     _nguyenVatLieuSanPhams = [];
@@ -373,6 +367,8 @@ class EditOrderViewModel extends BaseViewModel {
 
     await getDSBienSoXe();
     await getDSEmployeeByCompany();
+
+    await getDonGiaMuaBans();
 
     _isLoading = false;
     notifyListeners();
@@ -516,23 +512,43 @@ class EditOrderViewModel extends BaseViewModel {
     return null;
   }
 
-  Future getCustomerByCompany() async {
-    _responseGetCustomers = await locator<Api>().getCustomerByCompany();
+  Future getDonGiaMuaBans() async {
+    var response = await locator<Api>().getDonGiaMuaBans();
 
-    _customers = _responseGetCustomers != null &&
-            _responseGetCustomers!.customers != null
-        ? _responseGetCustomers!.customers!
+    _donGiaMuaBans = response != null && response.donGiaMuaBans != null
+        ? response.donGiaMuaBans!
+        : [];
+
+    notifyListeners();
+  }
+
+  DonGiaMuaBan? getSingleDonGiaMuaBan(String realName) {
+    var donGiaMuaBan = _donGiaMuaBans
+        .where((element) => element.realName == realName)
+        .toList();
+
+    if (donGiaMuaBan != null && donGiaMuaBan.length > 0) {
+      return donGiaMuaBan[0];
+    }
+
+    return null;
+  }
+
+  Future getCustomerByCompany() async {
+    var response = await locator<Api>().getCustomerByCompany();
+
+    _customers = response != null && response.customers != null
+        ? response.customers!
         : [];
 
     notifyListeners();
   }
 
   Future getManufactureByCompany() async {
-    _responseGetManufactures = await locator<Api>().getManufactureByCompany();
+    var response = await locator<Api>().getManufactureByCompany();
 
-    _manufactures = _responseGetManufactures != null &&
-            _responseGetManufactures!.customers != null
-        ? _responseGetManufactures!.customers!
+    _manufactures = response != null && response.customers != null
+        ? response.customers!
         : [];
 
     notifyListeners();
@@ -540,41 +556,37 @@ class EditOrderViewModel extends BaseViewModel {
 
   Future getGiaoViecSignature() async {
     if (!["", null, false, 0].contains(_name)) {
-      _giaoViecSignatureResponse =
-          await locator<Api>().getGiaoViecSignature(_name!);
+      var response = await locator<Api>().getGiaoViecSignature(_name!);
 
-      _giaoViecSignatures = _giaoViecSignatureResponse != null &&
-              _giaoViecSignatureResponse!.message != null
-          ? _giaoViecSignatureResponse!.message
-          : [];
+      _giaoViecSignatures =
+          response != null && response.message != null ? response.message : [];
     }
     notifyListeners();
   }
 
   Future getNguyenVatLieuSanPham() async {
-    _responseGetSanPhams =
-        await locator<Api>().getNguyenVatLieuSanPham(type: 0);
+    var response = await locator<Api>().getNguyenVatLieuSanPham(type: 0);
 
-    _nguyenVatLieuSanPhams = _responseGetSanPhams != null &&
-            _responseGetSanPhams!.nguyenVatLieuSanPhams != null
-        ? _responseGetSanPhams!.nguyenVatLieuSanPhams!
-        : [];
+    _nguyenVatLieuSanPhams =
+        response != null && response.nguyenVatLieuSanPhams != null
+            ? response.nguyenVatLieuSanPhams!
+            : [];
     notifyListeners();
   }
 
   Future getVatTuSanPham() async {
-    _responseGetVatTus = await locator<Api>().getNguyenVatLieuSanPham(type: 1);
-    _nguyenVatLieuVatTus = _responseGetVatTus != null &&
-            _responseGetVatTus!.nguyenVatLieuSanPhams != null
-        ? _responseGetVatTus!.nguyenVatLieuSanPhams!
-        : [];
+    var response = await locator<Api>().getNguyenVatLieuSanPham(type: 1);
+    _nguyenVatLieuVatTus =
+        response != null && response.nguyenVatLieuSanPhams != null
+            ? response.nguyenVatLieuSanPhams!
+            : [];
     notifyListeners();
   }
 
   Future getDSBienSoXe() async {
-    var responseData = await locator<Api>().getDSBienSoXe();
-    _bienSoXes = responseData != null && responseData.data != null
-        ? (responseData.data as List<dynamic>)
+    var response = await locator<Api>().getDSBienSoXe();
+    _bienSoXes = response != null && response.data != null
+        ? (response.data as List<dynamic>)
             .map((e) => BienSoXe.fromJson(e))
             .toList()
         : [];
@@ -583,18 +595,18 @@ class EditOrderViewModel extends BaseViewModel {
 
   Future getGiaoViec() async {
     if (!["", null, false, 0].contains(_order!.name)) {
-      var responseData = await locator<Api>().getGiaoViec(_order!.name);
-      giaoViec = responseData != null && responseData.message != null
-          ? responseData.message!
+      var response = await locator<Api>().getGiaoViec(_order!.name);
+      giaoViec = response != null && response.message != null
+          ? response.message!
           : giaoViec;
     }
     notifyListeners();
   }
 
   Future getDSEmployeeByCompany() async {
-    var responseData = await locator<Api>().getDSEmployeeByCompany();
-    _employees = responseData != null && responseData.data != null
-        ? (responseData.data as List<dynamic>)
+    var response = await locator<Api>().getDSEmployeeByCompany();
+    _employees = response != null && response.data != null
+        ? (response.data as List<dynamic>)
             .map((e) => Employee.fromJson(e))
             .toList()
         : [];
@@ -610,18 +622,16 @@ class EditOrderViewModel extends BaseViewModel {
 
         if (_order!.products != null && _order!.products.length > 0) {
           // get total price of an order
-          _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
-            return pv + cu.unitPrice;
-          });
+          _totalOrderPrice = _order!.totalCost;
 
           _customerValue = _order!.vendor;
           _sellInWarehouse = _order!.sellInWarehouse == 1;
 
-          _responseGetDeliveryAddress = await locator<Api>()
+          var responseGetDeliveryAddress = await locator<Api>()
               .getDeliveryAddress(customer: _customerValue as String);
-          _addresses = _responseGetDeliveryAddress != null &&
-                  _responseGetDeliveryAddress!.addresses != null
-              ? _responseGetDeliveryAddress!.addresses!
+          _addresses = responseGetDeliveryAddress != null &&
+                  responseGetDeliveryAddress.addresses != null
+              ? responseGetDeliveryAddress.addresses!
               : [];
           if (_order!.sellInWarehouse != 0 || _isNhaCungCap) {
             for (var product in _order!.products) {
@@ -647,9 +657,9 @@ class EditOrderViewModel extends BaseViewModel {
                 locations.add(product.address);
 
                 List<Address>? listAdrress =
-                    _responseGetDeliveryAddress != null &&
-                            _responseGetDeliveryAddress!.addresses != null
-                        ? _responseGetDeliveryAddress!.addresses
+                    responseGetDeliveryAddress != null &&
+                            responseGetDeliveryAddress.addresses != null
+                        ? responseGetDeliveryAddress.addresses
                         : [];
 
                 var elements = listAdrress!
@@ -705,10 +715,8 @@ class EditOrderViewModel extends BaseViewModel {
   customerSelect(dynamic value) async {
     _customerValue = value;
     var response = await locator<Api>().getDeliveryAddress(customer: value);
-    _responseGetDeliveryAddress = response;
-    _addresses = _responseGetDeliveryAddress != null &&
-            _responseGetDeliveryAddress!.addresses != null
-        ? _responseGetDeliveryAddress!.addresses!
+    _addresses = response != null && response.addresses != null
+        ? response.addresses!
         : [];
     notifyListeners();
   }
@@ -962,19 +970,13 @@ class EditOrderViewModel extends BaseViewModel {
     List<Customer>? customers = [];
 
     if (isNhaCungCap) {
-      customers = _responseGetManufactures != null &&
-              _responseGetManufactures!.customers != null
-          ? _responseGetManufactures!.customers
-          : [];
+      customers = _manufactures;
     } else {
-      customers = _responseGetCustomers != null &&
-              _responseGetCustomers!.customers != null
-          ? _responseGetCustomers!.customers
-          : [];
+      customers = _customers;
     }
 
     var elements =
-        customers!.where((element) => element.code == _customerValue).toList();
+        customers.where((element) => element.code == _customerValue).toList();
 
     if (elements != null && elements.length > 0) {
       _order!.email = elements[0].email;
@@ -995,6 +997,33 @@ class EditOrderViewModel extends BaseViewModel {
             subtitle: 'bạn chưa có sản phẩm nào!');
         return;
       }
+
+      _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
+        var realName = cu.product;
+
+        cu.type = "Sản phẩm";
+
+        if (!["", null, false, 0].contains(cu.material)) {
+          realName = "$realName-${cu.material}";
+
+          cu.type = "Vật tư";
+        }
+
+        var total = pv;
+
+        var getDonGiaMuaBan = getSingleDonGiaMuaBan(realName!);
+
+        if (getDonGiaMuaBan != null) {
+          total += (cu.actualQuantity * getDonGiaMuaBan.unitPrice) * 0.1 +
+              (cu.actualQuantity * getDonGiaMuaBan.unitPrice);
+        } else {
+          total += 0.0;
+        }
+
+        return total;
+      });
+
+      _order!.totalCost = _totalOrderPrice;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
       _order!.taxId = elements[0].taxId;
@@ -1130,19 +1159,13 @@ class EditOrderViewModel extends BaseViewModel {
     List<Customer>? customers = [];
 
     if (isNhaCungCap) {
-      customers = _responseGetManufactures != null &&
-              _responseGetManufactures!.customers != null
-          ? _responseGetManufactures!.customers
-          : [];
+      customers = _manufactures;
     } else {
-      customers = _responseGetCustomers != null &&
-              _responseGetCustomers!.customers != null
-          ? _responseGetCustomers!.customers
-          : [];
+      customers = _customers;
     }
 
     var elements =
-        customers!.where((element) => element.code == _order!.vendor).toList();
+        customers.where((element) => element.code == _order!.vendor).toList();
 
     if (elements != null && elements.length > 0) {
       _order!.email = elements[0].email;
@@ -1162,6 +1185,32 @@ class EditOrderViewModel extends BaseViewModel {
             subtitle: 'bạn chưa có sản phẩm nào!');
         return;
       }
+      _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
+        var realName = cu.product;
+
+        cu.type = "Sản phẩm";
+
+        if (!["", null, false, 0].contains(cu.material)) {
+          realName = "$realName-${cu.material}";
+
+          cu.type = "Vật tư";
+        }
+
+        var total = pv;
+
+        var getDonGiaMuaBan = getSingleDonGiaMuaBan(realName!);
+
+        if (getDonGiaMuaBan != null) {
+          total += (cu.actualQuantity * getDonGiaMuaBan.unitPrice) * 0.1 +
+              (cu.actualQuantity * getDonGiaMuaBan.unitPrice);
+        } else {
+          total += 0.0;
+        }
+
+        return total;
+      });
+
+      _order!.totalCost = _totalOrderPrice;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = ["", null, false, 0].contains(status)
           ? !_sellInWarehouse
@@ -1343,7 +1392,7 @@ class EditOrderViewModel extends BaseViewModel {
         order: _order!.name,
         status: status != null && status != '' ? status : _order!.status);
 
-    notifyListeners();
+    // notifyListeners();
   }
 }
 

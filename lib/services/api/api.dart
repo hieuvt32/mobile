@@ -10,6 +10,7 @@ import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/create_tracking_request.dart';
+import 'package:frappe_app/model/don_gia_mua_ban.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/get_bien_ban_kiem_kho_response.dart';
@@ -108,6 +109,8 @@ abstract class Api {
     int status,
     String serial,
   );
+
+  Future<ListDonGiaMuaBanResponse> getDonGiaMuaBans();
 
   Future<CreateHoaDonMuaBanRespone> createHoaDonMuaBan(Order order);
 
