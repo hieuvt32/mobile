@@ -112,6 +112,10 @@ abstract class Api {
 
   Future<ListDonGiaMuaBanResponse> getDonGiaMuaBans();
 
+  Future<ResponseData> createCongNoTienHoaDon(String code, String order);
+
+  Future<ResponseData> createCongNoTaiSan(String code, String order);
+
   Future<CreateHoaDonMuaBanRespone> createHoaDonMuaBan(Order order);
 
   Future<UpdateHoaDonMuaBanRespone> updateHoaDonMuaBan(Order order);

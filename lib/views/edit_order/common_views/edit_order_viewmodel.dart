@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/address.dart';
@@ -41,12 +42,14 @@ class EditOrderViewModel extends BaseViewModel {
   List<UserRole> _userRoles = [];
 
   late List<Map<String, TextEditingController>> _productEditControllers;
-  late List<Map<String, TextEditingController>>
-      _productForLocationEditControllers;
+  late Map<String, List<Map<String, TextEditingController>>>
+      _productForLocationEditControllerMap;
   late List<Map<String, TextEditingController>> _donNhapKhoEditControllers;
   late List<Map<String, TextEditingController>> _donTraVeEditControllers;
 
   late List<Map<String, TextEditingController>> _donHoanTraEditControllers;
+
+  late List<TextEditingController> _addressControllers;
 
   late List<Product> _products;
 
@@ -156,9 +159,9 @@ class EditOrderViewModel extends BaseViewModel {
   List<Map<String, TextEditingController>> get productEditControllers =>
       _productEditControllers;
 
-  List<Map<String, TextEditingController>>
-      get productForLocationEditControllers =>
-          _productForLocationEditControllers;
+  Map<String, List<Map<String, TextEditingController>>>
+      get productForLocationEditControllerMap =>
+          _productForLocationEditControllerMap;
   List<Map<String, TextEditingController>> get donNhapKhoEditControllers =>
       _donNhapKhoEditControllers;
 
@@ -167,6 +170,8 @@ class EditOrderViewModel extends BaseViewModel {
 
   List<Map<String, TextEditingController>> get donHoanTraEditControllers =>
       _donHoanTraEditControllers;
+
+  List<TextEditingController> get addressControllers => _addressControllers;
 
   List<DanhSachNhapKho> get nhapKhos => _nhapKhos;
 
@@ -269,6 +274,8 @@ class EditOrderViewModel extends BaseViewModel {
 
     _donGiaMuaBans = [];
 
+    _addressControllers = [];
+
     _signatureSupplierController = SignatureController(
       penStrokeWidth: 5,
       penColor: Colors.black,
@@ -278,7 +285,7 @@ class EditOrderViewModel extends BaseViewModel {
       penColor: Colors.black,
     );
     _productEditControllers = [];
-    _productForLocationEditControllers = [];
+    _productForLocationEditControllerMap = Map();
 
     _donNhapKhoEditControllers = [];
     _donTraVeEditControllers = [];
@@ -646,15 +653,16 @@ class EditOrderViewModel extends BaseViewModel {
             // _readOnlyView = true;
           } else {
             var locations = [];
+
+            var mapData = groupBy<Product, String>(
+                _order!.products, (obj) => obj.address);
             for (var product in _order!.products) {
               _productForLocations.add(product);
-              _productForLocationEditControllers.add({
-                "kgController": TextEditingController(text: "${product.kg}"),
-                "quantityController":
-                    TextEditingController(text: "${product.quantity}")
-              });
+
               if (!locations.contains(product.address)) {
                 locations.add(product.address);
+
+                _addressControllers.add(TextEditingController());
 
                 List<Address>? listAdrress =
                     responseGetDeliveryAddress != null &&
@@ -668,7 +676,20 @@ class EditOrderViewModel extends BaseViewModel {
 
                 if (elements != null && elements.length > 0) {
                   _editAddresses.add(elements[0]);
-                  // _readOnlyView = true;
+                }
+                if (mapData.containsKey(product.address)) {
+                  var products = mapData[product.address]!.toList();
+                  List<Map<String, TextEditingController>> mapChildData = [];
+                  for (int i = 0; i < products.length; i++) {
+                    mapChildData.add({
+                      "kgController": TextEditingController(),
+                      "quantityController": TextEditingController()
+                    });
+                  }
+                  if (!_productForLocationEditControllerMap
+                      .containsKey(product.address))
+                    _productForLocationEditControllerMap[product.address] =
+                        mapChildData;
                 }
               }
             }
@@ -734,10 +755,14 @@ class EditOrderViewModel extends BaseViewModel {
       productEditController["quantityController"]!.dispose();
     }
 
-    for (var productForLocationEditController
-        in _productForLocationEditControllers) {
-      productForLocationEditController["kgController"]!.dispose();
-      productForLocationEditController["quantityController"]!.dispose();
+    for (var editAddress in _editAddresses) {
+      if (_productForLocationEditControllerMap.containsKey(editAddress.name)) {
+        for (var controller
+            in _productForLocationEditControllerMap[editAddress.name]!) {
+          controller["kgController"]!.dispose();
+          controller["quantityController"]!.dispose();
+        }
+      }
     }
 
     for (var donNhapKhoEditController in _donNhapKhoEditControllers) {
@@ -750,6 +775,10 @@ class EditOrderViewModel extends BaseViewModel {
 
     for (var donHoanTraEditController in _donHoanTraEditControllers) {
       donHoanTraEditController["quantityController"]!.dispose();
+    }
+
+    for (var addressController in _addressControllers) {
+      addressController.dispose();
     }
   }
 
@@ -794,10 +823,22 @@ class EditOrderViewModel extends BaseViewModel {
       enabledKG: false,
       diaChi: "",
     ));
-    _productForLocationEditControllers.add({
-      "kgController": TextEditingController(),
-      "quantityController": TextEditingController()
-    });
+
+    if (_productForLocationEditControllerMap.containsKey(address)) {
+      var controllers = _productForLocationEditControllerMap[address];
+      controllers!.add({
+        "kgController": TextEditingController(),
+        "quantityController": TextEditingController()
+      });
+    } else {
+      _productForLocationEditControllerMap[address] = [
+        {
+          "kgController": TextEditingController(),
+          "quantityController": TextEditingController()
+        }
+      ];
+    }
+
     notifyListeners();
   }
 
@@ -845,6 +886,7 @@ class EditOrderViewModel extends BaseViewModel {
         isEditable: false,
       ),
     );
+    _addressControllers.add(TextEditingController());
   }
 
   changeState() {

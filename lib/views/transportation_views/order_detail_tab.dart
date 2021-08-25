@@ -28,6 +28,7 @@ class _OrderDetailTabState extends State<OrderDetailTab> {
             "Danh sách sản phẩm",
             realOnly:
                 giaoViewSig != null && giaoViewSig.status == "Đã giao hàng",
+            address: widget.address.address,
           ),
           ListShellView(
             'Danh sách vỏ bình nhập kho',

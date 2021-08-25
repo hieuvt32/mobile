@@ -12,9 +12,12 @@ import 'package:frappe_app/views/expansion_custom_panel.dart';
 class ProductView extends StatefulWidget {
   final bool isReadOnly;
   final EditOrderViewModel model = locator<EditOrderViewModel>();
+
+  final String address;
   ProductView({
     Key? key,
     this.isReadOnly = false,
+    required this.address,
   }) : super(key: key);
 
   @override
@@ -40,6 +43,7 @@ class _ProductViewState extends State<ProductView> {
             children: [
               ProductItem(
                 isReadOnly: widget.isReadOnly,
+                address: widget.address,
               ),
             ],
           ),
@@ -53,9 +57,12 @@ class _ProductViewState extends State<ProductView> {
 class ProductItem extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
   final bool isReadOnly;
+
+  final String address;
   ProductItem({
     Key? key,
     this.isReadOnly = false,
+    required this.address,
   }) : super(key: key);
 
   @override
@@ -64,7 +71,7 @@ class ProductItem extends StatefulWidget {
 
 class _ProductItemState extends State<ProductItem> {
   List<Product> values = [];
-  List<Map<String, TextEditingController>> controllers = [];
+  Map<String, List<Map<String, TextEditingController>>> map = Map();
   @override
   Widget build(BuildContext context) {
     var total = values.fold<int>(0, (sum, item) => sum + item.actualQuantity);
@@ -87,8 +94,8 @@ class _ProductItemState extends State<ProductItem> {
 
   List<ExpansionItem> _buildExpansionItems() {
     values = widget.model.productForLocations;
-    controllers = widget.model.productForLocationEditControllers;
-
+    map = widget.model.productForLocationEditControllerMap;
+    var controllers = map[widget.address] ?? [];
     var expansionItems = values
         .asMap()
         .map(

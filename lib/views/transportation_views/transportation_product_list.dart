@@ -10,11 +10,14 @@ class TransportationProductList extends StatefulWidget {
   final String title;
   final int type;
   final bool realOnly;
+
+  final String address;
   TransportationProductList(
     this.title, {
     Key? key,
     this.type = 0,
     this.realOnly = false,
+    required this.address,
   }) : super(key: key);
 
   @override
@@ -50,6 +53,7 @@ class _TransportationProductListState extends State<TransportationProductList> {
         [
           ProductView(
             isReadOnly: widget.realOnly,
+            address: widget.address,
           ),
         ],
         // Icon(Icons.image) // iconPic

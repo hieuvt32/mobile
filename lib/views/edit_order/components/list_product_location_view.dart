@@ -30,12 +30,9 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
 
   late Timer _debounce;
 
-  late TextEditingController addressController;
-
   @override
   void initState() {
     _debounce = Timer(const Duration(milliseconds: 0), () {});
-    addressController = TextEditingController();
     super.initState();
   }
 
@@ -87,7 +84,6 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
   @override
   void dispose() {
     if (_debounce != null) _debounce.cancel();
-    if (addressController != null) addressController.dispose();
     super.dispose();
   }
 
@@ -144,7 +140,7 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                     .where((element) => element.address == values[i].name)
                     .fold<int>(0, (sum, item) => sum + item.quantity);
 
-                addressController.text = values[i].diaChi;
+                widget.model.addressControllers[i].text = values[i].diaChi;
                 return Container(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 8),
@@ -190,7 +186,8 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                                       )
                                     : FieldData(
                                         // title: 'Đơn vị tính ',
-                                        controller: addressController,
+                                        controller:
+                                            widget.model.addressControllers[i],
                                         //     ['kgController'],
                                         fieldType: 1,
                                         // haveTextChange: false,
@@ -400,7 +397,7 @@ class ListProductLocationItemView extends StatefulWidget {
 class _ListProductLocationItemViewState
     extends State<ListProductLocationItemView> {
   List<Product> values = [];
-  List<Map<String, TextEditingController>> controllers = [];
+  Map<String, List<Map<String, TextEditingController>>> map = Map();
   @override
   Widget build(BuildContext context) {
     var expansionItems = _buildExpansionItems();
@@ -428,7 +425,9 @@ class _ListProductLocationItemViewState
           .where((element) => element.address == widget.address)
           .toList();
     }
-    controllers = widget.model.productForLocationEditControllers;
+    map = widget.model.productForLocationEditControllerMap;
+
+    var controllers = map[widget.address] ?? [];
 
     var expansionItems = values
         .asMap()

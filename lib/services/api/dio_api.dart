@@ -2811,4 +2811,16 @@ class DioApi implements Api {
       }
     }
   }
+
+  @override
+  Future<ResponseData> createCongNoTaiSan(String code, String order) {
+    // TODO: implement createCongNoTaiSan
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ResponseData> createCongNoTienHoaDon(String code, String order) {
+    // TODO: implement createCongNoTienHoaDon
+    throw UnimplementedError();
+  }
 }
