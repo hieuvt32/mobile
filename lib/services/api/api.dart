@@ -13,7 +13,9 @@ import 'package:frappe_app/model/create_tracking_request.dart';
 import 'package:frappe_app/model/don_gia_mua_ban.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
+import 'package:frappe_app/model/get_bao_cao_thu_chi_response.dart';
 import 'package:frappe_app/model/get_bien_ban_kiem_kho_response.dart';
+import 'package:frappe_app/model/get_chi_nhanh_response.dart';
 import 'package:frappe_app/model/get_customer_by_code_response.dart';
 import 'package:frappe_app/model/file_upload_response.dart';
 import 'package:frappe_app/model/get_customer_by_company_response.dart';
@@ -31,6 +33,7 @@ import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
+import 'package:frappe_app/model/bao_cao_loi_nhuan_response.dart';
 import 'package:frappe_app/model/rating_order_request.dart';
 import 'package:frappe_app/model/response_data.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
@@ -307,4 +310,24 @@ abstract class Api {
   Future<ResponseData> getDSEmployeeByCompany();
 
   Future<ResponseData> getDSBienSoXe();
+
+  Future<ChartChiTieuKHResponse> getKHChartDataChiTieu(
+      {required String code, required String date});
+
+  Future<ChiTieuDetailKHResponse> getChiTietChiTieuKH(
+      {required String preReportDate,
+      required String reportDate,
+      required String customer});
+
+  Future<DanhSachChiNhanhResponse> getDanhSachChiNhanh();
+
+  Future<BaoCaoThuChiResponse> getBaoCaoThuChiGiamDoc(
+      {required String reportDate,
+      required String date,
+      required String company});
+
+  Future<BaoCaoLoiNhuanResponse> getBaoCaoLoiNhuanGiamDoc(
+      {required String reportDate,
+      required String date,
+      required String company});
 }

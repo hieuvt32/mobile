@@ -3,7 +3,7 @@ import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 
 class SimpleTimeSeriesChart extends StatelessWidget {
-  final List<TimeSeriesSales> seriesList;
+  final List<TimeSeriesData> seriesList;
   final bool animate;
 
   SimpleTimeSeriesChart(this.seriesList, {required this.animate});
@@ -11,30 +11,31 @@ class SimpleTimeSeriesChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ignore: unnecessary_statements
-    List<charts.Series<TimeSeriesSales, DateTime>> data = [
-      new charts.Series<TimeSeriesSales, DateTime>(
+    List<charts.Series<TimeSeriesData, DateTime>> data = [
+      new charts.Series<TimeSeriesData, DateTime>(
           id: 'Sales',
           colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-          domainFn: (TimeSeriesSales sales, _) => sales.time,
-          measureFn: (TimeSeriesSales sales, _) => sales.sales,
+          domainFn: (TimeSeriesData sales, _) => sales.time,
+          measureFn: (TimeSeriesData sales, _) => sales.amount,
           data: seriesList),
     ];
 
     return new charts.TimeSeriesChart(
       data,
       animate: true,
-      // Optionally pass in a [DateTimeFactory] used by the chart. The factory
-      // should create the same type of [DateTime] as the data provided. If none
-      // specified, the default creates local date time.
+      domainAxis: new charts.DateTimeAxisSpec(
+          tickFormatterSpec: new charts.AutoDateTimeTickFormatterSpec(
+              day: new charts.TimeFormatterSpec(
+                  format: 'd', transitionFormat: 'MM/dd'))),
       dateTimeFactory: const charts.LocalDateTimeFactory(),
     );
   }
 }
 
 /// Sample time series data type.
-class TimeSeriesSales {
+class TimeSeriesData {
   final DateTime time;
-  final int sales;
+  final double amount;
 
-  TimeSeriesSales(this.time, this.sales);
+  TimeSeriesData(this.time, this.amount);
 }

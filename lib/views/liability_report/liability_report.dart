@@ -1,14 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/model/bao_cao_chi_tieu_kh_response.dart';
+import 'package:frappe_app/model/config.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/asset_liability_report/asset_liability_report.dart';
 import 'package:frappe_app/views/expense_report/expense_report.dart';
 import 'package:frappe_app/views/report_mistake/report_mistake_view.dart';
+import 'package:intl/intl.dart';
 
-class LiabilityReportView extends StatelessWidget {
+class LiabilityReportView extends StatefulWidget {
+  @override
+  _LiabilityReportState createState() => _LiabilityReportState();
+}
+
+class _LiabilityReportState extends State<LiabilityReportView> {
   Widget buildColumnInfo(String textLeft, String textRight, String colorText) {
     return Padding(
-      padding: const EdgeInsets.only(left: 16, top: 20),
+      padding: const EdgeInsets.only(left: 16, top: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -29,6 +39,36 @@ class LiabilityReportView extends StatelessWidget {
     );
   }
 
+  BaoCaoChiTieuKhachHang baocaoChiTieu = BaoCaoChiTieuKhachHang(
+      totalAmount: 0, totalOrder: 0, totalOwedAmount: 0, totalPaidAmount: 0);
+
+  onGetBaoCaoChiTieu() {
+    String reportDate = DateFormat('MMyy').format(DateTime.now());
+    String customer = Config().customerCode;
+
+    locator<Api>()
+        .getBaoCaoChiTietKH(reportDate: reportDate, customer: customer)
+        .then((value) {
+      setState(() {
+        baocaoChiTieu = value;
+      });
+    }).catchError((er) {
+      setState(() {
+        baocaoChiTieu = BaoCaoChiTieuKhachHang(
+            totalAmount: 0,
+            totalOrder: 0,
+            totalOwedAmount: 0,
+            totalPaidAmount: 0);
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    onGetBaoCaoChiTieu();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,10 +84,14 @@ class LiabilityReportView extends StatelessWidget {
               "Tổng quan",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            buildColumnInfo("Tổng số đơn hàng", "50", "#000000"),
-            buildColumnInfo("Tổng tiền hàng", "52.000.000", "#00478B"),
-            buildColumnInfo("Tổng tiền đã trả", "30.000.000", "#1BBD5C"),
-            buildColumnInfo("Tổng tiền còn nợ", "22.000.000", "#0072BC"),
+            buildColumnInfo("Tổng số đơn hàng",
+                formatCurrency(baocaoChiTieu.totalOrder), "#000000"),
+            buildColumnInfo("Tổng tiền hàng",
+                formatCurrency(baocaoChiTieu.totalAmount), "#00478B"),
+            buildColumnInfo("Tổng tiền đã trả",
+                formatCurrency(baocaoChiTieu.totalPaidAmount), "#1BBD5C"),
+            buildColumnInfo("Tổng tiền còn nợ",
+                formatCurrency(baocaoChiTieu.totalOwedAmount), "#FF0F00"),
             SizedBox(
               height: 24,
             ),

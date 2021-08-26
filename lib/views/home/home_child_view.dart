@@ -18,6 +18,9 @@ import 'package:frappe_app/views/coordination_views/coordination_list.dart';
 import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
+import 'package:frappe_app/views/reports/Incoming_and_spending_view.dart';
+import 'package:frappe_app/views/reports/manufacturing_report_view.dart';
+import 'package:frappe_app/views/reports/profit_report_view.dart';
 import 'package:frappe_app/views/transportation_views/transportation_list.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
@@ -294,23 +297,24 @@ class _HomeChildViewState extends State<HomeChildView> {
             "Giám Đốc",
           ],
           visible: true,
+          view: (context) => ManufacturingReportView(),
         ),
         Item(
-          icon: FrappeIcons.line_chart,
-          text: "Báo cáo lợi nhuận",
-          roles: [
-            "Giám Đốc",
-          ],
-          visible: true,
-        ),
+            icon: FrappeIcons.line_chart,
+            text: "Báo cáo lợi nhuận",
+            roles: [
+              "Giám Đốc",
+            ],
+            visible: true,
+            view: (context) => ProfitReportView()),
         Item(
-          icon: FrappeIcons.column_chart,
-          text: "Báo cáo thu chi",
-          roles: [
-            "Giám Đốc",
-          ],
-          visible: true,
-        ),
+            icon: FrappeIcons.column_chart,
+            text: "Báo cáo thu chi",
+            roles: [
+              "Giám Đốc",
+            ],
+            visible: true,
+            view: (context) => IncomingAndSpendingView()),
         Item(
           icon: FrappeIcons.gas,
           text: "Báo cáo tài sản",
