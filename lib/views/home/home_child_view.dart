@@ -263,7 +263,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       ],
       // view: CreateOrderView(),
       text: "Điều phối",
-      roles: ["Giám Đốc"],
+      roles: ["Điều Phối Viên"],
       visible: true,
     ),
     Item(

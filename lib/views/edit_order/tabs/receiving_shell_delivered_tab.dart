@@ -24,8 +24,8 @@ class _ReceivingShellDeliveredTabState
             element.actualQuantity != null &&
             element.actualQuantity != 0 &&
             element.actualQuantity != element.quantity);
-    var totalHoanTra =
-        filteredList.fold<int>(0, (sum, item) => sum + item.actualQuantity);
+    var totalHoanTra = filteredList.fold<int>(
+        0, (sum, item) => sum + (item.quantity - item.actualQuantity));
     var totalNhapKho =
         widget.model.nhapKhos.fold<int>(0, (sum, item) => sum + item.amount);
     var totalTraVe =

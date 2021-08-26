@@ -4,6 +4,7 @@ class Address {
   late String diaChi;
   late bool isEnable;
   late bool isEditable;
+  late bool isExpanded;
 
   Address({
     required this.name,
@@ -11,6 +12,7 @@ class Address {
     required this.customer,
     required this.isEnable,
     this.isEditable = false,
+    this.isExpanded = false,
   });
 
   Address.fromJson(Map<String, dynamic> json) {
@@ -19,6 +21,7 @@ class Address {
     customer = json['parent'] != null ? json['parent'] : '';
     isEnable = false;
     isEditable = false;
+    isExpanded = false;
   }
 
   Map<String, dynamic> toJson() {

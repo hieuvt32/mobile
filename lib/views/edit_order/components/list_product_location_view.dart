@@ -26,8 +26,6 @@ class ListProductLocationView extends StatefulWidget {
 }
 
 class _ListProductLocationViewState extends State<ListProductLocationView> {
-  bool isParentExpanded = false;
-
   late Timer _debounce;
 
   @override
@@ -132,9 +130,9 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
           (i, e) => MapEntry(
             i,
             ExpansionItem(
-              isParentExpanded, // isExpanded ?
+              e.isExpanded, // isExpanded ?
               (isExpanded) {
-                isParentExpanded = isExpanded;
+                e.isExpanded = isExpanded;
 
                 var total = widget.model.productForLocations
                     .where((element) => element.address == values[i].name)
