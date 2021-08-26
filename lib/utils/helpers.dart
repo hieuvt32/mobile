@@ -354,7 +354,7 @@ Color hexToColor(String code) {
   return new Color(int.parse(code.substring(1, 7), radix: 16) + 0xFF000000);
 }
 
-String formatCurrency(double value) {
+String formatCurrency(dynamic value) {
   final oCcy = new NumberFormat("#,##0", "en_US");
   return oCcy.format(value);
 }

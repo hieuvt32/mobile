@@ -1282,24 +1282,24 @@ class EditOrderViewModel extends BaseViewModel {
 
       var uploadHoaDonMuaBan = await locator<Api>().updateHoaDonMuaBan(_order!);
 
-      if (status == "Đang giao hàng") {
-        List<CreateTrackingLocationRequest> locations = _order!.products
-            .map((e) => CreateTrackingLocationRequest(
-                address: e.diaChi, order: order!.name))
-            .toList();
-
-        LocationData currentLocation = await Location().getLocation();
-        locations.add(CreateTrackingLocationRequest(
-            address: "Xe",
-            order: _order!.name,
-            latitude: currentLocation.latitude,
-            longitude: currentLocation.longitude));
-
-        await locator<Api>().createTrackingLocation(locations);
-      }
-
       if (uploadHoaDonMuaBan != null &&
           uploadHoaDonMuaBan.responseData != null) {
+        if (status == "Đang giao hàng") {
+          List<CreateTrackingLocationRequest> locations = _order!.products
+              .map((e) => CreateTrackingLocationRequest(
+                  address: e.diaChi, order: order!.name))
+              .toList();
+
+          LocationData currentLocation = await Location().getLocation();
+          locations.add(CreateTrackingLocationRequest(
+              address: "Xe",
+              order: _order!.name,
+              latitude: currentLocation.latitude,
+              longitude: currentLocation.longitude));
+
+          await locator<Api>().createTrackingLocation(locations);
+        }
+
         _donNhapKho!.codeOrders = _name!;
         _donNhapKho!.status = statusDonNhapKho;
         _donNhapKho!.listShell = [...nhapKhos, ...traVes];
