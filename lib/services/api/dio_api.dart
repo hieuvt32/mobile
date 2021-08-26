@@ -2813,14 +2813,101 @@ class DioApi implements Api {
   }
 
   @override
-  Future<ResponseData> createCongNoTaiSan(String code, String order) {
-    // TODO: implement createCongNoTaiSan
-    throw UnimplementedError();
+  Future<ResponseData> createCongNoTienHoaDon(String code, String order) async {
+    var data = {
+      "code": code,
+      "order": order,
+    };
+    try {
+      var response = await DioHelper.dio.post(
+        '/method/createCongNoTienHoaDon',
+        data: data,
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseData.fromJson(response.data["message"]);
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
   }
 
   @override
-  Future<ResponseData> createCongNoTienHoaDon(String code, String order) {
-    // TODO: implement createCongNoTienHoaDon
-    throw UnimplementedError();
+  Future<ResponseData> createCongNoTaiSan(String customer, String order,
+      String assetName, int received, int returned, double totalKg) async {
+    var data = {
+      'customer': customer,
+      'order': order,
+      'asset_name': assetName,
+      'received': received,
+      'returned': returned,
+      'total_kg': totalKg
+    };
+    try {
+      var response = await DioHelper.dio.post(
+        '/method/createCongNoTaiSan',
+        data: data,
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseData.fromJson(response.data["message"]);
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
   }
 }

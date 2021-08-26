@@ -93,7 +93,9 @@ class _ProductItemState extends State<ProductItem> {
   }
 
   List<ExpansionItem> _buildExpansionItems() {
-    values = widget.model.productForLocations;
+    values = widget.model.productForLocations
+        .where((element) => element.address == widget.address)
+        .toList();
     map = widget.model.productForLocationEditControllerMap;
     var controllers = map[widget.address] ?? [];
     var expansionItems = values

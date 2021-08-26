@@ -1,5 +1,6 @@
 class Product {
   late String address;
+  late String addressText;
   late String diaChi;
   late String? product;
   late int quantity;
@@ -30,6 +31,7 @@ class Product {
     required this.enabledVatTu,
     required this.enabledKG,
     required this.diaChi,
+    required this.addressText,
     this.isExpanded = false,
   }) {
     validator = new ProductValidator();
@@ -52,6 +54,7 @@ class Product {
     diaChi = json['dia_chi'];
     isExpanded = false;
     diaChi = json['dia_chi'];
+    addressText = json['address_text'];
     validator = new ProductValidator();
   }
 
@@ -68,6 +71,7 @@ class Product {
     data['type'] = this.type;
     data['material'] = this.material;
     data['unit'] = this.unit;
+    data['address_text'] = this.addressText;
     return data;
   }
 }

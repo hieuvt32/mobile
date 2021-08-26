@@ -397,10 +397,18 @@ class _ListProductItemState extends State<ListProductItem> {
                                                 .text)) {
                                           // do sth
                                           values[i].kg = 0;
+                                          values[i].actualKg = 0;
                                         } else {
-                                          values[i].kg = double.parse(
-                                              controllers[i]['kgController']!
-                                                  .text);
+                                          values[i].kg = double.tryParse(
+                                                  controllers[i]
+                                                          ['kgController']!
+                                                      .text) ??
+                                              0;
+                                          values[i].actualKg = double.tryParse(
+                                                  controllers[i]
+                                                          ['kgController']!
+                                                      .text) ??
+                                              0;
 
                                           values[i].validator.isKgRequired =
                                               false;
@@ -457,12 +465,21 @@ class _ListProductItemState extends State<ListProductItem> {
                                             .text)) {
                                       // do sth
                                       values[i].quantity = 0;
+                                      values[i].actualQuantity = 0;
                                     } else {
-                                      values[i].quantity = int.parse(
-                                          controllers[i]['quantityController']!
-                                              .text);
+                                      values[i].quantity = int.tryParse(
+                                              controllers[i]
+                                                      ['quantityController']!
+                                                  .text) ??
+                                          0;
                                       values[i].validator.isQuantityRequired =
                                           false;
+
+                                      values[i].actualQuantity = int.tryParse(
+                                              controllers[i]
+                                                      ['quantityController']!
+                                                  .text) ??
+                                          0;
                                     }
                                     widget.model.changeState();
                                   })

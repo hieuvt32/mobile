@@ -28,6 +28,7 @@ import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/views/base_viewmodel.dart';
 import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:injectable/injectable.dart';
+import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 import 'package:signature/signature.dart';
 import 'package:uuid/uuid.dart';
@@ -682,8 +683,10 @@ class EditOrderViewModel extends BaseViewModel {
                   List<Map<String, TextEditingController>> mapChildData = [];
                   for (int i = 0; i < products.length; i++) {
                     mapChildData.add({
-                      "kgController": TextEditingController(),
-                      "quantityController": TextEditingController()
+                      "kgController":
+                          TextEditingController(text: "${products[i].kg}"),
+                      "quantityController":
+                          TextEditingController(text: "${products[i].quantity}")
                     });
                   }
                   if (!_productForLocationEditControllerMap
@@ -798,6 +801,7 @@ class EditOrderViewModel extends BaseViewModel {
       enabledVatTu: false,
       enabledKG: false,
       diaChi: "",
+      addressText: "",
     ));
     _productEditControllers.add({
       "kgController": TextEditingController(),
@@ -806,7 +810,7 @@ class EditOrderViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-  void addSanPhamByLocation(String address) {
+  void addSanPhamByLocation(String address, String addressText) {
     _productForLocations.add(Product(
       actualKg: 0,
       actualQuantity: 0,
@@ -822,6 +826,7 @@ class EditOrderViewModel extends BaseViewModel {
       enabledVatTu: false,
       enabledKG: false,
       diaChi: "",
+      addressText: addressText,
     ));
 
     if (_productForLocationEditControllerMap.containsKey(address)) {
@@ -1043,12 +1048,12 @@ class EditOrderViewModel extends BaseViewModel {
       _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
         var realName = cu.product;
 
-        cu.type = "Sản phẩm";
+        cu.type = "Vật tư";
 
         if (!["", null, false, 0].contains(cu.material)) {
           realName = "$realName-${cu.material}";
 
-          cu.type = "Vật tư";
+          cu.type = "Sản phẩm";
         }
 
         var total = pv;
@@ -1069,7 +1074,6 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
       _order!.taxId = elements[0].taxId;
-      _order!.totalCost = 0;
       _order!.vendor = elements[0].code;
 
       _order!.vendorAddress = '';
@@ -1121,6 +1125,9 @@ class EditOrderViewModel extends BaseViewModel {
             donNhapKhoResponse.donNhapKho != null) {
           _donNhapKho = donNhapKhoResponse.donNhapKho;
         }
+        var code =
+            "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
+        await locator<Api>().createCongNoTienHoaDon(code, _name!);
 
         notifyListeners();
       } else {
@@ -1230,12 +1237,12 @@ class EditOrderViewModel extends BaseViewModel {
       _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
         var realName = cu.product;
 
-        cu.type = "Sản phẩm";
+        cu.type = "Vật tư";
 
         if (!["", null, false, 0].contains(cu.material)) {
           realName = "$realName-${cu.material}";
 
-          cu.type = "Vật tư";
+          cu.type = "Sản phẩm";
         }
 
         var total = pv;
@@ -1260,7 +1267,6 @@ class EditOrderViewModel extends BaseViewModel {
               : "Đã giao hàng"
           : status;
       _order!.taxId = elements[0].taxId;
-      _order!.totalCost = 0;
       _order!.vendor = elements[0].code;
 
       _order!.vendorAddress = '';
@@ -1308,6 +1314,20 @@ class EditOrderViewModel extends BaseViewModel {
               context: context,
               subtitle: 'Cập nhật đơn hàng thành công.');
         }
+
+        var code =
+            "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
+        await locator<Api>().createCongNoTienHoaDon(code, _name!);
+
+        for (var product in _order!.products) {
+          if (!["", null, false, 0].contains(product.material)) {
+            await createCongNoTaiSan(
+                product.material!,
+                product.quantity - product.actualQuantity,
+                0,
+                product.kg - product.actualKg);
+          }
+        }
       } else {
         FrappeAlert.errorAlert(
             title: 'Lỗi xảy ra',
@@ -1322,6 +1342,12 @@ class EditOrderViewModel extends BaseViewModel {
       );
     }
     notifyListeners();
+  }
+
+  Future<void> createCongNoTaiSan(
+      String assetName, int received, int returned, double totalKg) async {
+    await locator<Api>().createCongNoTaiSan(
+        _customerValue!, _name!, assetName, received, returned, totalKg);
   }
 
   Future<void> cancelOrder(

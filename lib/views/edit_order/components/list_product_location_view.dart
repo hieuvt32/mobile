@@ -328,7 +328,8 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                           if (!["", null, false, 0]
                               .contains(widget.model.editAddresses[i].name))
                             widget.model.addSanPhamByLocation(
-                                widget.model.editAddresses[i].name!);
+                                widget.model.editAddresses[i].name!,
+                                widget.model.editAddresses[i].diaChi);
                         },
                         child: Text(
                           'Thêm sản phẩm',
@@ -688,10 +689,12 @@ class _ListProductLocationItemViewState
                                         controllers[i]['kgController']!.text)) {
                                       // do sth
                                       values[i].kg = 0;
+                                      values[i].actualKg = 0;
                                     } else {
                                       values[i].kg = double.parse(
                                           controllers[i]['kgController']!.text);
-
+                                      values[i].actualKg = double.parse(
+                                          controllers[i]['kgController']!.text);
                                       values[i].validator.isKgRequired = false;
                                     }
                                     widget.model.changeState();
@@ -741,8 +744,12 @@ class _ListProductLocationItemViewState
                                             .text)) {
                                       // do sth
                                       values[i].quantity = 0;
+                                      values[i].actualQuantity = 0;
                                     } else {
                                       values[i].quantity = int.parse(
+                                          controllers[i]['quantityController']!
+                                              .text);
+                                      values[i].actualQuantity = int.parse(
                                           controllers[i]['quantityController']!
                                               .text);
                                     }

@@ -114,7 +114,8 @@ abstract class Api {
 
   Future<ResponseData> createCongNoTienHoaDon(String code, String order);
 
-  Future<ResponseData> createCongNoTaiSan(String code, String order);
+  Future<ResponseData> createCongNoTaiSan(String customer, String order,
+      String assetName, int received, int returned, double totalKg);
 
   Future<CreateHoaDonMuaBanRespone> createHoaDonMuaBan(Order order);
 
