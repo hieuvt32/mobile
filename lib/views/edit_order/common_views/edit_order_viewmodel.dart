@@ -1072,7 +1072,7 @@ class EditOrderViewModel extends BaseViewModel {
 
       if (createOrderResponse != null &&
           createOrderResponse.responseData != null) {
-        _donNhapKho!.codeOrders = createOrderResponse.responseData.data;
+        _donNhapKho!.codeOrders = createOrderResponse.responseData.data["name"];
         _donNhapKho!.status = "Chờ nhập hàng";
         _donNhapKho!.listShell = [...nhapKhos, ...traVes];
         _name = createOrderResponse.responseData.data["name"];

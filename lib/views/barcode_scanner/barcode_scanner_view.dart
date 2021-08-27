@@ -125,39 +125,64 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: 48,
+                  height: 24,
                 ),
-                Text(
-                  (_response!.quyChuanThongTin != null &&
-                          _response!.quyChuanThongTin?.status == 'Bình thường')
-                      ? 'Để camera vào gần mã vạch của sản phẩm để quét mã'
-                      : 'Mã vạch của sản phẩm được quét bị lỗi !',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: (_response!.quyChuanThongTin != null &&
-                              _response!.quyChuanThongTin?.status ==
-                                  'Bình thường')
-                          ? hexToColor('#00478B')
-                          : hexToColor('#FF0F00')),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24.0, 28, 24, 28),
+                  child: Text(
+                    ["", null, false, 0].contains(barcode)
+                        ? "Để camera vào gần mã vạch của sản phẩm để quét mã"
+                        : (_response!.quyChuanThongTin != null &&
+                                _response!.quyChuanThongTin?.status ==
+                                    'Bình thường')
+                            ? 'Quét mã vạch thành công'
+                            : 'Mã vạch của sản phẩm được quét bị lỗi !',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: ["", null, false, 0].contains(barcode)
+                            ? hexToColor('#00478B')
+                            : (_response!.quyChuanThongTin != null &&
+                                    _response!.quyChuanThongTin?.status ==
+                                        'Bình thường')
+                                ? hexToColor('#1BBD5C')
+                                : hexToColor('#FF0F00')),
+                  ),
                 ),
                 SizedBox(
-                  height: 28,
+                  height: 12,
                 ),
 
                 Expanded(
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(24.0, 28, 24, 28),
-                      child: PlatformAiBarcodeCreatorWidget(
-                        creatorController: _creatorController!,
-                        initialValue: "11111111111111",
-                      )
+                    padding: const EdgeInsets.fromLTRB(24.0, 28, 24, 28),
+                    child:
 
-                      // PlatformAiBarcodeScannerWidget(
-                      //   platformScannerController: _scannerController,
-                      // ),
-                      ),
+                        // PlatformAiBarcodeCreatorWidget(
+                        //   creatorController: _creatorController!,
+                        //   initialValue: "11111111111111",
+                        // )
+
+                        Container(
+                      // height: 45,
+                      child: ["", null, false, 0].contains(barcode)
+                          ? PlatformAiBarcodeScannerWidget(
+                              platformScannerController: _scannerController,
+                            )
+                          : IconTheme(
+                              data: IconThemeData(
+                                size: 56.0,
+                              ),
+                              child: Container(
+                                child: FrappeIcon(FrappeIcons.barcode),
+                                height: 150,
+                                width: 120,
+                              ),
+                            ),
+                    ),
+                  ),
+                  flex: 3,
                 ),
                 // Container(
                 //     decoration: BoxDecoration(
@@ -267,6 +292,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                                             "Cập nhật lịch sử sản xuất thành công",
                                         context: context,
                                       );
+                                      Navigator.pop(context);
                                     } else {
                                       FrappeAlert.errorAlert(
                                         title: "Cập nhật không thành công",
@@ -318,6 +344,9 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
 
                                   if (response.responseData != null &&
                                       response.responseData!.code == 200) {
+                                    setState(() {
+                                      barcode = "";
+                                    });
                                     FrappeAlert.successAlert(
                                       title: "Cập nhật thành công",
                                       subtitle:
