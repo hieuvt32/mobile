@@ -109,6 +109,7 @@ class _ListProductReturnItemState extends State<ListProductReturnItem> {
   }
 
   List<ExpansionItem> _buildExpansionItems() {
+    values = [];
     Iterable<Product> filteredList = widget.model.productForLocations.where(
         (element) =>
             element.actualQuantity != null &&
@@ -123,7 +124,8 @@ class _ListProductReturnItemState extends State<ListProductReturnItem> {
 
     groupBy<Product, String>(filteredList, (obj) => obj.product!)
         .map((key, value) {
-      var total = value.fold<int>(0, (sum, item) => sum + item.actualQuantity);
+      var total = value.fold<int>(
+          0, (sum, item) => sum + (item.quantity - item.actualQuantity));
       values.add(MapEntry(ProductReturnKey(key, total, false), value));
       return MapEntry(key, value);
     });

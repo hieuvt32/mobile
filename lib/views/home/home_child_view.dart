@@ -31,6 +31,7 @@ import 'package:frappe_app/views/mnvl/mnvl_edit.dart';
 import 'package:frappe_app/views/mnvl/mnvl_list.dart';
 import 'package:frappe_app/views/production_report/production_report_view.dart';
 import 'package:frappe_app/views/search/search_view.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeChildView extends StatefulWidget {
   const HomeChildView({Key? key}) : super(key: key);
@@ -242,7 +243,16 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
-      icon: FrappeIcons.mua_hang,
+        view: (context) {
+          return CustomerListOrderView();
+        },
+        icon: FrappeIcons.don_hang,
+        visible: true,
+        text: "Đơn hàng",
+        roles: ["Điều Phối Viên"],
+        childrens: []),
+    Item(
+      icon: FrappeIcons.users,
       childrens: [
         Item(
           icon: FrappeIcons.danh_sach_don_loi,
@@ -261,23 +271,6 @@ class _HomeChildViewState extends State<HomeChildView> {
           },
         ),
       ],
-      // view: CreateOrderView(),
-      text: "Điều phối",
-      roles: ["Điều Phối Viên"],
-      visible: true,
-    ),
-    Item(
-        view: (context) {
-          return CustomerListOrderView();
-        },
-        icon: FrappeIcons.don_hang,
-        visible: true,
-        text: "Đơn hàng",
-        roles: ["Điều Phối Viên"],
-        childrens: []),
-    Item(
-      icon: FrappeIcons.users,
-      childrens: [],
       view: (context) {
         return ListOrderView();
       },
@@ -341,18 +334,18 @@ class _HomeChildViewState extends State<HomeChildView> {
       ],
       visible: true,
     ),
-    Item(
-      icon: FrappeIcons.book,
-      childrens: [],
-      view: (context) {
-        return ListOrderView();
-      },
-      text: "Danh sách trả lại",
-      roles: [
-        "Điều Phối Viên",
-      ],
-      visible: true,
-    ),
+    // Item(
+    //   icon: FrappeIcons.book,
+    //   childrens: [],
+    //   view: (context) {
+    //     return ListOrderView();
+    //   },
+    //   text: "Danh sách trả lại",
+    //   roles: [
+    //     "Điều Phối Viên",
+    //   ],
+    //   visible: true,
+    // ),
     Item(
       icon: FrappeIcons.binh_loi,
       childrens: [],
@@ -367,64 +360,66 @@ class _HomeChildViewState extends State<HomeChildView> {
     ),
   ];
 
-  Future<void> startBarcodeScanStream() async {
-    FlutterBarcodeScanner.getBarcodeStreamReceiver(
-            '#ff6666', 'Cancel', true, ScanMode.BARCODE)!
-        .listen((barcode) => print(barcode));
-  }
-
   GetRolesResponse? _response;
 
-  Future<void> scanQR() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.QR);
-      print(barcodeScanRes);
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-    }
+  bool _isGranted = false;
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
+  // Future<void> startBarcodeScanStream() async {
+  //   FlutterBarcodeScanner.getBarcodeStreamReceiver(
+  //           '#ff6666', 'Cancel', true, ScanMode.BARCODE)!
+  //       .listen((barcode) => print(barcode));
+  // }
 
-    setState(() {});
-  }
+  // Future<void> scanQR() async {
+  //   String barcodeScanRes;
+  //   // Platform messages may fail, so we use a try/catch PlatformException.
+  //   try {
+  //     barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+  //         '#ff6666', 'Cancel', true, ScanMode.QR);
+  //     print(barcodeScanRes);
+  //   } on PlatformException {
+  //     barcodeScanRes = 'Failed to get platform version.';
+  //   }
+
+  //   // If the widget was removed from the tree while the asynchronous platform
+  //   // message was in flight, we want to discard the reply rather than calling
+  //   // setState to update our non-existent appearance.
+  //   if (!mounted) return;
+
+  //   setState(() {});
+  // }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> scanBarcodeNormal() async {
-    String barcodeScanRes;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) {
-            return BarcodeScannerView(
-              barcode: barcodeScanRes,
-            );
-          },
-        ),
-      );
-    } on PlatformException {
-      barcodeScanRes = 'Failed to get platform version.';
-      FrappeAlert.errorAlert(
-        title: "Quét barcode không thành công",
-        subtitle: "Failed to get platform version.",
-        context: context,
-      );
+  // Future<void> scanBarcodeNormal() async {
+  //   String barcodeScanRes;
+  //   // Platform messages may fail, so we use a try/catch PlatformException.
+  //   try {
+  //     barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+  //         '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+
+  //   } on PlatformException {
+  //     barcodeScanRes = 'Failed to get platform version.';
+  //     FrappeAlert.errorAlert(
+  //       title: "Quét barcode không thành công",
+  //       subtitle: "Failed to get platform version.",
+  //       context: context,
+  //     );
+  //   }
+
+  //   // // If the widget was removed from the tree while the asynchronous platform
+  //   // // message was in flight, we want to discard the reply rather than calling
+  //   // // setState to update our non-existent appearance.
+  //   // if (!mounted) return;
+
+  //   // setState(() {});
+  // }
+
+  void _requestMobilePermission() async {
+    if (await Permission.camera.request().isGranted) {
+      setState(() {
+        _isGranted = true;
+      });
     }
-
-    // // If the widget was removed from the tree while the asynchronous platform
-    // // message was in flight, we want to discard the reply rather than calling
-    // // setState to update our non-existent appearance.
-    // if (!mounted) return;
-
-    // setState(() {});
   }
 
   List<Item> items = [];
@@ -458,6 +453,15 @@ class _HomeChildViewState extends State<HomeChildView> {
           item.visible = false;
         }
       }
+    }
+
+    TargetPlatform platform = Theme.of(context).platform;
+    if (platform == TargetPlatform.android || platform == TargetPlatform.iOS) {
+      _requestMobilePermission();
+    } else {
+      setState(() {
+        _isGranted = true;
+      });
     }
 
     return Scaffold(
@@ -532,7 +536,24 @@ class _HomeChildViewState extends State<HomeChildView> {
                                         } else {
                                           if (item.icon ==
                                               FrappeIcons.barcode_red) {
-                                            scanBarcodeNormal();
+                                            // scanBarcodeNormal();
+                                            if (_isGranted) {
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return BarcodeScannerView(
+                                                        // barcode: barcodeScanRes,
+                                                        );
+                                                  },
+                                                ),
+                                              );
+                                            } else {
+                                              FrappeAlert.errorAlert(
+                                                  title: "Thông báo",
+                                                  context: context,
+                                                  subtitle:
+                                                      "Bạn chưa cáp quyền camera cho ứng dụng!");
+                                            }
                                           } else {
                                             Navigator.of(context).push(
                                               MaterialPageRoute(

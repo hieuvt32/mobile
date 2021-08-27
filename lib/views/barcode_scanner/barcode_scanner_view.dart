@@ -1,3 +1,4 @@
+import 'package:ai_barcode/ai_barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
@@ -7,12 +8,15 @@ import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class BarcodeScannerView extends StatefulWidget {
-  final String barcode;
+  // final String barcode;
+  // final Function(String result) resultCallback;
   const BarcodeScannerView({
     Key? key,
-    required this.barcode,
+    // required this.barcode,
+    // required this.resultCallback,
   }) : super(key: key);
 
   @override
@@ -21,30 +25,66 @@ class BarcodeScannerView extends StatefulWidget {
 
 class _BarcodeScannerViewState extends State<BarcodeScannerView> {
   late GetQuyChuanThongTinResponse? _response;
+
+  late ScannerController _scannerController;
+  late CreatorController? _creatorController;
+
+  late String barcode = "";
+  late bool isLoading = false;
   @override
   void initState() {
     super.initState();
-    _response = null;
+    _creatorController = CreatorController();
+    _response = GetQuyChuanThongTinResponse();
+    _scannerController = ScannerController(scannerResult: (result) {
+      resultCallback(result);
+    }, scannerViewCreated: () {
+      TargetPlatform platform = Theme.of(context).platform;
+      if (TargetPlatform.iOS == platform) {
+        Future.delayed(Duration(seconds: 2), () {
+          _scannerController.startCamera();
+          _scannerController.startCameraPreview();
+        });
+      } else {
+        _scannerController.startCamera();
+        _scannerController.startCameraPreview();
+      }
+    });
+    onLoad();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _creatorController = null;
+    _scannerController.stopCameraPreview();
+    _scannerController.stopCamera();
+  }
+
+  resultCallback(String result) {
+    barcode = result;
     onLoad();
   }
 
   Future<void> onLoad() async {
-    var response = await locator<Api>().getTraCuuSanXuat(widget.barcode);
-    if (response.quyChuanThongTin != null &&
-        response.quyChuanThongTin?.status == 'Bình thường') {
-      await locator<Api>().updateLichSuSanXuat(
-          widget.barcode,
-          response.quyChuanThongTin!.company,
-          response.quyChuanThongTin!.productContain,
-          response.quyChuanThongTin!.materialType,
-          response.quyChuanThongTin!.serial,
-          response.quyChuanThongTin!.status,
-          response.quyChuanThongTin!.countByKG,
-          response.quyChuanThongTin!.kg);
+    if (!["", null, false, 0].contains(barcode)) {
+      var response = await locator<Api>().getTraCuuSanXuat(barcode);
+      if (response.quyChuanThongTin != null &&
+          response.quyChuanThongTin?.status == 'Bình thường') {
+        await locator<Api>().updateLichSuSanXuat(
+            barcode,
+            response.quyChuanThongTin!.company,
+            response.quyChuanThongTin!.productContain,
+            response.quyChuanThongTin!.materialType,
+            response.quyChuanThongTin!.serial,
+            response.quyChuanThongTin!.status,
+            response.quyChuanThongTin!.countByKG,
+            response.quyChuanThongTin!.kg);
+      }
+      setState(() {
+        _response = response;
+      });
     }
-    setState(() {
-      _response = response;
-    });
   }
 
   @override
@@ -68,129 +108,181 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
               fontWeight: FontWeight.w700,
             ),
           )),
-      body: _response != null
-          ? Container(
-              width: double.infinity,
-              height: double.infinity,
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 44, 28, 0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                        ),
-                        alignment: Alignment.center,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 36, 24, 36),
-                          child: Flex(
-                            direction: Axis.vertical,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text(
-                                (_response!.quyChuanThongTin != null &&
-                                        _response!.quyChuanThongTin?.status ==
-                                            'Bình thường')
-                                    ? 'Để camera vào gần mã vạch của sản phẩm để quét mã'
-                                    : 'Mã vạch của sản phẩm được quét bị lỗi !',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w700,
-                                    color:
-                                        (_response!.quyChuanThongTin != null &&
-                                                _response!.quyChuanThongTin
-                                                        ?.status ==
-                                                    'Bình thường')
-                                            ? hexToColor('#00478B')
-                                            : hexToColor('#FF0F00')),
-                              ),
-                              SizedBox(
-                                height: 82,
-                              ),
-                              GestureDetector(
-                                onTap: () {},
-                                child: IconTheme(
-                                  data: IconThemeData(
-                                    size: 56.0,
-                                  ),
-                                  child: Container(
-                                    child: FrappeIcon(FrappeIcons.barcode),
-                                    height: 150,
-                                    width: 120,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 113,
-                              )
+      body: !isLoading
+          ?
+          // ? Container(
+          //     width: double.infinity,
+          //     height: double.infinity,
+          //     child: SingleChildScrollView(
+          //         child:
+          //             //  Padding(
+          //             //   padding: const EdgeInsets.fromLTRB(28, 44, 28, 0),
+          //             //   child: ,
+          //             // ),
+          //             ), /* add child content here */
+          //   )
+          Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 48,
+                ),
+                Text(
+                  (_response!.quyChuanThongTin != null &&
+                          _response!.quyChuanThongTin?.status == 'Bình thường')
+                      ? 'Để camera vào gần mã vạch của sản phẩm để quét mã'
+                      : 'Mã vạch của sản phẩm được quét bị lỗi !',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: (_response!.quyChuanThongTin != null &&
+                              _response!.quyChuanThongTin?.status ==
+                                  'Bình thường')
+                          ? hexToColor('#00478B')
+                          : hexToColor('#FF0F00')),
+                ),
+                SizedBox(
+                  height: 28,
+                ),
 
-                              // ElevatedButton(
-                              //     onPressed: () => scanBarcodeNormal(),
-                              //     child: Text(
-                              //         'Để camera vào gần mã vạch của sản phẩm để quét mã')),
-                              // ElevatedButton(
-                              //     onPressed: () => scanQR(),
-                              //     child: Text('Start QR scan')),
-                              // ElevatedButton(
-                              //     onPressed: () => startBarcodeScanStream(),
-                              //     child: Text('Start barcode scan stream')),
-                              // Text('Scan result : $_scanBarcode\n',
-                              //     style: TextStyle(fontSize: 20))
-                            ],
-                          ),
-                        ),
+                Expanded(
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24.0, 28, 24, 28),
+                      child: PlatformAiBarcodeCreatorWidget(
+                        creatorController: _creatorController!,
+                        initialValue: "11111111111111",
+                      )
+
+                      // PlatformAiBarcodeScannerWidget(
+                      //   platformScannerController: _scannerController,
+                      // ),
                       ),
-                      SizedBox(
-                        height: 36,
-                      ),
-                      Visibility(
+                ),
+                // Container(
+                //     decoration: BoxDecoration(
+                //       border: Border.all(),
+                //     ),
+                //     alignment: Alignment.center,
+                //     child:
+                // Padding(
+                //     padding: const EdgeInsets.fromLTRB(24, 36, 24, 36),
+                //     child:
+
+                //  Flex(
+                //   direction: Axis.vertical,
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: <Widget>[
+                //     Text(
+                //       (_response!.quyChuanThongTin != null &&
+                //               _response!.quyChuanThongTin?.status ==
+                //                   'Bình thường')
+                //           ? 'Để camera vào gần mã vạch của sản phẩm để quét mã'
+                //           : 'Mã vạch của sản phẩm được quét bị lỗi !',
+                //       textAlign: TextAlign.center,
+                //       style: TextStyle(
+                //           fontSize: 20,
+                //           fontWeight: FontWeight.w700,
+                //           color:
+                //               (_response!.quyChuanThongTin != null &&
+                //                       _response!.quyChuanThongTin
+                //                               ?.status ==
+                //                           'Bình thường')
+                //                   ? hexToColor('#00478B')
+                //                   : hexToColor('#FF0F00')),
+                //     ),
+                //     SizedBox(
+                //       height: 82,
+                //     ),
+                //     GestureDetector(
+                //       onTap: () {},
+                //       child: IconTheme(
+                //         data: IconThemeData(
+                //           size: 56.0,
+                //         ),
+                //         child: Container(
+                //           child: FrappeIcon(FrappeIcons.barcode),
+                //           height: 150,
+                //           width: 120,
+                //         ),
+                //       ),
+                //     ),
+                //     SizedBox(
+                //       height: 113,
+                //     )
+
+                //     // ElevatedButton(
+                //     //     onPressed: () => scanBarcodeNormal(),
+                //     //     child: Text(
+                //     //         'Để camera vào gần mã vạch của sản phẩm để quét mã')),
+                //     // ElevatedButton(
+                //     //     onPressed: () => scanQR(),
+                //     //     child: Text('Start QR scan')),
+                //     // ElevatedButton(
+                //     //     onPressed: () => startBarcodeScanStream(),
+                //     //     child: Text('Start barcode scan stream')),
+                //     // Text('Scan result : $_scanBarcode\n',
+                //     //     style: TextStyle(fontSize: 20))
+                //   ],
+                // ),
+                // ),
+                // ),
+                SizedBox(
+                  height: 36,
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Visibility(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 28, 24, 28),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             ElevatedButton(
                               onPressed: () async {
-                                if (_response != null &&
-                                    _response!.quyChuanThongTin != null) {
-                                  var response = await locator<Api>()
-                                      .updateLichSuSanXuat(
-                                          widget.barcode,
-                                          _response!.quyChuanThongTin!.company,
-                                          _response!
-                                              .quyChuanThongTin!.productContain,
-                                          _response!
-                                              .quyChuanThongTin!.materialType,
-                                          _response!.quyChuanThongTin!.serial,
-                                          _response!.quyChuanThongTin!.status,
-                                          _response!
-                                              .quyChuanThongTin!.countByKG,
-                                          _response!.quyChuanThongTin!.kg);
+                                if (!["", null, false, 0].contains(barcode)) {
+                                  if (_response != null &&
+                                      _response!.quyChuanThongTin != null) {
+                                    var response = await locator<Api>()
+                                        .updateLichSuSanXuat(
+                                            barcode,
+                                            _response!
+                                                .quyChuanThongTin!.company,
+                                            _response!.quyChuanThongTin!
+                                                .productContain,
+                                            _response!
+                                                .quyChuanThongTin!.materialType,
+                                            _response!.quyChuanThongTin!.serial,
+                                            _response!.quyChuanThongTin!.status,
+                                            _response!
+                                                .quyChuanThongTin!.countByKG,
+                                            _response!.quyChuanThongTin!.kg);
 
-                                  if (response.responseData != null &&
-                                      response.responseData!.code == 200) {
-                                    FrappeAlert.successAlert(
-                                      title: "Cập nhật thành công",
-                                      subtitle:
-                                          "Cập nhật lịch sử sản xuất thành công",
-                                      context: context,
-                                    );
-                                  } else {
-                                    FrappeAlert.errorAlert(
-                                      title: "Cập nhật không thành công",
-                                      subtitle:
-                                          "Cập nhật lịch sử sản xuất không thành công.",
-                                      context: context,
-                                    );
+                                    if (response.responseData != null &&
+                                        response.responseData!.code == 200) {
+                                      FrappeAlert.successAlert(
+                                        title: "Cập nhật thành công",
+                                        subtitle:
+                                            "Cập nhật lịch sử sản xuất thành công",
+                                        context: context,
+                                      );
+                                    } else {
+                                      FrappeAlert.errorAlert(
+                                        title: "Cập nhật không thành công",
+                                        subtitle:
+                                            "Cập nhật lịch sử sản xuất không thành công.",
+                                        context: context,
+                                      );
+                                    }
                                   }
                                 }
                               },
                               child: Text(
-                                'Xác nhận nạp',
+                                'Kết thúc',
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               style: ElevatedButton.styleFrom(
@@ -198,10 +290,10 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                                 // side: BorderSide(
                                 //   width: 1.0,
                                 // ),
-                                minimumSize: Size(160, 52),
+                                minimumSize: Size(120, 32),
                                 padding: EdgeInsets.fromLTRB(8, 12, 8, 12),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderRadius: BorderRadius.circular(4.0),
                                   side: BorderSide(color: Colors.red),
                                 ),
                               ),
@@ -212,7 +304,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                                     _response!.quyChuanThongTin != null) {
                                   var response = await locator<Api>()
                                       .updateLichSuSanXuat(
-                                          widget.barcode,
+                                          barcode,
                                           _response!.quyChuanThongTin!.company,
                                           _response!
                                               .quyChuanThongTin!.productContain,
@@ -243,21 +335,21 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                                 }
                               },
                               child: Text(
-                                'Hủy bỏ',
+                                'Tiếp tục',
                                 style: TextStyle(
-                                    color: hexToColor('#00478B'),
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold),
+                                    color: hexToColor('#FFFFFF'),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600),
                               ),
                               style: ElevatedButton.styleFrom(
-                                primary: Color.fromRGBO(255, 255, 255, 1),
+                                primary: hexToColor("#0072BC"),
                                 side: BorderSide(
-                                  width: 1.0,
+                                  width: 0.0,
                                 ),
-                                minimumSize: Size(160, 52),
+                                minimumSize: Size(120, 32),
                                 padding: EdgeInsets.fromLTRB(8, 12, 8, 12),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.0),
+                                  borderRadius: BorderRadius.circular(4.0),
                                   side: BorderSide(
                                     color: hexToColor('#00478B'),
                                   ),
@@ -266,14 +358,13 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                             )
                           ],
                         ),
-                        visible: !(_response!.quyChuanThongTin != null &&
-                            _response!.quyChuanThongTin?.status ==
-                                'Bình thường'),
-                      )
-                    ],
+                      ),
+                      visible: !(_response!.quyChuanThongTin != null &&
+                          _response!.quyChuanThongTin?.status == 'Bình thường'),
+                    ),
                   ),
-                ),
-              ), /* add child content here */
+                )
+              ],
             )
           : Center(
               child: CircularProgressIndicator(),

@@ -919,7 +919,10 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.sellInWarehouse = 0;
       _order!.status = "Chờ xác nhận";
       _order!.taxId = customer.taxId;
-      _order!.totalCost = 0;
+
+      calculateTotalPrice();
+
+      _order!.totalCost = _totalOrderPrice;
       _order!.vendor = customer.code;
       _order!.vendorName = customer.realName;
       _order!.type = 'B';
@@ -1045,30 +1048,7 @@ class EditOrderViewModel extends BaseViewModel {
         return;
       }
 
-      _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
-        var realName = cu.product;
-
-        cu.type = "Vật tư";
-
-        if (!["", null, false, 0].contains(cu.material)) {
-          realName = "$realName-${cu.material}";
-
-          cu.type = "Sản phẩm";
-        }
-
-        var total = pv;
-
-        var getDonGiaMuaBan = getSingleDonGiaMuaBan(realName!);
-
-        if (getDonGiaMuaBan != null) {
-          total += (cu.actualQuantity * getDonGiaMuaBan.unitPrice) * 0.1 +
-              (cu.actualQuantity * getDonGiaMuaBan.unitPrice);
-        } else {
-          total += 0.0;
-        }
-
-        return total;
-      });
+      calculateTotalPrice();
 
       _order!.totalCost = _totalOrderPrice;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
@@ -1095,10 +1075,13 @@ class EditOrderViewModel extends BaseViewModel {
         _donNhapKho!.codeOrders = createOrderResponse.responseData.data;
         _donNhapKho!.status = "Chờ nhập hàng";
         _donNhapKho!.listShell = [...nhapKhos, ...traVes];
-        _name = createOrderResponse.responseData.data;
-        _title = createOrderResponse.responseData.data;
-        _order!.name = createOrderResponse.responseData.data;
-
+        _name = createOrderResponse.responseData.data["name"];
+        _title = createOrderResponse.responseData.data["name"];
+        _order!.name = createOrderResponse.responseData.data["name"];
+        _totalOrderPrice =
+            createOrderResponse.responseData.data["total_amount"];
+        _order!.totalCost =
+            createOrderResponse.responseData.data["total_amount"];
         var createDonNhapKhoResponse =
             await locator<Api>().createDonNhapKho(_donNhapKho!);
 
@@ -1150,6 +1133,33 @@ class EditOrderViewModel extends BaseViewModel {
         giaoViec.supportEmployee, giaoViec.plate, giaoViec.deliverDate);
     giaoViec.name = response['message']["name"];
     notifyListeners();
+  }
+
+  calculateTotalPrice() {
+    _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
+      var realName = cu.product;
+
+      cu.type = "Vật tư";
+
+      if (!["", null, false, 0].contains(cu.material)) {
+        realName = "$realName-${cu.material}";
+
+        cu.type = "Sản phẩm";
+      }
+
+      var total = pv;
+
+      var getDonGiaMuaBan = getSingleDonGiaMuaBan(realName!);
+
+      if (getDonGiaMuaBan != null) {
+        total += (cu.actualQuantity * getDonGiaMuaBan.unitPrice) * 0.1 +
+            (cu.actualQuantity * getDonGiaMuaBan.unitPrice);
+      } else {
+        total += 0.0;
+      }
+
+      return total;
+    });
   }
 
   Future updateOrder(
@@ -1234,30 +1244,8 @@ class EditOrderViewModel extends BaseViewModel {
             subtitle: 'bạn chưa có sản phẩm nào!');
         return;
       }
-      _totalOrderPrice = _order!.products.fold(0, (pv, cu) {
-        var realName = cu.product;
 
-        cu.type = "Vật tư";
-
-        if (!["", null, false, 0].contains(cu.material)) {
-          realName = "$realName-${cu.material}";
-
-          cu.type = "Sản phẩm";
-        }
-
-        var total = pv;
-
-        var getDonGiaMuaBan = getSingleDonGiaMuaBan(realName!);
-
-        if (getDonGiaMuaBan != null) {
-          total += (cu.actualQuantity * getDonGiaMuaBan.unitPrice) * 0.1 +
-              (cu.actualQuantity * getDonGiaMuaBan.unitPrice);
-        } else {
-          total += 0.0;
-        }
-
-        return total;
-      });
+      calculateTotalPrice();
 
       _order!.totalCost = _totalOrderPrice;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
@@ -1284,6 +1272,9 @@ class EditOrderViewModel extends BaseViewModel {
 
       if (uploadHoaDonMuaBan != null &&
           uploadHoaDonMuaBan.responseData != null) {
+        _totalOrderPrice = uploadHoaDonMuaBan.responseData.data["total_amount"];
+        _order!.totalCost =
+            uploadHoaDonMuaBan.responseData.data["total_amount"];
         if (status == "Đang giao hàng") {
           List<CreateTrackingLocationRequest> locations = _order!.products
               .map((e) => CreateTrackingLocationRequest(
