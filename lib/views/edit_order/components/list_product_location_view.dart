@@ -175,8 +175,8 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                                                 .where((element) =>
                                                     element.name == value);
                                             if (addresses.length > 0) {
-                                              values[i].diaChi = widget
-                                                  .model.addresses.first.diaChi;
+                                              values[i].diaChi =
+                                                  addresses.first.diaChi;
                                             }
                                             values[i].name = value;
                                           });

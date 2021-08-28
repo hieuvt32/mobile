@@ -124,7 +124,10 @@ class EditOrderViewModel extends BaseViewModel {
 
   String get title => _title ?? '';
 
-  bool get sellInWarehouse => _sellInWarehouse;
+  bool get sellInWarehouse {
+    _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
+    return _sellInWarehouse;
+  }
 
   bool get readOnlyView {
     if (_order != null) {
@@ -899,12 +902,30 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   clearSignatureCustomer() {
-    _signatureCustomerController = new SignatureController();
+    _signatureCustomerController = SignatureController(
+      penStrokeWidth: 5,
+      penColor: Colors.black,
+    );
     notifyListeners();
   }
 
   clearSignatureSupplier() {
-    _signatureSupplierController = new SignatureController();
+    _signatureSupplierController = SignatureController(
+      penStrokeWidth: 5,
+      penColor: Colors.black,
+    );
+    notifyListeners();
+  }
+
+  clearAllSignatures() {
+    _signatureSupplierController = SignatureController(
+      penStrokeWidth: 5,
+      penColor: Colors.black,
+    );
+    _signatureCustomerController = SignatureController(
+      penStrokeWidth: 5,
+      penColor: Colors.black,
+    );
     notifyListeners();
   }
 
@@ -920,16 +941,28 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.status = "Chờ xác nhận";
       _order!.taxId = customer.taxId;
 
-      calculateTotalPrice();
+      // calculateTotalPrice();
 
-      _order!.totalCost = _totalOrderPrice;
+      // _order!.totalCost = _totalOrderPrice;
       _order!.vendor = customer.code;
       _order!.vendorName = customer.realName;
       _order!.type = 'B';
       _order!.vendorAddress = '';
       _order!.vendorName = customer.realName;
 
-      await locator<Api>().createHoaDonMuaBan(_order!);
+      var createOrderResponse =
+          await locator<Api>().createHoaDonMuaBan(_order!);
+
+      if (createOrderResponse != null &&
+          createOrderResponse.responseData != null) {
+        _name = createOrderResponse.responseData.data["name"];
+        _title = createOrderResponse.responseData.data["name"];
+        _order!.name = createOrderResponse.responseData.data["name"];
+        _totalOrderPrice =
+            createOrderResponse.responseData.data["total_amount"];
+        _order!.totalCost =
+            createOrderResponse.responseData.data["total_amount"];
+      }
 
       notifyListeners();
       FrappeAlert.successAlert(
@@ -1048,9 +1081,9 @@ class EditOrderViewModel extends BaseViewModel {
         return;
       }
 
-      calculateTotalPrice();
+      // calculateTotalPrice();
 
-      _order!.totalCost = _totalOrderPrice;
+      // _order!.totalCost = _totalOrderPrice;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
       _order!.taxId = elements[0].taxId;
@@ -1192,6 +1225,14 @@ class EditOrderViewModel extends BaseViewModel {
           customerAttachmemts = null;
         }
       }
+      // else {
+      //   FrappeAlert.errorAlert(
+      //     title: 'Lỗi xảy ra',
+      //     context: context,
+      //     subtitle: 'Bạn chưa có chữ ký khách hàng!',
+      //   );
+      //   return;
+      // }
 
       imgId = Uuid().v1().toString();
       var supplierBytes = await _signatureSupplierController.toPngBytes();
@@ -1213,6 +1254,14 @@ class EditOrderViewModel extends BaseViewModel {
           supplierAttachments = null;
         }
       }
+      // else {
+      //   FrappeAlert.errorAlert(
+      //     title: 'Lỗi xảy ra',
+      //     context: context,
+      //     subtitle: 'Bạn chưa có chữ ký nhà cung cấp!',
+      //   );
+      //   return;
+      // }
     }
 
     List<Customer>? customers = [];
@@ -1245,9 +1294,9 @@ class EditOrderViewModel extends BaseViewModel {
         return;
       }
 
-      calculateTotalPrice();
+      // calculateTotalPrice();
 
-      _order!.totalCost = _totalOrderPrice;
+      // _order!.totalCost = _totalOrderPrice;
       _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
       _order!.status = ["", null, false, 0].contains(status)
           ? !_sellInWarehouse
@@ -1385,7 +1434,7 @@ class EditOrderViewModel extends BaseViewModel {
     }
   }
 
-  Future<GiaoViecSignature> updateGiaoViecSignature(context,
+  Future<GiaoViecSignature?> updateGiaoViecSignature(context,
       {String status = '', String address = ''}) async {
     Attachments? customerAttachmemts;
     Attachments? supplierAttachments;
@@ -1408,6 +1457,12 @@ class EditOrderViewModel extends BaseViewModel {
       } else {
         customerAttachmemts = null;
       }
+    } else {
+      FrappeAlert.errorAlert(
+          title: 'Tạo mới không thành công',
+          context: context,
+          subtitle: 'Bạn cần có chữ ký khách hàng trước khi hoàn thành đơn.');
+      return null;
     }
 
     imgId = Uuid().v1().toString();
@@ -1429,6 +1484,13 @@ class EditOrderViewModel extends BaseViewModel {
       } else {
         supplierAttachments = null;
       }
+    } else {
+      FrappeAlert.errorAlert(
+          title: 'Tạo mới không thành công',
+          context: context,
+          subtitle: 'Bạn cần có chữ ký nhà cung cấp trước khi hoàn thành đơn.');
+
+      return null;
     }
 
     await locator<Api>().updateGiaoViecSignature(

@@ -156,6 +156,7 @@ class _TransportationDetailState extends State<TransportationDetail> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
+                            model.clearAllSignatures();
                             return TransportationEdit(
                               // name: item.name,
                               address: e.key,

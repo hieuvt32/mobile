@@ -38,12 +38,19 @@ class _InventoryViewState extends State<InventoryView>
   late ScrollController _scrollController;
   late bool fixedScroll;
 
-  GetKiemKhoResponse? _responseVatTu;
+  // GetKiemKhoResponse? _responseVatTu;
 
-  GetKiemKhoResponse? _responseThanhPham;
+  // GetKiemKhoResponse? _responseThanhPham;
 
-  GetBienBanKiemKhoResponse? _responsebienBanKiemKho;
+  //GetBienBanKiemKhoResponse? _responsebienBanKiemKho;
   var _readOnly = false;
+
+  List<BangThongKeKho> _vatTus = [];
+  List<BangThongKeKho> _thanhPhams = [];
+
+  BienBanKiemKho? _bienBanKiemKho = null;
+
+  final List<bool> _loading = [];
 
   // final List<Store> stores = [
   //   Store(name: 'Van A', system: 30, reality: 0),
@@ -71,48 +78,47 @@ class _InventoryViewState extends State<InventoryView>
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_smoothScrollToTop);
     fixedScroll = false;
-    _responseVatTu = null;
-    _responseThanhPham = null;
 
     _readOnly = false;
 
     super.initState();
     locator<Api>().getKiemKho(0).then((value) {
       setState(() {
-        _responseVatTu = value;
+        _vatTus = (value.thongKeKhos != null ? value.thongKeKhos : []) ?? [];
+        _loading.add(true);
       });
     });
 
     locator<Api>().getKiemKho(1).then((value) {
       setState(() {
-        _responseThanhPham = value;
+        _thanhPhams =
+            (value.thongKeKhos != null ? value.thongKeKhos : []) ?? [];
+        _loading.add(true);
       });
     });
 
     locator<Api>().getBienBanKiemKho().then((value) {
       setState(() {
-        _responsebienBanKiemKho = value;
-
-        if (_responsebienBanKiemKho != null &&
-            _responsebienBanKiemKho!.bienBanKiemKho != null) {
+        if (value != null && value.bienBanKiemKho != null) {
+          _bienBanKiemKho = value.bienBanKiemKho;
           _readOnly = true;
         }
+        _loading.add(true);
       });
     });
   }
 
   KiemKhoDanhSach? getDetailBienBanKiemKho(int type, String name) {
-    if (_responsebienBanKiemKho != null &&
-        _responsebienBanKiemKho!.bienBanKiemKho != null) {
+    if (_bienBanKiemKho != null) {
       if (type == 0) {
-        if (_responsebienBanKiemKho!.bienBanKiemKho!.materialList.length > 0) {
-          return _responsebienBanKiemKho!.bienBanKiemKho!.materialList
+        if (_bienBanKiemKho!.materialList.length > 0) {
+          return _bienBanKiemKho!.materialList
               .where((element) => element.realName == name)
               .first;
         }
       }
-      if (_responsebienBanKiemKho!.bienBanKiemKho!.semiProductList.length > 0) {
-        return _responsebienBanKiemKho!.bienBanKiemKho!.semiProductList
+      if (_bienBanKiemKho!.semiProductList.length > 0) {
+        return _bienBanKiemKho!.semiProductList
             .where((element) => element.realName == name)
             .first;
       }
@@ -148,15 +154,14 @@ class _InventoryViewState extends State<InventoryView>
   _buildTabContext(int type) {
     switch (type) {
       case 0:
-        return buidVatTu(_responseVatTu, type);
+        return buidVatTu(type);
       default:
-        return buidVatTu(_responseThanhPham, type);
+        return buidVatTu(type);
     }
   }
 
-  Widget buidVatTu(GetKiemKhoResponse? response, int type) {
-    var stores = (response!.thongKeKhos != null ? response.thongKeKhos : [])
-        as List<BangThongKeKho>;
+  Widget buidVatTu(int type) {
+    var stores = type == 0 ? _vatTus : _thanhPhams;
 
     return Container(
         child: SingleChildScrollView(
@@ -263,6 +268,9 @@ class _InventoryViewState extends State<InventoryView>
                                         width: 80,
                                         height: 32,
                                         child: TextField(
+                                          controller: TextEditingController(
+                                              text:
+                                                  "${stores[index].actualCount}"),
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
                                             // suffixIcon: Icon(Icons.search),
@@ -288,16 +296,12 @@ class _InventoryViewState extends State<InventoryView>
                                           ),
                                           textAlign: TextAlign.center,
                                           onChanged: (text) {
-                                            setState(() {
-                                              stores[index].actualCount =
-                                                  int.tryParse(text) ?? 0;
-                                            });
+                                            stores[index].actualCount =
+                                                int.tryParse(text) ?? 0;
                                           },
                                           onSubmitted: (text) {
-                                            setState(() {
-                                              stores[index].actualCount =
-                                                  int.tryParse(text) ?? 0;
-                                            });
+                                            stores[index].actualCount =
+                                                int.tryParse(text) ?? 0;
                                           },
                                         ),
                                       )
@@ -402,9 +406,7 @@ class _InventoryViewState extends State<InventoryView>
           // bottom: ,
         ),
         // body: AnswerButton(),
-        body: _responseVatTu != null &&
-                _responseThanhPham != null &&
-                _responsebienBanKiemKho != null
+        body: _loading.where((item) => item).length == 3
             ? Padding(
                 padding: const EdgeInsets.only(top: 12),
                 child: NestedScrollView(

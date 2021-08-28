@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
 import 'package:intl/intl.dart';
@@ -84,6 +86,10 @@ class _ListOrderViewState extends State<ListOrderView>
 
     super.initState();
 
+    reloadScreen();
+  }
+
+  void reloadScreen() {
     _responseDaDatHang = null;
 
     _responseDangGiaoHang = null;
@@ -397,7 +403,22 @@ class _ListOrderViewState extends State<ListOrderView>
               Navigator.pop(context);
             },
           ),
-          actions: [],
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 24),
+              child: GestureDetector(
+                child: FrappeIcon(
+                  FrappeIcons.refresh,
+                  size: 20,
+                ),
+                onTap: () {
+                  setState(() {
+                    reloadScreen();
+                  });
+                },
+              ),
+            )
+          ],
           title: Text(
             'Danh sách đơn bán hàng',
             style: TextStyle(

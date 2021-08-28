@@ -239,16 +239,18 @@ class _TransportationSignatureTabState
                         ),
                       ),
                       onPressed: () async {
-                        await widget.model.updateOrder(context,
-                            status: widget.isLatest
-                                ? "Đã giao hàng"
-                                : widget.model.order!.status);
                         var model = await widget.model.updateGiaoViecSignature(
                             context,
                             address: widget.address.address,
                             status: "Đã giao hàng");
+                        if (model != null) {
+                          await widget.model.updateOrder(context,
+                              status: widget.isLatest
+                                  ? "Đã giao hàng"
+                                  : widget.model.order!.status);
 
-                        widget.model.addGiaoViecSignature(model);
+                          widget.model.addGiaoViecSignature(model);
+                        }
                         widget.model.changeState();
                       },
                       child: Text(

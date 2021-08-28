@@ -90,8 +90,12 @@ class _SignatureViewState extends State<SignatureView> {
                         height: 12,
                       ),
                       widget.model.readOnlyView
-                          ? Image.network(
-                              '${widget.model.config!.baseUrl}${attachImageCustomer}')
+                          ? Container(
+                              width: double.infinity,
+                              height: 110,
+                              child: Image.network(
+                                  '${widget.model.config!.baseUrl}$attachImageCustomer'),
+                            )
                           : Signature(
                               controller:
                                   widget.model.signatureCustomerController,
@@ -153,8 +157,12 @@ class _SignatureViewState extends State<SignatureView> {
                         height: 12,
                       ),
                       widget.model.readOnlyView
-                          ? Image.network(
-                              '${widget.model.config!.baseUrl}${attachImage}')
+                          ? Container(
+                              width: double.infinity,
+                              height: 110,
+                              child: Image.network(
+                                  '${widget.model.config!.baseUrl}$attachImage'),
+                            )
                           : Signature(
                               controller:
                                   widget.model.signatureSupplierController,
