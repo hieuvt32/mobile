@@ -3,7 +3,9 @@ import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/model/bao_cao_tai_san_response.dart';
 import 'package:frappe_app/model/get_chi_nhanh_response.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/asset_liability_report/asset_liability_report.dart';
 import 'package:frappe_app/views/reports/dropdown_button_view.dart';
 
 class AssetReportView extends StatefulWidget {
@@ -66,11 +68,32 @@ class _AssetReportViewState extends State<AssetReportView> {
             children: listRow.asMap().entries.map((entry) {
           return Expanded(
               flex: entry.key == 0 ? 2 : 1,
-              child: Text(
-                entry.value,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ));
+              child: entry.key == 0
+                  ? GestureDetector(
+                      onTap: () {
+                        Navigator.of(context)
+                            .push(MaterialPageRoute(builder: (context) {
+                          return AssetLiabilityReport(
+                            customer: baoCaoTaiSan.code,
+                            customerName: baoCaoTaiSan.name,
+                          );
+                        }));
+                      },
+                      child: Text(
+                        entry.value,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 16,
+                            color: hexToColor("#007BFF"),
+                            decoration: TextDecoration.underline,
+                            decorationColor: hexToColor("#007BFF")),
+                      ),
+                    )
+                  : Text(
+                      entry.value,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16),
+                    ));
         }).toList()),
       );
     }).toList();
@@ -95,6 +118,11 @@ class _AssetReportViewState extends State<AssetReportView> {
 
   Future onGetBaoCaoTaiSan() async {
     try {
+      if (_selectedBranch == null || _selectedBranch!.length == 0) {
+        FrappeAlert.warnAlert(title: "Hãy chọn chi nhánh", context: context);
+        return;
+      }
+
       BaoCaoTaiSanResponse baoCaoTaiSanResponse =
           await locator<Api>().getBaoCaoTaiSanGiamDoc(_selectedBranch ?? "");
 

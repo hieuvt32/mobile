@@ -82,14 +82,14 @@ class _InventoryViewState extends State<InventoryView>
     _readOnly = false;
 
     super.initState();
-    locator<Api>().getKiemKho(0).then((value) {
+    locator<Api>().getKiemKho(type: 0).then((value) {
       setState(() {
         _vatTus = (value.thongKeKhos != null ? value.thongKeKhos : []) ?? [];
         _loading.add(true);
       });
     });
 
-    locator<Api>().getKiemKho(1).then((value) {
+    locator<Api>().getKiemKho(type: 1).then((value) {
       setState(() {
         _thanhPhams =
             (value.thongKeKhos != null ? value.thongKeKhos : []) ?? [];

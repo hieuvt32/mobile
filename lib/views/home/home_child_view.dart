@@ -353,7 +353,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       icon: FrappeIcons.binh_loi,
       childrens: [],
       view: (context) {
-        return ListOrderView();
+        return ListBrokenOrderView();
       },
       text: "Đơn bình báo lỗi",
       roles: [

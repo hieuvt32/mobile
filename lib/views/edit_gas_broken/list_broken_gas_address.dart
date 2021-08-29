@@ -2,6 +2,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/address.dart';
+import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
@@ -112,13 +113,13 @@ class _ListBrokenGasAddressState extends State<ListBrokenGasAddress> {
                           child: TextField(
                             controller: item.descriptionController,
                             keyboardType: TextInputType.multiline,
-                            maxLines: null,
+                            maxLines: 2,
                             decoration: InputDecoration(
                               border: new OutlineInputBorder(
                                   borderSide:
                                       new BorderSide(color: Colors.teal)),
-                              contentPadding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 10),
                             ),
                           ),
                         )
@@ -141,7 +142,7 @@ class _ListBrokenGasAddressState extends State<ListBrokenGasAddress> {
     required EditGasBrokenViewModel model,
   }) {
     return ExpansionItem(
-        item.isExpanded,
+        true,
         (isExpanded) => Row(
               children: [
                 Text("Địa chỉ:", style: TextStyle(fontSize: 16)),
@@ -160,8 +161,6 @@ class _ListBrokenGasAddressState extends State<ListBrokenGasAddress> {
                                     enabledBorder: InputBorder.none),
                                 icon: const Icon(Icons.arrow_drop_down),
                                 iconSize: 24,
-                                style:
-                                    const TextStyle(color: Colors.deepPurple),
                                 onChanged: (String? newValue) {
                                   model.changeAddress(
                                       itemIndex, newValue ?? "");
@@ -388,7 +387,9 @@ class _ListBrokenGasAddressState extends State<ListBrokenGasAddress> {
                                         },
                                         child: Text(
                                           "Báo bình lỗi",
-                                          style: TextStyle(color: Colors.white),
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18),
                                         ),
                                       ),
                                     )
@@ -416,25 +417,92 @@ class _ListBrokenGasAddressState extends State<ListBrokenGasAddress> {
                                             )
                                           ],
                                         )
-                                      : Container(
-                                          height: 48,
-                                          width: double.infinity,
-                                          decoration: BoxDecoration(
-                                              color: hexToColor("#FF0F00"),
-                                              borderRadius:
-                                                  BorderRadius.circular(4)),
-                                          child: TextButton(
-                                            onPressed: () {
-                                              model
-                                                  .deleteDonBinhBaoLoi(context);
-                                            },
-                                            child: Text(
-                                              "Xóa",
-                                              style: TextStyle(
-                                                  color: Colors.white),
+                                      : Config()
+                                              .roles
+                                              .contains(UserRole.DieuPhoi)
+                                          ? Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "Phản hồi",
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                  textAlign: TextAlign.left,
+                                                ),
+                                                SizedBox(
+                                                  height: 16,
+                                                ),
+                                                Container(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: TextField(
+                                                    controller: model
+                                                        .feedbackController,
+                                                    keyboardType:
+                                                        TextInputType.multiline,
+                                                    maxLines: 3,
+                                                    decoration: InputDecoration(
+                                                      border: new OutlineInputBorder(
+                                                          borderSide:
+                                                              new BorderSide(
+                                                                  color: Colors
+                                                                      .teal)),
+                                                      contentPadding:
+                                                          const EdgeInsets
+                                                                  .symmetric(
+                                                              horizontal: 10,
+                                                              vertical: 10),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 24),
+                                                Container(
+                                                  height: 48,
+                                                  width: double.infinity,
+                                                  decoration: BoxDecoration(
+                                                      color:
+                                                          hexToColor("#0072BC"),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              4)),
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      model.updateDonBaoBinhLoi(
+                                                          context);
+                                                    },
+                                                    child: Text(
+                                                      "Gửi phản hồi",
+                                                      style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          : Container(
+                                              height: 48,
+                                              width: double.infinity,
+                                              decoration: BoxDecoration(
+                                                  color: hexToColor("#FF0F00"),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4)),
+                                              child: TextButton(
+                                                onPressed: () {
+                                                  model.deleteDonBinhBaoLoi(
+                                                      context);
+                                                },
+                                                child: Text(
+                                                  "Xóa",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 18),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
                             ],
                           ))
                       : Center(
