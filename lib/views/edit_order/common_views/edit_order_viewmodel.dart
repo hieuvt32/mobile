@@ -35,95 +35,201 @@ import 'package:uuid/uuid.dart';
 
 @lazySingleton
 class EditOrderViewModel extends BaseViewModel {
+  // Start: controller editing data
   late SignatureController _signatureCustomerController;
   late SignatureController _signatureSupplierController;
-
-  Order? _order;
-
-  List<UserRole> _userRoles = [];
-
   late List<Map<String, TextEditingController>> _productEditControllers;
   late Map<String, List<Map<String, TextEditingController>>>
       _productForLocationEditControllerMap;
   late List<Map<String, TextEditingController>> _donNhapKhoEditControllers;
   late List<Map<String, TextEditingController>> _donTraVeEditControllers;
-
   late List<Map<String, TextEditingController>> _donHoanTraEditControllers;
-
   late List<TextEditingController> _addressControllers;
+  // End: controller editing data
 
+  // Start: data store
+  Order? _order;
+  List<UserRole> _userRoles = [];
   late List<Product> _products;
-
   late List<Product> _productForLocations;
-
   late List<DanhSachNhapKho> _nhapKhos;
-
   late List<DanhSachNhapKho> _hoanTras;
-
   late List<DanhSachNhapKho> _traVes;
-
   DonNhapKho? _donNhapKho;
-
   late List<Address> _addresses;
-
   late List<Address> _editAddresses;
-
   late List<Customer> _customers;
-
   late List<Customer> _manufactures;
-
   late List<DonGiaMuaBan> _donGiaMuaBans;
-
   late List<NguyenVatLieuSanPham> _nguyenVatLieuVatTus;
-
   late List<NguyenVatLieuSanPham> _nguyenVatLieuSanPhams;
-
   late List<GiaoViecSignature> _giaoViecSignatures;
-
   late List<BienSoXe> _bienSoXes;
-
   late List<Employee> _employees;
-
   late double _totalOrderPrice = 0;
-
   late bool _isNhaCungCap = false;
-
-  double get totalOrderPrice => _totalOrderPrice;
-
-  List<GiaoViecSignature> get giaoViecSignatures => _giaoViecSignatures;
-
-  List<BienSoXe> get bienSoXes => _bienSoXes;
-
-  List<Employee> get employees => _employees;
-
-  List<DonGiaMuaBan> get donGiaMuaBans => _donGiaMuaBans;
-
   late GiaoViec giaoViec;
-
-  // Object? _diaChiSelect;
-
   String? _customerValue;
-
   bool _sellInWarehouse = false;
-  // bool _readOnlyView = false;
   bool _haveDelivery = false;
-
   int _isRated = 0;
-
   bool _saveTemplate = false;
-
   bool _isLoading = false;
-
   String? _name;
-
   String? _title;
+  late Config _config;
+  bool isCreateScreen = false;
+  // End: data store
 
+  final String key = "order_template";
+
+  storeData() {
+    try {
+      var editOrderViewModel = {
+        "order": _order,
+        // "user_roles": _userRoles,
+        "products": products,
+        "product_for_locations": _productForLocations,
+        "nhap_khos": _nhapKhos,
+        "hoan_tras": _hoanTras,
+        "tra_ves": _traVes,
+        "don_nhap_kho": _donNhapKho,
+        "addresses": _addresses,
+        "edit_addresses": _editAddresses,
+        "customers": _customers,
+        "manufactures": _manufactures,
+        "don_gia_mua_bans": _donGiaMuaBans,
+        "nguyen_vat_lieu_vat_tus": _nguyenVatLieuVatTus,
+        "nguyen_vat_lieu_san_phams": _nguyenVatLieuSanPhams,
+        "giao_viec_signatures": _giaoViecSignatures,
+        "bien_so_xes": _bienSoXes,
+        "employees": _employees,
+        "total_order_price": _totalOrderPrice,
+        "is_nha_cung_cap": _isNhaCungCap,
+        "giao_viec": giaoViec,
+        "customer_value": _customerValue,
+        "sell_in_warehouse": _sellInWarehouse,
+        "have_delivery": _haveDelivery,
+        "is_rated": _isRated,
+        "save_template": _saveTemplate,
+        "name": _name,
+        "title": _title
+      };
+
+      var jsonData = jsonEncode(editOrderViewModel);
+
+      Config.set(
+        key,
+        jsonData,
+      );
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  loadStoreData() async {
+    try {
+      // Config.remove(key);
+      if (Config.containsKey(key)) {
+        var jsonData = Config.get(key);
+
+        var data = jsonDecode(jsonData);
+
+        _order = Order.fromJson(data["order"]);
+
+        _products = (data["products"] as List<dynamic>)
+            .map((e) => Product.fromJson(e))
+            .toList();
+
+        _productForLocations = (data["product_for_locations"] as List<dynamic>)
+            .map((e) => Product.fromJson(e))
+            .toList();
+
+        _sellInWarehouse = data["sell_in_warehouse"];
+
+        _isNhaCungCap = data["is_nha_cung_cap"];
+
+        // get total price of an order
+        _totalOrderPrice = data["total_order_price"];
+
+        _customerValue = data["customer_value"];
+
+        _addresses = (data["addresses"] as List<dynamic>)
+            .map((e) => Address.fromJson(e))
+            .toList();
+
+        _editAddresses = (data["edit_addresses"] as List<dynamic>)
+            .map((e) => Address.fromJson(e))
+            .toList();
+
+        if (_sellInWarehouse || _isNhaCungCap) {
+          for (var product in _products) {
+            _products.add(product);
+            _productEditControllers.add({
+              "kgController": TextEditingController(text: "${product.kg}"),
+              "quantityController":
+                  TextEditingController(text: "${product.quantity}")
+            });
+          }
+          // TODO: Nếu lỗi xem lại tại đây
+          // _readOnlyView = true;
+        } else {
+          var locations = [];
+
+          var mapData = groupBy<Product, String>(
+              _productForLocations, (obj) => obj.address);
+          for (var product in _productForLocations) {
+            // _productForLocations.add(product);
+
+            if (!locations.contains(product.address)) {
+              locations.add(product.address);
+
+              _addressControllers.add(TextEditingController());
+
+              // List<Address>? listAdrress = _addresses;
+
+              // var elements = listAdrress
+              //     .where((element) => element.name == product.address)
+              //     .toList();
+
+              // if (elements != null && elements.length > 0) {
+              //   _editAddresses.add(elements[0]);
+              // }
+              if (mapData.containsKey(product.address)) {
+                var products = mapData[product.address]!.toList();
+                List<Map<String, TextEditingController>> mapChildData = [];
+                for (int i = 0; i < products.length; i++) {
+                  mapChildData.add({
+                    "kgController":
+                        TextEditingController(text: "${products[i].kg}"),
+                    "quantityController":
+                        TextEditingController(text: "${products[i].quantity}")
+                  });
+                }
+                if (!_productForLocationEditControllerMap
+                    .containsKey(product.address))
+                  _productForLocationEditControllerMap[product.address] =
+                      mapChildData;
+              }
+            }
+          }
+        }
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  // Start: public get value
+  double get totalOrderPrice => _totalOrderPrice;
+  List<GiaoViecSignature> get giaoViecSignatures => _giaoViecSignatures;
+  List<BienSoXe> get bienSoXes => _bienSoXes;
+  List<Employee> get employees => _employees;
+  List<DonGiaMuaBan> get donGiaMuaBans => _donGiaMuaBans;
   DonNhapKho? get donNhapKho => _donNhapKho;
-
   bool get isLoading => _isLoading;
-
   String get title => _title ?? '';
-
   bool get sellInWarehouse {
     _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
     return _sellInWarehouse;
@@ -146,35 +252,27 @@ class EditOrderViewModel extends BaseViewModel {
       //   return true;
 
     }
-
     return false;
   }
 
   bool get haveDelivery => _haveDelivery;
-
   int get isRated => _isRated;
-
   bool get saveTemplate => _saveTemplate;
-
   OrderState get orderState {
     return calculateState();
   }
 
   List<Map<String, TextEditingController>> get productEditControllers =>
       _productEditControllers;
-
   Map<String, List<Map<String, TextEditingController>>>
       get productForLocationEditControllerMap =>
           _productForLocationEditControllerMap;
   List<Map<String, TextEditingController>> get donNhapKhoEditControllers =>
       _donNhapKhoEditControllers;
-
   List<Map<String, TextEditingController>> get donTraVeEditControllers =>
       _donTraVeEditControllers;
-
   List<Map<String, TextEditingController>> get donHoanTraEditControllers =>
       _donHoanTraEditControllers;
-
   List<TextEditingController> get addressControllers => _addressControllers;
 
   List<DanhSachNhapKho> get nhapKhos => _nhapKhos;
@@ -192,35 +290,21 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   String? get customerValue => _customerValue;
-
   Order? get order => _order;
-
-  late Config _config;
-
   Config? get config => _config;
-
   List<Customer> get customers => _customers;
-
   List<Customer> get manufactures => _manufactures;
-
   List<Address> get addresses => _addresses;
-
   List<Address> get editAddresses => _editAddresses;
-
   List<Product> get products => _products;
   List<Product> get productForLocations => _productForLocations;
-
   List<NguyenVatLieuSanPham> get nguyenVatLieuVatTus => _nguyenVatLieuVatTus;
-
   List<NguyenVatLieuSanPham> get nguyenVatLieuSanPhams =>
       _nguyenVatLieuSanPhams;
-
   SignatureController get signatureCustomerController =>
       _signatureCustomerController;
-
   SignatureController get signatureSupplierController =>
       _signatureSupplierController;
-
   OrderState calculateState() {
     if (_order != null) {
       switch (_order!.status) {
@@ -251,6 +335,7 @@ class EditOrderViewModel extends BaseViewModel {
 
     return '';
   }
+  // End: public get value
 
   bool isAvailableRoles(List<UserRole> roles) {
     return _userRoles.any((element) => roles.contains(element));
@@ -492,7 +577,7 @@ class EditOrderViewModel extends BaseViewModel {
     notifyListeners();
   }
 
-// customer logic code;
+  // customer logic code;
   Future getCustomerByCode(String customerCode) async {
     locator<Api>().getCusomterByCode(code: customerCode).then((response) {
       Customer? customer = response.customer;
@@ -898,6 +983,7 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   changeState() {
+    storeData();
     notifyListeners();
   }
 
@@ -982,182 +1068,193 @@ class EditOrderViewModel extends BaseViewModel {
     String type = 'B',
     bool isNhaCungCap = false,
   }) async {
-    if (_userRoles.contains(UserRole.KhachHang)) {
-      await customerCreateOrder(context);
-      return;
-    }
+    try {
+      if (_userRoles.contains(UserRole.KhachHang)) {
+        await customerCreateOrder(context);
+        return;
+      }
 
-    Attachments? customerAttachmemts;
-    Attachments? supplierAttachments;
-    if (order!.sellInWarehouse == 1) {
-      var imgId = Uuid().v1().toString();
-      var customerBytes = await _signatureCustomerController.toPngBytes();
-      if (customerBytes != null) {
-        var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
-          doctype: 'HLGas_HoaDonMuaBan',
-          name: _name!, //
-          file: GasFile(
-            file: customerBytes,
-            fileName: 'hlgas_hoadonmuaban-$imgId.png',
-            fieldName: 'attach_signature_customer_image',
-          ),
-        );
+      Attachments? customerAttachmemts;
+      Attachments? supplierAttachments;
+      if (order!.sellInWarehouse == 1) {
+        var imgId = Uuid().v1().toString();
+        var customerBytes = await _signatureCustomerController.toPngBytes();
+        if (customerBytes != null) {
+          var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
+            doctype: 'HLGas_HoaDonMuaBan',
+            name: _name!, //
+            file: GasFile(
+              file: customerBytes,
+              fileName: 'hlgas_hoadonmuaban-$imgId.png',
+              fieldName: 'attach_signature_customer_image',
+            ),
+          );
 
-        if (responseUploadCustomer != null &&
-            responseUploadCustomer.attachments != null) {
-          customerAttachmemts = responseUploadCustomer.attachments;
+          if (responseUploadCustomer != null &&
+              responseUploadCustomer.attachments != null) {
+            customerAttachmemts = responseUploadCustomer.attachments;
+          } else {
+            customerAttachmemts = null;
+          }
         } else {
-          customerAttachmemts = null;
-        }
-      } else {
-        FrappeAlert.errorAlert(
-            title: 'Tạo mới không thành công',
-            context: context,
-            subtitle: 'Bạn cần có chữ ký khách hàng trước khi hoàn thành đơn.');
-        return;
-      }
-
-      imgId = Uuid().v1().toString();
-      var supplierBytes = await _signatureSupplierController.toPngBytes();
-      if (supplierBytes != null) {
-        var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
-          doctype: 'HLGas_HoaDonMuaBan',
-          name: _name!, //
-          file: GasFile(
-            file: supplierBytes,
-            fileName: 'hlgas_hoadonmuaban-$imgId.png',
-            fieldName: 'attach_signature_supplier_image',
-          ),
-        );
-
-        if (responseUploadSupplier != null &&
-            responseUploadSupplier.attachments != null) {
-          supplierAttachments = responseUploadSupplier.attachments;
-        } else {
-          supplierAttachments = null;
-        }
-      } else {
-        FrappeAlert.errorAlert(
-            title: 'Tạo mới không thành công',
-            context: context,
-            subtitle:
-                'Bạn cần có chữ ký nhà cung cấp trước khi hoàn thành đơn.');
-        return;
-      }
-    }
-
-    // if (!_sellInWarehouse) {
-    //   for
-    // }
-
-    List<Customer>? customers = [];
-
-    if (isNhaCungCap) {
-      customers = _manufactures;
-    } else {
-      customers = _customers;
-    }
-
-    var elements =
-        customers.where((element) => element.code == _customerValue).toList();
-
-    if (elements != null && elements.length > 0) {
-      _order!.email = elements[0].email;
-      _order!.paymentStatus = 'Chưa thanh toán';
-      _order!.phone = elements[0].phone;
-      if (_isNhaCungCap) {
-        _order!.products = products;
-      } else {
-        _order!.products = _sellInWarehouse ? _products : _productForLocations;
-      }
-
-      var quantity = _order!.products.fold<int>(
-          0, (previousValue, element) => previousValue + element.quantity);
-      if (_order!.products.length <= 0 || quantity <= 0) {
-        FrappeAlert.errorAlert(
-            title: 'Lỗi xảy ra',
-            context: context,
-            subtitle: 'bạn chưa có sản phẩm nào!');
-        return;
-      }
-
-      // calculateTotalPrice();
-
-      // _order!.totalCost = _totalOrderPrice;
-      _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
-      _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
-      _order!.taxId = elements[0].taxId;
-      _order!.vendor = elements[0].code;
-
-      _order!.vendorAddress = '';
-
-      _order!.type = type;
-
-      _order!.vendorName = elements[0].realName;
-      _order!.attachSignatureCustomerImage =
-          customerAttachmemts != null ? customerAttachmemts.fileUrl : '';
-
-      _order!.attachSignatureSupplierImage =
-          supplierAttachments != null ? supplierAttachments.fileUrl : '';
-
-      var createOrderResponse =
-          await locator<Api>().createHoaDonMuaBan(_order!);
-
-      if (createOrderResponse != null &&
-          createOrderResponse.responseData != null) {
-        _donNhapKho!.codeOrders = createOrderResponse.responseData.data["name"];
-        _donNhapKho!.status = "Chờ nhập hàng";
-        _donNhapKho!.listShell = [...nhapKhos, ...traVes];
-        _name = createOrderResponse.responseData.data["name"];
-        _title = createOrderResponse.responseData.data["name"];
-        _order!.name = createOrderResponse.responseData.data["name"];
-        _totalOrderPrice =
-            createOrderResponse.responseData.data["total_amount"];
-        _order!.totalCost =
-            createOrderResponse.responseData.data["total_amount"];
-        var createDonNhapKhoResponse =
-            await locator<Api>().createDonNhapKho(_donNhapKho!);
-
-        if (createDonNhapKhoResponse != null &&
-            createDonNhapKhoResponse.responseData != null) {
-          FrappeAlert.successAlert(
-              title: 'Tạo đơn thành công',
+          FrappeAlert.errorAlert(
+              title: 'Tạo mới không thành công',
               context: context,
-              subtitle: 'Tạo đơn hàng thành công.');
+              subtitle:
+                  'Bạn cần có chữ ký khách hàng trước khi hoàn thành đơn.');
+          return;
         }
 
-        _haveDelivery = false;
+        imgId = Uuid().v1().toString();
+        var supplierBytes = await _signatureSupplierController.toPngBytes();
+        if (supplierBytes != null) {
+          var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
+            doctype: 'HLGas_HoaDonMuaBan',
+            name: _name!, //
+            file: GasFile(
+              file: supplierBytes,
+              fileName: 'hlgas_hoadonmuaban-$imgId.png',
+              fieldName: 'attach_signature_supplier_image',
+            ),
+          );
 
-        var donBanHangResponse =
-            await locator<Api>().getSingleHoaDonBanHang(_name!);
+          if (responseUploadSupplier != null &&
+              responseUploadSupplier.attachments != null) {
+            supplierAttachments = responseUploadSupplier.attachments;
+          } else {
+            supplierAttachments = null;
+          }
+        } else {
+          FrappeAlert.errorAlert(
+              title: 'Tạo mới không thành công',
+              context: context,
+              subtitle:
+                  'Bạn cần có chữ ký nhà cung cấp trước khi hoàn thành đơn.');
+          return;
+        }
+      }
 
-        if (donBanHangResponse != null && donBanHangResponse.order != null) {
-          _order = donBanHangResponse.order;
+      // if (!_sellInWarehouse) {
+      //   for
+      // }
+
+      List<Customer>? customers = [];
+
+      if (isNhaCungCap) {
+        customers = _manufactures;
+      } else {
+        customers = _customers;
+      }
+
+      var elements =
+          customers.where((element) => element.code == _customerValue).toList();
+
+      if (elements != null && elements.length > 0) {
+        _order!.email = elements[0].email;
+        _order!.paymentStatus = 'Chưa thanh toán';
+        _order!.phone = elements[0].phone;
+        if (_isNhaCungCap) {
+          _order!.products = products;
+        } else {
+          _order!.products =
+              _sellInWarehouse ? _products : _productForLocations;
         }
 
-        var donNhapKhoResponse =
-            await locator<Api>().getSingleDonNhapKho(_name!);
-        if (donNhapKhoResponse != null &&
-            donNhapKhoResponse.donNhapKho != null) {
-          _donNhapKho = donNhapKhoResponse.donNhapKho;
+        var quantity = _order!.products.fold<int>(
+            0, (previousValue, element) => previousValue + element.quantity);
+        if (_order!.products.length <= 0 || quantity <= 0) {
+          FrappeAlert.errorAlert(
+              title: 'Lỗi xảy ra',
+              context: context,
+              subtitle: 'bạn chưa có sản phẩm nào!');
+          return;
         }
-        var code =
-            "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
-        await locator<Api>().createCongNoTienHoaDon(code, _name!);
 
-        notifyListeners();
+        // calculateTotalPrice();
+
+        // _order!.totalCost = _totalOrderPrice;
+        _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
+        _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
+        _order!.taxId = elements[0].taxId;
+        _order!.vendor = elements[0].code;
+
+        _order!.vendorAddress = '';
+
+        _order!.type = type;
+
+        _order!.vendorName = elements[0].realName;
+        _order!.attachSignatureCustomerImage =
+            customerAttachmemts != null ? customerAttachmemts.fileUrl : '';
+
+        _order!.attachSignatureSupplierImage =
+            supplierAttachments != null ? supplierAttachments.fileUrl : '';
+
+        var createOrderResponse =
+            await locator<Api>().createHoaDonMuaBan(_order!);
+
+        if (createOrderResponse != null &&
+            createOrderResponse.responseData != null) {
+          _donNhapKho!.codeOrders =
+              createOrderResponse.responseData.data["name"];
+          _donNhapKho!.status = "Chờ nhập hàng";
+          _donNhapKho!.listShell = [...nhapKhos, ...traVes];
+          _name = createOrderResponse.responseData.data["name"];
+          _title = createOrderResponse.responseData.data["name"];
+          _order!.name = createOrderResponse.responseData.data["name"];
+          _totalOrderPrice =
+              createOrderResponse.responseData.data["total_amount"];
+          _order!.totalCost =
+              createOrderResponse.responseData.data["total_amount"];
+          var createDonNhapKhoResponse =
+              await locator<Api>().createDonNhapKho(_donNhapKho!);
+
+          if (createDonNhapKhoResponse != null &&
+              createDonNhapKhoResponse.responseData != null) {
+            FrappeAlert.successAlert(
+                title: 'Tạo đơn thành công',
+                context: context,
+                subtitle: 'Tạo đơn hàng thành công.');
+          }
+
+          _haveDelivery = false;
+
+          var donBanHangResponse =
+              await locator<Api>().getSingleHoaDonBanHang(_name!);
+
+          if (donBanHangResponse != null && donBanHangResponse.order != null) {
+            _order = donBanHangResponse.order;
+          }
+
+          var donNhapKhoResponse =
+              await locator<Api>().getSingleDonNhapKho(_name!);
+          if (donNhapKhoResponse != null &&
+              donNhapKhoResponse.donNhapKho != null) {
+            _donNhapKho = donNhapKhoResponse.donNhapKho;
+          }
+          var code =
+              "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
+          await locator<Api>().createCongNoTienHoaDon(code, _name!);
+          if (!saveTemplate) Config.remove(key);
+          notifyListeners();
+        } else {
+          FrappeAlert.errorAlert(
+              title: 'Lỗi xảy ra',
+              context: context,
+              subtitle:
+                  'Tạo đơn hàng không thành công, có lỗi khi tạo đơn hàng!');
+        }
       } else {
         FrappeAlert.errorAlert(
             title: 'Lỗi xảy ra',
             context: context,
-            subtitle:
-                'Tạo đơn hàng không thành công, có lỗi khi tạo đơn hàng!');
+            subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!');
       }
-    } else {
+    } catch (e) {
       FrappeAlert.errorAlert(
           title: 'Lỗi xảy ra',
           context: context,
-          subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!');
+          subtitle:
+              'Khi thực thi tác vụ, xin hãy liên hệ với bên phát triển để xử lý!');
     }
   }
 
@@ -1202,186 +1299,197 @@ class EditOrderViewModel extends BaseViewModel {
     bool isNhaCungCap = false,
     String statusDonNhapKho = 'Chờ nhập hàng',
   }) async {
-    Attachments? customerAttachmemts;
-    Attachments? supplierAttachments;
-    if (order!.sellInWarehouse == 1) {
-      var imgId = Uuid().v1().toString();
-      var customerBytes = await _signatureCustomerController.toPngBytes();
-      if (customerBytes != null) {
-        var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
-          doctype: 'HLGas_HoaDonMuaBan',
-          name: _name!, //
-          file: GasFile(
-            file: customerBytes,
-            fileName: 'hlgas_hoadonmuaban-$imgId.png',
-            fieldName: 'attach_signature_customer_image',
-          ),
-        );
+    try {
+      Attachments? customerAttachmemts;
+      Attachments? supplierAttachments;
+      if (order!.sellInWarehouse == 1) {
+        var imgId = Uuid().v1().toString();
+        var customerBytes = await _signatureCustomerController.toPngBytes();
+        if (customerBytes != null) {
+          var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
+            doctype: 'HLGas_HoaDonMuaBan',
+            name: _name!, //
+            file: GasFile(
+              file: customerBytes,
+              fileName: 'hlgas_hoadonmuaban-$imgId.png',
+              fieldName: 'attach_signature_customer_image',
+            ),
+          );
 
-        if (responseUploadCustomer != null &&
-            responseUploadCustomer.attachments != null) {
-          customerAttachmemts = responseUploadCustomer.attachments;
-        } else {
-          customerAttachmemts = null;
-        }
-      }
-      // else {
-      //   FrappeAlert.errorAlert(
-      //     title: 'Lỗi xảy ra',
-      //     context: context,
-      //     subtitle: 'Bạn chưa có chữ ký khách hàng!',
-      //   );
-      //   return;
-      // }
-
-      imgId = Uuid().v1().toString();
-      var supplierBytes = await _signatureSupplierController.toPngBytes();
-      if (supplierBytes != null) {
-        var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
-          doctype: 'HLGas_HoaDonMuaBan',
-          name: _name!, //
-          file: GasFile(
-            file: supplierBytes,
-            fileName: 'hlgas_hoadonmuaban-$imgId.png',
-            fieldName: 'attach_signature_supplier_image',
-          ),
-        );
-
-        if (responseUploadSupplier != null &&
-            responseUploadSupplier.attachments != null) {
-          supplierAttachments = responseUploadSupplier.attachments;
-        } else {
-          supplierAttachments = null;
-        }
-      }
-      // else {
-      //   FrappeAlert.errorAlert(
-      //     title: 'Lỗi xảy ra',
-      //     context: context,
-      //     subtitle: 'Bạn chưa có chữ ký nhà cung cấp!',
-      //   );
-      //   return;
-      // }
-    }
-
-    List<Customer>? customers = [];
-
-    if (isNhaCungCap) {
-      customers = _manufactures;
-    } else {
-      customers = _customers;
-    }
-
-    var elements =
-        customers.where((element) => element.code == _order!.vendor).toList();
-
-    if (elements != null && elements.length > 0) {
-      _order!.email = elements[0].email;
-      _order!.paymentStatus = 'Chưa thanh toán';
-      _order!.phone = elements[0].phone;
-      if (_isNhaCungCap) {
-        _order!.products = products;
-      } else {
-        _order!.products = _sellInWarehouse ? _products : _productForLocations;
-      }
-      var quantity = _order!.products.fold<int>(
-          0, (previousValue, element) => previousValue + element.quantity);
-      if (_order!.products.length <= 0 || quantity <= 0) {
-        FrappeAlert.errorAlert(
-            title: 'Lỗi xảy ra',
-            context: context,
-            subtitle: 'bạn chưa có sản phẩm nào!');
-        return;
-      }
-
-      // calculateTotalPrice();
-
-      // _order!.totalCost = _totalOrderPrice;
-      _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
-      _order!.status = ["", null, false, 0].contains(status)
-          ? !_sellInWarehouse
-              ? "Đã đặt hàng"
-              : "Đã giao hàng"
-          : status;
-      _order!.taxId = elements[0].taxId;
-      _order!.vendor = elements[0].code;
-
-      _order!.vendorAddress = '';
-
-      _order!.type = type;
-
-      _order!.vendorName = elements[0].realName;
-      _order!.attachSignatureCustomerImage =
-          customerAttachmemts != null ? customerAttachmemts.fileUrl : '';
-
-      _order!.attachSignatureSupplierImage =
-          supplierAttachments != null ? supplierAttachments.fileUrl : '';
-
-      var uploadHoaDonMuaBan = await locator<Api>().updateHoaDonMuaBan(_order!);
-
-      if (uploadHoaDonMuaBan != null &&
-          uploadHoaDonMuaBan.responseData != null) {
-        _totalOrderPrice = uploadHoaDonMuaBan.responseData.data["total_amount"];
-        _order!.totalCost =
-            uploadHoaDonMuaBan.responseData.data["total_amount"];
-        if (status == "Đang giao hàng") {
-          List<CreateTrackingLocationRequest> locations = _order!.products
-              .map((e) => CreateTrackingLocationRequest(
-                  address: e.diaChi, order: order!.name))
-              .toList();
-
-          LocationData currentLocation = await Location().getLocation();
-          locations.add(CreateTrackingLocationRequest(
-              address: "Xe",
-              order: _order!.name,
-              latitude: currentLocation.latitude,
-              longitude: currentLocation.longitude));
-
-          await locator<Api>().createTrackingLocation(locations);
-        }
-
-        _donNhapKho!.codeOrders = _name!;
-        _donNhapKho!.status = statusDonNhapKho;
-        _donNhapKho!.listShell = [...nhapKhos, ...traVes];
-
-        var updateDonNhapKhoResponse =
-            await locator<Api>().updateDonNhapKho(_donNhapKho!);
-        if (updateDonNhapKhoResponse != null &&
-            updateDonNhapKhoResponse.responseData != null) {
-          notifyListeners();
-          FrappeAlert.successAlert(
-              title: 'Cập nhật thành công',
-              context: context,
-              subtitle: 'Cập nhật đơn hàng thành công.');
-        }
-
-        var code =
-            "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
-        await locator<Api>().createCongNoTienHoaDon(code, _name!);
-
-        for (var product in _order!.products) {
-          if (!["", null, false, 0].contains(product.material)) {
-            await createCongNoTaiSan(
-                product.material!,
-                product.quantity - product.actualQuantity,
-                0,
-                product.kg - product.actualKg);
+          if (responseUploadCustomer != null &&
+              responseUploadCustomer.attachments != null) {
+            customerAttachmemts = responseUploadCustomer.attachments;
+          } else {
+            customerAttachmemts = null;
           }
         }
+        // else {
+        //   FrappeAlert.errorAlert(
+        //     title: 'Lỗi xảy ra',
+        //     context: context,
+        //     subtitle: 'Bạn chưa có chữ ký khách hàng!',
+        //   );
+        //   return;
+        // }
+
+        imgId = Uuid().v1().toString();
+        var supplierBytes = await _signatureSupplierController.toPngBytes();
+        if (supplierBytes != null) {
+          var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
+            doctype: 'HLGas_HoaDonMuaBan',
+            name: _name!, //
+            file: GasFile(
+              file: supplierBytes,
+              fileName: 'hlgas_hoadonmuaban-$imgId.png',
+              fieldName: 'attach_signature_supplier_image',
+            ),
+          );
+
+          if (responseUploadSupplier != null &&
+              responseUploadSupplier.attachments != null) {
+            supplierAttachments = responseUploadSupplier.attachments;
+          } else {
+            supplierAttachments = null;
+          }
+        }
+        // else {
+        //   FrappeAlert.errorAlert(
+        //     title: 'Lỗi xảy ra',
+        //     context: context,
+        //     subtitle: 'Bạn chưa có chữ ký nhà cung cấp!',
+        //   );
+        //   return;
+        // }
+      }
+
+      List<Customer>? customers = [];
+
+      if (isNhaCungCap) {
+        customers = _manufactures;
+      } else {
+        customers = _customers;
+      }
+
+      var elements =
+          customers.where((element) => element.code == _order!.vendor).toList();
+
+      if (elements != null && elements.length > 0) {
+        _order!.email = elements[0].email;
+        _order!.paymentStatus = 'Chưa thanh toán';
+        _order!.phone = elements[0].phone;
+        if (_isNhaCungCap) {
+          _order!.products = products;
+        } else {
+          _order!.products =
+              _sellInWarehouse ? _products : _productForLocations;
+        }
+        var quantity = _order!.products.fold<int>(
+            0, (previousValue, element) => previousValue + element.quantity);
+        if (_order!.products.length <= 0 || quantity <= 0) {
+          FrappeAlert.errorAlert(
+              title: 'Lỗi xảy ra',
+              context: context,
+              subtitle: 'bạn chưa có sản phẩm nào!');
+          return;
+        }
+
+        // calculateTotalPrice();
+
+        // _order!.totalCost = _totalOrderPrice;
+        _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
+        _order!.status = ["", null, false, 0].contains(status)
+            ? !_sellInWarehouse
+                ? "Đã đặt hàng"
+                : "Đã giao hàng"
+            : status;
+        _order!.taxId = elements[0].taxId;
+        _order!.vendor = elements[0].code;
+
+        _order!.vendorAddress = '';
+
+        _order!.type = type;
+
+        _order!.vendorName = elements[0].realName;
+        _order!.attachSignatureCustomerImage =
+            customerAttachmemts != null ? customerAttachmemts.fileUrl : '';
+
+        _order!.attachSignatureSupplierImage =
+            supplierAttachments != null ? supplierAttachments.fileUrl : '';
+
+        var uploadHoaDonMuaBan =
+            await locator<Api>().updateHoaDonMuaBan(_order!);
+
+        if (uploadHoaDonMuaBan != null &&
+            uploadHoaDonMuaBan.responseData != null) {
+          _totalOrderPrice =
+              uploadHoaDonMuaBan.responseData.data["total_amount"];
+          _order!.totalCost =
+              uploadHoaDonMuaBan.responseData.data["total_amount"];
+          if (status == "Đang giao hàng") {
+            List<CreateTrackingLocationRequest> locations = _order!.products
+                .map((e) => CreateTrackingLocationRequest(
+                    address: e.diaChi, order: order!.name))
+                .toList();
+
+            LocationData currentLocation = await Location().getLocation();
+            locations.add(CreateTrackingLocationRequest(
+                address: "Xe",
+                order: _order!.name,
+                latitude: currentLocation.latitude,
+                longitude: currentLocation.longitude));
+
+            await locator<Api>().createTrackingLocation(locations);
+          }
+
+          _donNhapKho!.codeOrders = _name!;
+          _donNhapKho!.status = statusDonNhapKho;
+          _donNhapKho!.listShell = [...nhapKhos, ...traVes];
+
+          var updateDonNhapKhoResponse =
+              await locator<Api>().updateDonNhapKho(_donNhapKho!);
+          if (updateDonNhapKhoResponse != null &&
+              updateDonNhapKhoResponse.responseData != null) {
+            notifyListeners();
+            FrappeAlert.successAlert(
+                title: 'Cập nhật thành công',
+                context: context,
+                subtitle: 'Cập nhật đơn hàng thành công.');
+          }
+
+          var code =
+              "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
+          await locator<Api>().createCongNoTienHoaDon(code, _name!);
+
+          for (var product in _order!.products) {
+            if (!["", null, false, 0].contains(product.material)) {
+              await createCongNoTaiSan(
+                  product.material!,
+                  product.quantity - product.actualQuantity,
+                  0,
+                  product.kg - product.actualKg);
+            }
+          }
+        } else {
+          FrappeAlert.errorAlert(
+              title: 'Lỗi xảy ra',
+              context: context,
+              subtitle: 'Không cập nhật được đơn hàng!');
+        }
       } else {
         FrappeAlert.errorAlert(
-            title: 'Lỗi xảy ra',
-            context: context,
-            subtitle: 'Không cập nhật được đơn hàng!');
+          title: 'Lỗi xảy ra',
+          context: context,
+          subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
+        );
       }
-    } else {
+      notifyListeners();
+    } catch (e) {
       FrappeAlert.errorAlert(
-        title: 'Lỗi xảy ra',
-        context: context,
-        subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
-      );
+          title: 'Lỗi xảy ra',
+          context: context,
+          subtitle:
+              'Khi thực thi tác vụ, xin hãy liên hệ với bên phát triển để xử lý!');
     }
-    notifyListeners();
   }
 
   Future<void> createCongNoTaiSan(
@@ -1436,84 +1544,89 @@ class EditOrderViewModel extends BaseViewModel {
 
   Future<GiaoViecSignature?> updateGiaoViecSignature(context,
       {String status = '', String address = ''}) async {
-    Attachments? customerAttachmemts;
-    Attachments? supplierAttachments;
-    var imgId = Uuid().v1().toString();
-    var customerBytes = await _signatureCustomerController.toPngBytes();
-    if (customerBytes != null) {
-      var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
-        doctype: 'HLGas_GiaoViec_Signature',
-        name: _name!, //
-        file: GasFile(
-          file: customerBytes,
-          fileName: 'hlgas_giaoviec_signature-$imgId.png',
-          fieldName: 'attach_signature_customer_image',
-        ),
-      );
+    try {
+      Attachments? customerAttachmemts;
+      Attachments? supplierAttachments;
+      var imgId = Uuid().v1().toString();
+      var customerBytes = await _signatureCustomerController.toPngBytes();
+      if (customerBytes != null) {
+        var responseUploadCustomer = await locator<Api>().uploadFileForBytes(
+          doctype: 'HLGas_GiaoViec_Signature',
+          name: _name!, //
+          file: GasFile(
+            file: customerBytes,
+            fileName: 'hlgas_giaoviec_signature-$imgId.png',
+            fieldName: 'attach_signature_customer_image',
+          ),
+        );
 
-      if (responseUploadCustomer != null &&
-          responseUploadCustomer.attachments != null) {
-        customerAttachmemts = responseUploadCustomer.attachments;
+        if (responseUploadCustomer != null &&
+            responseUploadCustomer.attachments != null) {
+          customerAttachmemts = responseUploadCustomer.attachments;
+        } else {
+          customerAttachmemts = null;
+        }
       } else {
-        customerAttachmemts = null;
+        FrappeAlert.errorAlert(
+            title: 'Tạo mới không thành công',
+            context: context,
+            subtitle: 'Bạn cần có chữ ký khách hàng trước khi hoàn thành đơn.');
+        return null;
       }
-    } else {
-      FrappeAlert.errorAlert(
-          title: 'Tạo mới không thành công',
-          context: context,
-          subtitle: 'Bạn cần có chữ ký khách hàng trước khi hoàn thành đơn.');
+
+      imgId = Uuid().v1().toString();
+      var supplierBytes = await _signatureSupplierController.toPngBytes();
+      if (supplierBytes != null) {
+        var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
+          doctype: 'HLGas_GiaoViec_Signature',
+          name: _name!, //
+          file: GasFile(
+            file: supplierBytes,
+            fileName: 'hlgas_giaoviec_signature-$imgId.png',
+            fieldName: 'attach_signature_deliver_image',
+          ),
+        );
+
+        if (responseUploadSupplier != null &&
+            responseUploadSupplier.attachments != null) {
+          supplierAttachments = responseUploadSupplier.attachments;
+        } else {
+          supplierAttachments = null;
+        }
+      } else {
+        FrappeAlert.errorAlert(
+            title: 'Tạo mới không thành công',
+            context: context,
+            subtitle:
+                'Bạn cần có chữ ký nhà cung cấp trước khi hoàn thành đơn.');
+
+        return null;
+      }
+
+      await locator<Api>().updateGiaoViecSignature(
+          _order!.name,
+          status != null && status != '' ? status : _order!.status,
+          address,
+          customerAttachmemts != null ? customerAttachmemts.fileUrl : '',
+          supplierAttachments != null ? supplierAttachments.fileUrl : '');
+
+      // if(updateGiaoViecSignatureResponse != null) {
+
+      // }
+
+      return GiaoViecSignature(
+          address: address,
+          attachSignatureCustomerImage:
+              customerAttachmemts != null ? customerAttachmemts.fileUrl : '',
+          attachSignatureDeliverImage:
+              supplierAttachments != null ? supplierAttachments.fileUrl : '',
+          order: _order!.name,
+          status: status != null && status != '' ? status : _order!.status);
+
+      // notifyListeners();
+    } catch (e) {
       return null;
     }
-
-    imgId = Uuid().v1().toString();
-    var supplierBytes = await _signatureSupplierController.toPngBytes();
-    if (supplierBytes != null) {
-      var responseUploadSupplier = await locator<Api>().uploadFileForBytes(
-        doctype: 'HLGas_GiaoViec_Signature',
-        name: _name!, //
-        file: GasFile(
-          file: supplierBytes,
-          fileName: 'hlgas_giaoviec_signature-$imgId.png',
-          fieldName: 'attach_signature_deliver_image',
-        ),
-      );
-
-      if (responseUploadSupplier != null &&
-          responseUploadSupplier.attachments != null) {
-        supplierAttachments = responseUploadSupplier.attachments;
-      } else {
-        supplierAttachments = null;
-      }
-    } else {
-      FrappeAlert.errorAlert(
-          title: 'Tạo mới không thành công',
-          context: context,
-          subtitle: 'Bạn cần có chữ ký nhà cung cấp trước khi hoàn thành đơn.');
-
-      return null;
-    }
-
-    await locator<Api>().updateGiaoViecSignature(
-        _order!.name,
-        status != null && status != '' ? status : _order!.status,
-        address,
-        customerAttachmemts != null ? customerAttachmemts.fileUrl : '',
-        supplierAttachments != null ? supplierAttachments.fileUrl : '');
-
-    // if(updateGiaoViecSignatureResponse != null) {
-
-    // }
-
-    return GiaoViecSignature(
-        address: address,
-        attachSignatureCustomerImage:
-            customerAttachmemts != null ? customerAttachmemts.fileUrl : '',
-        attachSignatureDeliverImage:
-            supplierAttachments != null ? supplierAttachments.fileUrl : '',
-        order: _order!.name,
-        status: status != null && status != '' ? status : _order!.status);
-
-    // notifyListeners();
   }
 }
 

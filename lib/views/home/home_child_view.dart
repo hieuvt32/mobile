@@ -66,7 +66,9 @@ class _HomeChildViewState extends State<HomeChildView> {
           visible: true,
           roles: ["Giám Đốc", "Thủ Kho"],
           view: (context) {
-            return EditOrderView();
+            return EditOrderView(
+              isCreateScreen: true,
+            );
           },
         )
       ],
@@ -137,7 +139,10 @@ class _HomeChildViewState extends State<HomeChildView> {
         visible: true,
         roles: ["Khách Hàng"],
         view: (context) {
-          return EditOrderView(haveDelivery: true);
+          return EditOrderView(
+            haveDelivery: true,
+            isCreateScreen: true,
+          );
         },
       )
     ]),

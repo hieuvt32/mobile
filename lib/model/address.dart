@@ -29,6 +29,8 @@ class Address {
     data['name'] = this.name;
     data['address'] = this.diaChi;
     data['customer'] = this.customer;
+    data['dia_chi'] = this.diaChi;
+    data['parent'] = this.customer;
     return data;
   }
 }

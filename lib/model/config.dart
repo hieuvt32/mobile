@@ -83,6 +83,14 @@ class Config {
     configContainer.put(k, v);
   }
 
+  static dynamic get(String k) {
+    return configContainer.get(k);
+  }
+
+  static bool containsKey(String k) {
+    return configContainer.containsKey(k);
+  }
+
   static Future clear() async {
     configContainer.clear();
   }

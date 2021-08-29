@@ -11,9 +11,14 @@ class EditOrderView extends StatefulWidget {
   final String name;
   final bool haveDelivery;
   final int isRated;
-  EditOrderView(
-      {Key? key, this.name = '', this.haveDelivery = false, this.isRated = 0})
-      : super(key: key);
+  final bool isCreateScreen;
+  EditOrderView({
+    Key? key,
+    this.name = '',
+    this.haveDelivery = false,
+    this.isRated = 0,
+    this.isCreateScreen = false,
+  }) : super(key: key);
 
   @override
   _EditOrderViewState createState() => _EditOrderViewState();
@@ -48,6 +53,7 @@ class _EditOrderViewState extends State<EditOrderView>
         await model.initPreData();
         model.setHaveDelivery(widget.haveDelivery);
         model.setIsRated(widget.isRated);
+        model.loadStoreData();
         // this.initTab();
       },
       onModelClose: (model) {
