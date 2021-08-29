@@ -9,15 +9,17 @@ class LimitTextLength extends StatelessWidget {
   final TextAlign textAlign;
   @override
   Widget build(BuildContext context) {
-    return RichText(
-      overflow: TextOverflow.ellipsis,
-      strutStyle: StrutStyle(fontSize: 10.0),
-      text: TextSpan(
-          style: style == null
-              ? TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
-              : style,
-          text: text),
-      textAlign: this.textAlign,
-    );
+    return Flexible(
+        flex: 1,
+        child: RichText(
+          overflow: TextOverflow.ellipsis,
+          strutStyle: StrutStyle(fontSize: 10.0),
+          text: TextSpan(
+              style: style == null
+                  ? TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
+                  : style,
+              text: text),
+          textAlign: this.textAlign,
+        ));
   }
 }

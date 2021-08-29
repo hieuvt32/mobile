@@ -14,25 +14,29 @@ class AssetLiabilityReport extends StatefulWidget {
 }
 
 class _AssetLiabilityReportState extends State<AssetLiabilityReport> {
+  Future onGetBaoCaoCongNoKH() async {
+    try {
+      DateTime now = DateTime.now();
+      String formarttedDate = DateFormat('MMyy').format(now);
+
+      String customerCode = Config().customerCode;
+      String key = ["CNTS", customerCode, formarttedDate].join("-");
+
+      var response = await locator<Api>().getBaoCaoCongNoChoKH(key);
+      setState(() {
+        listBaoCaoCongNo = response.listBaoCaoCongNo ?? [];
+        isLoading = false;
+      });
+    } catch (err) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   void initState() {
-    DateTime now = DateTime.now();
-    String formarttedDate = DateFormat('MMyy').format(now);
-
-    String customerCode = Config().customerCode;
-    String key = ["CNTS", customerCode, formarttedDate].join("-");
-
-    locator<Api>().getBaoCaoCongNoChoKH(key).then((respone) {
-      setState(() {
-        listBaoCaoCongNo = respone.listBaoCaoCongNo ?? [];
-        isLoading = false;
-      });
-    }).catchError((err) {
-      setState(() {
-        isLoading = false;
-      });
-    });
-
+    onGetBaoCaoCongNoKH();
     super.initState();
   }
 
@@ -81,7 +85,6 @@ class _AssetLiabilityReportState extends State<AssetLiabilityReport> {
       alignment: Alignment.center,
       child: Row(
           children: listRow.asMap().entries.map((entry) {
-        print(entry.value);
         return Expanded(
             flex: entry.key == 0 ? 2 : 1,
             child: entry.key == 0

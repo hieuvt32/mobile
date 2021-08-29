@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
 import 'package:frappe_app/model/bao_cao_chi_tieu_kh_response.dart';
 import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
+import 'package:frappe_app/model/bao_cao_san_xuat_chi_tiet_response.dart';
+import 'package:frappe_app/model/bao_cao_san_xuat_response.dart';
+import 'package:frappe_app/model/bao_cao_tai_san_response.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
@@ -26,6 +29,7 @@ import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
+import 'package:frappe_app/model/giao_van_location_response.dart';
 import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
@@ -330,4 +334,18 @@ abstract class Api {
       {required String reportDate,
       required String date,
       required String company});
+
+  Future<BaoCaoSanXuatResponse> getBaoCaoSanXuatGiamDoc(String date);
+
+  Future<BaoCaoSanXuatChiTietResponse> getBaoCaoSanXuatChiTietGiamDoc(
+      {required String company, required String date});
+
+  Future<BaoCaoTaiSanResponse> getBaoCaoTaiSanGiamDoc(String company);
+
+  Future updateCarLocation(
+      {required String order,
+      required double longitude,
+      required double latitude});
+
+  Future<OrderLocationResponse> getLocationByOrder(String order);
 }

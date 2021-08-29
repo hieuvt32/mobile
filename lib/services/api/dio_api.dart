@@ -11,6 +11,9 @@ import 'package:frappe_app/model/bang_thong_ke_kho.dart';
 import 'package:frappe_app/model/bao_cao_chi_tieu_kh_response.dart';
 import 'package:frappe_app/model/bao_cao_cong_no_respone.dart';
 import 'package:frappe_app/model/bao_cao_loi_nhuan_response.dart';
+import 'package:frappe_app/model/bao_cao_san_xuat_chi_tiet_response.dart';
+import 'package:frappe_app/model/bao_cao_san_xuat_response.dart';
+import 'package:frappe_app/model/bao_cao_tai_san_response.dart';
 import 'package:frappe_app/model/change_password_request.dart';
 import 'package:frappe_app/model/change_password_response.dart';
 import 'package:frappe_app/model/common.dart';
@@ -34,6 +37,7 @@ import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
+import 'package:frappe_app/model/giao_van_location_response.dart';
 import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
@@ -3125,6 +3129,217 @@ class DioApi implements Api {
         }
       } else {
         throw e;
+      }
+    }
+  }
+
+  Future<BaoCaoSanXuatResponse> getBaoCaoSanXuatGiamDoc(String date) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getBaoCaoSanXuatGiamDoc',
+        queryParameters: {
+          'date': date,
+        },
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return BaoCaoSanXuatResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  Future<BaoCaoSanXuatChiTietResponse> getBaoCaoSanXuatChiTietGiamDoc(
+      {company, date}) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getBaoCaoSanXuatChiTietGiamDoc',
+        queryParameters: {
+          'company': company,
+          'date': date,
+        },
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return BaoCaoSanXuatChiTietResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  Future<BaoCaoTaiSanResponse> getBaoCaoTaiSanGiamDoc(company) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getBaoCaoTaiSanGiamDoc',
+        queryParameters: {
+          'company': company,
+        },
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return BaoCaoTaiSanResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future updateCarLocation({order, longitude, latitude}) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/updateCarLocation',
+        queryParameters: {
+          'order': order,
+          'longitude': longitude,
+          'latitude': latitude
+        },
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<OrderLocationResponse> getLocationByOrder(order) async {
+    try {
+      final response = await DioHelper.dio.get(
+        '/method/getLocationByOrder',
+        queryParameters: {
+          'order': order,
+        },
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return OrderLocationResponse.fromJson(response.data);
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(statusMessage: error.message);
+        }
+      } else {
+        throw ErrorResponse();
       }
     }
   }

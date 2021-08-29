@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:frappe_app/model/common.dart';
+import 'package:frappe_app/model/get_doc_response.dart';
 import 'package:frappe_app/model/offline_storage.dart';
 import 'package:frappe_app/services/storage_service.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
@@ -28,6 +29,7 @@ import '../app/locator.dart';
 
 import '../utils/dio_helper.dart';
 import '../utils/enums.dart';
+import 'dart:math';
 
 getDownloadPath() async {
   if (Platform.isAndroid) {
@@ -357,4 +359,26 @@ Color hexToColor(String code) {
 String formatCurrency(dynamic value) {
   final oCcy = new NumberFormat("#,##0", "en_US");
   return oCcy.format(value);
+}
+
+Color randomColor() {
+  return Color((Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+}
+
+String generateRandomHexColor() {
+  Random random = new Random();
+  int length = 6;
+  String chars = '0123456789ABCDEF';
+  String hex = '#';
+  while (length-- > 0) hex += chars[(random.nextInt(16)) | 0];
+  return hex;
+}
+
+Future<bool> requestLocationPermission() async {
+  if (await Permission.location.status.isGranted) return true;
+
+  if (Platform.isIOS) return true;
+
+  bool isGranted = await Permission.location.request().isGranted;
+  return isGranted;
 }

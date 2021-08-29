@@ -1,33 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
-import 'package:frappe_app/model/bao_cao_san_xuat_chi_tiet_response.dart';
+import 'package:frappe_app/model/bao_cao_tai_san_response.dart';
 import 'package:frappe_app/model/get_chi_nhanh_response.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/reports/dropdown_button_view.dart';
-import 'package:intl/intl.dart';
 
-class ManufacturingReportDetailView extends StatefulWidget {
-  final DateTime date;
-
-  ManufacturingReportDetailView({Key? key, required this.date})
-      : super(key: key);
-
+class AssetReportView extends StatefulWidget {
   @override
-  _ManufacturingReportDetailViewState createState() {
-    return _ManufacturingReportDetailViewState();
+  _AssetReportViewState createState() {
+    return _AssetReportViewState();
   }
 }
 
-class _ManufacturingReportDetailViewState
-    extends State<ManufacturingReportDetailView> {
+class _AssetReportViewState extends State<AssetReportView> {
   String? _selectedBranch;
   List<String> _branchList = [];
-  List<BaoCaoSanXuatChiTiet> listReport = [];
+
+  List<BaoCaoTaiSan> _listReport = [];
+
+  _buildHeaderListView() {
+    final List<String> listTitle = ["Sản phẩm", "Nhận", "Kg", "Trả", "Nợ"];
+    return Container(
+      height: 42,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+          color: hexToColor("#0072BC").withOpacity(0.3),
+          border: Border(
+              bottom: BorderSide(
+                  color: hexToColor("#0072BC").withOpacity(0.3), width: 1))),
+      child: Row(
+          children: listTitle.asMap().entries.map((entry) {
+        return Expanded(
+          flex: entry.key == 0 ? 2 : 1,
+          child: Text(
+            entry.value,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        );
+      }).toList()),
+    );
+  }
+
+  _buildListContentView() {
+    return _listReport.asMap().entries.map((entry) {
+      BaoCaoTaiSan baoCaoTaiSan = entry.value;
+
+      final List<String> listRow = [
+        baoCaoTaiSan.name,
+        baoCaoTaiSan.nhan,
+        baoCaoTaiSan.kg,
+        baoCaoTaiSan.tra,
+        baoCaoTaiSan.no
+      ];
+
+      return Container(
+        height: 42,
+        decoration: BoxDecoration(
+            border: Border(
+                bottom: BorderSide(
+                    color: hexToColor("#0072BC").withOpacity(0.3), width: 1))),
+        alignment: Alignment.center,
+        child: Row(
+            children: listRow.asMap().entries.map((entry) {
+          return Expanded(
+              flex: entry.key == 0 ? 2 : 1,
+              child: Text(
+                entry.value,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ));
+        }).toList()),
+      );
+    }).toList();
+  }
 
   void onSelectItem(String? value) {
     setState(() {
-      _selectedBranch = value;
+      _selectedBranch = value ?? "";
     });
   }
 
@@ -42,71 +93,15 @@ class _ManufacturingReportDetailViewState
     } catch (err) {}
   }
 
-  Future onGetData() async {
+  Future onGetBaoCaoTaiSan() async {
     try {
-      String formatteDate = DateFormat("yyyy-MM-dd").format(widget.date);
-
-      BaoCaoSanXuatChiTietResponse baoCaoSanXuatChiTietResponse =
-          await locator<Api>().getBaoCaoSanXuatChiTietGiamDoc(
-              company: _selectedBranch ?? "", date: formatteDate);
+      BaoCaoTaiSanResponse baoCaoTaiSanResponse =
+          await locator<Api>().getBaoCaoTaiSanGiamDoc(_selectedBranch ?? "");
 
       setState(() {
-        listReport = baoCaoSanXuatChiTietResponse.listBaoCaoSanXuatChiTiet;
+        _listReport = baoCaoTaiSanResponse.listBaoCao;
       });
     } catch (err) {}
-  }
-
-  _buildHeaderListView() {
-    final List<String> listTitle = ["Chi nhánh", "Thành phẩm", "Số lượng"];
-    return Container(
-      height: 42,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-          color: hexToColor("#0072BC").withOpacity(0.3),
-          border: Border(
-              bottom: BorderSide(
-                  color: hexToColor("#0072BC").withOpacity(0.3), width: 1))),
-      child: Row(
-          children: listTitle.asMap().entries.map((entry) {
-        return Expanded(
-          flex: entry.key == listTitle.length - 1 ? 1 : 2,
-          child: Text(
-            entry.value,
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        );
-      }).toList()),
-    );
-  }
-
-  _buildListContent() {
-    return listReport.map((element) {
-      final List<String> listRow = [
-        _selectedBranch ?? "",
-        element.product,
-        element.amount.toString(),
-      ];
-
-      return Container(
-        height: 42,
-        decoration: BoxDecoration(
-            border: Border(
-                bottom: BorderSide(
-                    color: hexToColor("#0072BC").withOpacity(0.3), width: 1))),
-        alignment: Alignment.center,
-        child: Row(
-            children: listRow.asMap().entries.map((entry) {
-          return Expanded(
-              flex: entry.key == listRow.length - 1 ? 1 : 2,
-              child: Text(
-                entry.value,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ));
-        }).toList()),
-      );
-    }).toList();
   }
 
   @override
@@ -119,7 +114,7 @@ class _ManufacturingReportDetailViewState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Báo cáo sản xuất chi tiết"),
+        title: Text("Báo cáo tài sản"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -158,7 +153,7 @@ class _ManufacturingReportDetailViewState
                           borderRadius: BorderRadius.circular(4.0),
                         ),
                       ),
-                      onPressed: onGetData,
+                      onPressed: onGetBaoCaoTaiSan,
                       child: Text(
                         'Tìm báo cáo',
                         style: TextStyle(
@@ -175,14 +170,9 @@ class _ManufacturingReportDetailViewState
             SizedBox(
               height: 24,
             ),
-            listReport.length == 0
-                ? Container(
-                    margin: const EdgeInsets.only(top: 36),
-                    child: Text("Không có báo cáo nào"),
-                  )
-                : Column(
-                    children: [_buildHeaderListView(), ..._buildListContent()],
-                  )
+            Column(
+              children: [_buildHeaderListView(), ..._buildListContentView()],
+            )
           ],
         ),
       ),

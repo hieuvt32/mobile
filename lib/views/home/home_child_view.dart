@@ -9,6 +9,7 @@ import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
@@ -19,8 +20,10 @@ import 'package:frappe_app/views/customer_list_order/customer_list_order_view.da
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
 import 'package:frappe_app/views/reports/Incoming_and_spending_view.dart';
+import 'package:frappe_app/views/reports/asset_report_view.dart';
 import 'package:frappe_app/views/reports/manufacturing_report_view.dart';
 import 'package:frappe_app/views/reports/profit_report_view.dart';
+import 'package:frappe_app/views/reports/warehouse_report_search_view.dart';
 import 'package:frappe_app/views/transportation_views/transportation_list.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
@@ -316,21 +319,21 @@ class _HomeChildViewState extends State<HomeChildView> {
             visible: true,
             view: (context) => IncomingAndSpendingView()),
         Item(
-          icon: FrappeIcons.gas,
-          text: "Báo cáo tài sản",
-          roles: [
-            "Giám Đốc",
-          ],
-          visible: true,
-        ),
+            icon: FrappeIcons.gas,
+            text: "Báo cáo tài sản",
+            roles: [
+              "Giám Đốc",
+            ],
+            visible: true,
+            view: (context) => AssetReportView()),
         Item(
-          icon: FrappeIcons.note_book,
-          text: "Báo cáo kho",
-          roles: [
-            "Giám Đốc",
-          ],
-          visible: true,
-        ),
+            icon: FrappeIcons.note_book,
+            text: "Báo cáo kho",
+            roles: [
+              "Giám Đốc",
+            ],
+            visible: true,
+            view: (context) => WarehouseReportSearchView()),
       ],
       view: (context) {
         return LiabilityReportView();
@@ -427,19 +430,28 @@ class _HomeChildViewState extends State<HomeChildView> {
     // setState(() {});
   }
 
+  storeUserRoles(List<String>? userRoles) {
+    Config.set("roles", jsonEncode(userRoles));
+
+    if (Config().roles.contains(UserRole.GiaoVan)) {
+      requestLocationPermission();
+    }
+  }
+
   List<Item> items = [];
   @override
   void initState() {
     items = baseItems;
-    super.initState();
 
     locator<Api>().getRoles().then((value) {
-      var roles = jsonEncode(value.roles);
-      Config.set("roles", roles);
+      storeUserRoles(value.roles);
+
       setState(() {
         _response = value;
       });
     });
+
+    super.initState();
   }
 
   @override

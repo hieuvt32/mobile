@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/model/giao_van_location_response.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -14,43 +16,68 @@ class TrackingOrderView extends StatefulWidget {
   MapSampleState createState() => MapSampleState();
 }
 
+const double CAMERA_ZOOM = 16;
+const double CAMERA_TILT = 80;
+const double CAMERA_BEARING = 30;
+const LatLng SOURCE_LOCATION = LatLng(42.747932, -71.167889);
+const LatLng DEST_LOCATION = LatLng(37.335685, -122.0605916);
+
 class MapSampleState extends State<TrackingOrderView> {
-  late GoogleMapController _controller;
+  GoogleMapController? _controller;
 
-  CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(21.0084906, 105.81720639999999),
-    zoom: 14.4746,
-  );
+  String googleAPIKey = "AIzaSyBt24cVH1Bw-lMnQMXX0ODuamU1nkcUH18";
 
-  Location _location = Location();
+  BitmapDescriptor? sourceIcon;
+
+  LocationData? currentLocation;
+
+  Location? location;
 
   Set<Marker> _markers = Set<Marker>();
 
   bool _loading = false;
+
+  CameraPosition _cameraPosition = CameraPosition(
+      target: LatLng(21.0084906, 105.81720639999999),
+      zoom: CAMERA_ZOOM,
+      tilt: CAMERA_TILT,
+      bearing: CAMERA_BEARING);
+
+  Future onGetCoordinates(String address) async {
+    List<Address> listAddress =
+        await Geocoder.local.findAddressesFromQuery(address);
+    return listAddress.first;
+  }
 
   Future onSetupMarkers() async {
     setState(() {
       _loading = true;
     });
 
-    Iterable<Future<List<Address>>> listAsync =
-        widget.model.editAddresses.map((e) => e.diaChi).toSet().map((element) {
-      return Geocoder.local.findAddressesFromQuery(element);
-    });
+    List<Address> addressResponse = [];
 
-    List<List<Address>> addressResponse = await Future.wait(listAsync);
+    List<String> queries =
+        widget.model.editAddresses.map((e) => e.diaChi).toSet().toList();
+
+    for (int i = 0; i < queries.length; i++) {
+      try {
+        Address address = await onGetCoordinates(queries[i]);
+        addressResponse.add(address);
+      } catch (err) {}
+    }
 
     Set<Marker> markers = new Set();
-    markers = addressResponse.asMap().entries.map((entry) {
-      String markerId = widget.model.editAddresses[entry.key].name ??
-          entry.value.first.addressLine;
-      Coordinates coordinates = entry.value.first.coordinates;
+    addressResponse.asMap().entries.forEach((entry) {
+      String markerId = queries[entry.key];
+
+      Coordinates coordinates = entry.value.coordinates;
       LatLng lat = LatLng(coordinates.latitude, coordinates.longitude);
-      return Marker(
+
+      markers.add(Marker(
         markerId: MarkerId(markerId),
         position: lat,
-      );
-    }).toSet();
+      ));
+    });
 
     setState(() {
       _markers = markers;
@@ -58,44 +85,119 @@ class MapSampleState extends State<TrackingOrderView> {
     });
   }
 
+  void setSourceIcon() async {
+    sourceIcon = await BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5),
+        'assets/icons/driving_pin.png');
+  }
+
+  Future<void> onGetOrderLocation() async {
+    try {
+      OrderLocationResponse orderLocationResponse =
+          await locator<Api>().getLocationByOrder(widget.model.order!.name);
+
+      List<OrderLocation> listLocation = orderLocationResponse.listLocations;
+
+      OrderLocation orderLocation =
+          listLocation.firstWhere((element) => element.address == "Xe");
+
+      List<Marker> listMarker = _markers.toList();
+      int deliverIndex =
+          listMarker.indexWhere((element) => element.markerId.value == "Xe");
+
+      LatLng lat = LatLng(double.parse(orderLocation.latitude),
+          double.parse(orderLocation.longitude));
+
+      Marker newMarker =
+          Marker(markerId: MarkerId("Xe"), position: lat, icon: sourceIcon!);
+      if (deliverIndex != -1) {
+        listMarker[deliverIndex] = newMarker;
+      } else {
+        listMarker.add(newMarker);
+      }
+
+      CameraPosition newCameraPosition = CameraPosition(
+          target: lat,
+          zoom: CAMERA_ZOOM,
+          tilt: CAMERA_TILT,
+          bearing: CAMERA_BEARING);
+
+      if (_controller != null) {
+        _controller!
+            .animateCamera(CameraUpdate.newCameraPosition(newCameraPosition));
+      }
+
+      setState(() {
+        _markers = listMarker.toSet();
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Timer? timer;
+
   @override
   void initState() {
     onSetupMarkers();
+    setSourceIcon();
+
+    timer = Timer.periodic(Duration(seconds: 30), (timer) {
+      onGetOrderLocation();
+    });
+
+    location = new Location();
+
+    location!.onLocationChanged.listen((event) {
+      currentLocation = event;
+    });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (timer != null) {
+      timer!.cancel();
+    }
+
+    super.dispose();
   }
 
   void onMapCreated(GoogleMapController _cntlr) {
     _controller = _cntlr;
 
-    // _location.onLocationChanged.listen((l) {
-    //   _cntlr.animateCamera(
-    //     CameraUpdate.newCameraPosition(
-    //       CameraPosition(
-    //           target: LatLng(21.0084906, 105.81720639999999), zoom: 15),
-    //     ),
-    //   );
-    // });
+    onGetOrderLocation();
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      body: _loading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : GoogleMap(
-              markers: _markers,
-              myLocationEnabled: true,
-              mapType: MapType.normal,
-              initialCameraPosition: _kGooglePlex,
-              onMapCreated: onMapCreated,
-            ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: _goToTheLake,
-      //   label: Text('To !'),
-      //   icon: Icon(Icons.directions_boat),
-      // ),
-    );
+    return Scaffold(
+        body: _loading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : SafeArea(
+                child: GoogleMap(
+                  buildingsEnabled: true,
+                  zoomControlsEnabled: false,
+                  zoomGesturesEnabled: false,
+                  compassEnabled: false,
+                  mapToolbarEnabled: false,
+                  myLocationButtonEnabled: false,
+                  rotateGesturesEnabled: false,
+                  markers: _markers,
+                  myLocationEnabled: true,
+                  mapType: MapType.normal,
+                  initialCameraPosition: _cameraPosition,
+                  onMapCreated: onMapCreated,
+                ),
+              )
+        // floatingActionButton: FloatingActionButton.extended(
+        //   onPressed: _goToTheLake,
+        //   label: Text('To !'),
+        //   icon: Icon(Icons.directions_boat),
+        // ),
+        );
   }
 }
