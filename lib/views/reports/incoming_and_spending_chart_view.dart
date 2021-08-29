@@ -22,7 +22,7 @@ class PatternForwardHatchBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new charts.BarChart(
-      _createSampleData(),
+      _createData(),
       animate: true,
       barGroupingType: charts.BarGroupingType.grouped,
       vertical: false,
@@ -30,7 +30,7 @@ class PatternForwardHatchBarChart extends StatelessWidget {
   }
 
   /// Create series list with multiple series
-  List<charts.Series<IncomingAndSpending, String>> _createSampleData() {
+  List<charts.Series<IncomingAndSpending, String>> _createData() {
     return [
       new charts.Series<IncomingAndSpending, String>(
           id: 'Incoming',

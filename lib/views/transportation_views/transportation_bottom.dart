@@ -1,5 +1,7 @@
+import 'package:background_location/background_location.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 
@@ -12,6 +14,24 @@ class TransportationBottom extends StatefulWidget {
 }
 
 class _TransportationBottomState extends State<TransportationBottom> {
+  Future onUpdateUserLocation() async {
+    await requestLocationPermission();
+
+    await BackgroundLocation.startLocationService(distanceFilter: 200);
+
+    locator<Api>().updateCarLocation(
+        order: widget.model.order!.name,
+        longitude: -122.084,
+        latitude: 37.4219983);
+
+    BackgroundLocation.getLocationUpdates((location) {
+      locator<Api>().updateCarLocation(
+          order: widget.model.order!.name,
+          longitude: location.longitude!,
+          latitude: location.latitude!);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Align(
@@ -38,6 +58,7 @@ class _TransportationBottomState extends State<TransportationBottom> {
                 ),
               ),
               onPressed: () async {
+                onUpdateUserLocation();
                 await widget.model
                     .updateOrder(context, status: "Đang giao hàng");
               },
