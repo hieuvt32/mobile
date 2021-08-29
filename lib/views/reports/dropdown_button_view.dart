@@ -7,12 +7,14 @@ class DropDownButtonView extends StatelessWidget {
   final String? selectedItem;
   final List<String> data;
   final void Function(String? seletedValue) onSelectItem;
+  final String hintText;
 
   const DropDownButtonView(
       {Key? key,
       this.selectedItem,
       required this.data,
-      required this.onSelectItem})
+      required this.onSelectItem,
+      this.hintText = "Chọn"})
       : super(key: key);
 
   @override
@@ -28,7 +30,7 @@ class DropDownButtonView extends StatelessWidget {
             hintStyle: TextStyle(fontSize: 14),
             contentPadding: const EdgeInsets.fromLTRB(10, 2, 10, 2),
             border: InputBorder.none,
-            hintText: "Chọn chi nhánh"),
+            hintText: hintText),
         value: selectedItem,
         onChanged: onSelectItem,
         items: data.map((e) {

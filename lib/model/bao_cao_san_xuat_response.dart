@@ -10,7 +10,7 @@ class BaoCaoSanXuatResponse {
 
 class BaoCaoSanXuat {
   late String company;
-  late double value;
+  late int value;
 
   BaoCaoSanXuat.fromJson(Map<String, dynamic> json) {
     company = json['công ty'];
