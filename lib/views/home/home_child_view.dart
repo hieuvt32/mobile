@@ -433,6 +433,14 @@ class _HomeChildViewState extends State<HomeChildView> {
     }
   }
 
+  storeUserRoles(List<String>? userRoles) {
+    Config.set("roles", jsonEncode(userRoles));
+
+    if (Config().roles.contains(UserRole.GiaoVan)) {
+      requestLocationPermission();
+    }
+  }
+
   List<Item> items = [];
   @override
   void initState() {
