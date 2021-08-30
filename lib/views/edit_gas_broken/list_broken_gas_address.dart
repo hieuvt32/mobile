@@ -15,8 +15,10 @@ import 'package:frappe_app/views/expansion_custom_panel.dart';
 import 'package:frappe_app/widgets/frappe_button.dart';
 
 class ListBrokenGasAddress extends StatefulWidget {
-  ListBrokenGasAddress({this.id});
+  ListBrokenGasAddress({this.id, this.customer});
+
   final String? id;
+  final String? customer;
 
   @override
   _ListBrokenGasAddressState createState() => _ListBrokenGasAddressState();
@@ -258,7 +260,7 @@ class _ListBrokenGasAddressState extends State<ListBrokenGasAddress> {
   Widget build(BuildContext context) {
     return BaseView<EditGasBrokenViewModel>(
         onModelReady: (model) {
-          model.initState(widget.id);
+          model.initState(id: widget.id, customer: widget.customer);
         },
         builder: (context, model, child) => Builder(builder: (context) {
               SingleDonBaoBinhLoiRespone? donBaoBinhLoi = model.donBaoBinhLoi;

@@ -6,13 +6,15 @@ class UpdateBaoBinhLoiRequest {
   late List<DonBaoLoiAddress> listDonBaoLoiAddress;
   late String name;
   late String feedback;
+  late String status;
 
   UpdateBaoBinhLoiRequest(
       {required this.listDonBaoLoiAddress,
       required this.notes,
       required this.customerCode,
       required this.name,
-      required this.feedback});
+      required this.feedback,
+      required this.status});
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = new Map<String, dynamic>();
@@ -36,6 +38,7 @@ class UpdateBaoBinhLoiRequest {
     data['error_list'] = errorList;
     data['feedback'] = feedback;
     data['name'] = name;
+    data['status'] = status;
 
     return data;
   }

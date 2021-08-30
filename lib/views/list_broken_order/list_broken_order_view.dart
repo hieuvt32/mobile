@@ -104,6 +104,7 @@ class _ListBrokenOrderViewState extends State<ListBrokenOrderView>
                     builder: (context) {
                       return ListBrokenGasAddress(
                         id: item.id,
+                        customer: item.customer,
                       );
                     },
                   ),
@@ -130,11 +131,13 @@ class _ListBrokenOrderViewState extends State<ListBrokenOrderView>
   }
 
   _onFetchData() {
-    String? userId = Config().userId;
-    String customerCode = "00091";
+    String? customerCode;
+    if (Config().roles.contains(UserRole.KhachHang)) {
+      customerCode = Config().customerCode;
+    }
 
     locator<Api>()
-        .getListDonBaoBinhLoi(customerCode, "Đã phản hồi")
+        .getListDonBaoBinhLoi(customerCode: customerCode, status: "Đã phản hồi")
         .then((value) {
       setState(() {
         listOrderResponded = value.listDonBaoBinhLoi;
@@ -147,8 +150,8 @@ class _ListBrokenOrderViewState extends State<ListBrokenOrderView>
 
     locator<Api>()
         .getListDonBaoBinhLoi(
-      customerCode,
-      "Chờ phản hồi",
+      customerCode: customerCode,
+      status: "Chờ phản hồi",
     )
         .then((value) {
       setState(() {

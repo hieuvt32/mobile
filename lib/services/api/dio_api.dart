@@ -1444,11 +1444,17 @@ class DioApi implements Api {
 
   @override
   Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
-      String customerCode, String status) async {
+      {String customerCode, String status}) async {
     try {
+      Map<String, dynamic> queryParameters = {'status': status};
+
+      if (customerCode != null) {
+        queryParameters['customer'] = customerCode;
+      }
+
       final response = await DioHelper.dio.get(
         '/method/getDanhSachDonBaoBinhLoi',
-        queryParameters: {"customer": customerCode, "status": status},
+        queryParameters: queryParameters,
         options: Options(
           validateStatus: (status) {
             return status < 500;
@@ -2309,7 +2315,7 @@ class DioApi implements Api {
       ));
 
       if (response.statusCode == 200) {
-        return GiaoViecSignatureResponse.fromJson(response.data);
+        return response.data;
       } else if (response.statusCode == HttpStatus.forbidden) {
         throw ErrorResponse(
           statusCode: response.statusCode,
