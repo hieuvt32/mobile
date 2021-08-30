@@ -554,24 +554,26 @@ class EditOrderViewModel extends BaseViewModel {
     final String key = "order_template";
 
     if (enableToSave) {
-      List<Map<String, dynamic>> listProduct = _products.map((value) {
-        return {
-          "actualKg": value.actualKg,
-          "address": value.address,
-          "kg": value.kg,
-          "material": value.material,
-          "product": value.product,
-          "quantity": value.quantity,
-          "status": value.status,
-          "type": value.type,
-          "unit": value.unit,
-          "unitPrice": value.unitPrice,
-        };
-      }).toList();
+      // List<Map<String, dynamic>> listProduct = _products.map((value) {
+      //   return {
+      //     "actualKg": value.actualKg,
+      //     "address": value.address,
+      //     "kg": value.kg,
+      //     "material": value.material,
+      //     "product": value.product,
+      //     "quantity": value.quantity,
+      //     "status": value.status,
+      //     "type": value.type,
+      //     "unit": value.unit,
+      //     "unitPrice": value.unitPrice,
+      //   };
+      // }).toList();
 
-      Config.set(key, jsonEncode(listProduct));
-    } else
-      Config.remove(key);
+      // Config.set(key, jsonEncode(listProduct));
+      storeData();
+    }
+    // else
+    //   Config.remove(key);
 
     _saveTemplate = enableToSave;
     notifyListeners();
