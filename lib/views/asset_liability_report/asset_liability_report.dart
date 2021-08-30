@@ -9,6 +9,12 @@ import 'package:frappe_app/views/asset_liability_report/asset_liability_report_d
 import 'package:intl/intl.dart';
 
 class AssetLiabilityReport extends StatefulWidget {
+  final String? customer;
+  final String? customerName;
+
+  const AssetLiabilityReport({Key? key, this.customer, this.customerName})
+      : super(key: key);
+
   @override
   _AssetLiabilityReportState createState() => _AssetLiabilityReportState();
 }
@@ -19,7 +25,8 @@ class _AssetLiabilityReportState extends State<AssetLiabilityReport> {
       DateTime now = DateTime.now();
       String formarttedDate = DateFormat('MMyy').format(now);
 
-      String customerCode = Config().customerCode;
+      String customerCode = widget.customer ?? Config().customerCode;
+
       String key = ["CNTS", customerCode, formarttedDate].join("-");
 
       var response = await locator<Api>().getBaoCaoCongNoChoKH(key);
@@ -92,7 +99,10 @@ class _AssetLiabilityReportState extends State<AssetLiabilityReport> {
                     onTap: () {
                       Navigator.of(this.context).push(
                           MaterialPageRoute(builder: (BuildContext context) {
-                        return AssetLiabilityReportDetail();
+                        return AssetLiabilityReportDetail(
+                          customer: widget.customer,
+                          assetName: baoCaoCongNo.sanpham,
+                        );
                       }));
                     },
                     child: Text(
@@ -124,7 +134,7 @@ class _AssetLiabilityReportState extends State<AssetLiabilityReport> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Báo cáo công nợ tài sản"),
+          title: Text(widget.customerName ?? "Báo cáo công nợ tài sản"),
         ),
         body: isLoading
             ? Center(

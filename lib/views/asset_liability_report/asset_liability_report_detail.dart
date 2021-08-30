@@ -8,6 +8,10 @@ import 'package:frappe_app/utils/helpers.dart';
 import 'package:intl/intl.dart';
 
 class AssetLiabilityReportDetail extends StatefulWidget {
+  final String? customer;
+  final String assetName;
+  AssetLiabilityReportDetail({this.customer, required this.assetName});
+
   @override
   _AssetLiabilityReportDetailState createState() =>
       _AssetLiabilityReportDetailState();
@@ -18,16 +22,19 @@ class _AssetLiabilityReportDetailState
   @override
   void initState() {
     DateTime now = DateTime.now();
-    String formarttedDate = DateFormat('MMyy').format(now);
+    String currentDate = DateFormat('MMyy').format(now);
+    String preDate =
+        DateFormat('MMyy').format(DateTime(now.year, now.month - 1, now.day));
 
-    String customerCode = Config().customerCode;
-    String key = ["CNTS", customerCode, formarttedDate].join("-");
+    String customerCode = widget.customer ?? Config().customerCode;
+    String key = ["CNTS", customerCode, currentDate].join("-");
+    String preKey = ["CNTS", customerCode, preDate].join("-");
 
 //CNTS-00091-0821&previouskey=CNTS-00091-0821&assetname=Bình%20thép%
 
     locator<Api>()
         .getBaoCaoCongNoDetail(
-            key: key, previouskey: key, assetname: "Bình thép 10L")
+            key: key, previouskey: preKey, assetname: widget.assetName)
         .then((respone) {
       setState(() {
         listBaoCaoCongNoDetail = respone.listBaocaoCongNoDetail ?? [];

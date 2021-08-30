@@ -47,6 +47,7 @@ import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/model/rating_order_request.dart';
 import 'package:frappe_app/model/response_data.dart';
+import 'package:frappe_app/model/update_bap_binh_loi_request.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
 import 'package:frappe_app/model/update_trang_thai_quy_chuan_response.dart';
@@ -1206,10 +1207,15 @@ class DioApi implements Api {
   }
 
   @override
-  Future<GetKiemKhoResponse> getKiemKho(int type) async {
-    var queryParams = {
+  Future<GetKiemKhoResponse> getKiemKho({int type, company}) async {
+    Map<String, dynamic> queryParams = {
       'type': type,
     };
+
+    if (company != null) {
+      queryParams['company'] = company;
+    }
+
     try {
       final response = await DioHelper.dio.get(
         '/method/getKiemKho',
@@ -3340,6 +3346,52 @@ class DioApi implements Api {
         }
       } else {
         throw ErrorResponse();
+      }
+    }
+  }
+
+  @override
+  Future<dynamic> updateDonBaoBinhLoi(UpdateBaoBinhLoiRequest request) async {
+    try {
+      final response = await DioHelper.dio.post('/method/updateDonBaoLoiBinh',
+          data: request.toJson(), options: Options(
+        validateStatus: (status) {
+          return status < 500;
+        },
+      ));
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else if (response.statusCode == HttpStatus.forbidden) {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage,
+        );
+      } else {
+        throw ErrorResponse();
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
       }
     }
   }

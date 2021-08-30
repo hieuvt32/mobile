@@ -4,6 +4,7 @@ import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/don_bao_binh_loi.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
@@ -130,7 +131,7 @@ class _ListBrokenOrderViewState extends State<ListBrokenOrderView>
 
   _onFetchData() {
     String? userId = Config().userId;
-    String customerCode = userId!.split("@")[0];
+    String customerCode = "00091";
 
     locator<Api>()
         .getListDonBaoBinhLoi(customerCode, "Đã phản hồi")

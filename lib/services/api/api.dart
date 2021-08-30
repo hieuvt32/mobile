@@ -40,6 +40,7 @@ import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/model/bao_cao_loi_nhuan_response.dart';
 import 'package:frappe_app/model/rating_order_request.dart';
 import 'package:frappe_app/model/response_data.dart';
+import 'package:frappe_app/model/update_bap_binh_loi_request.dart';
 import 'package:frappe_app/model/update_bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/update_lich_su_san_xuat_response.dart';
 import 'package:frappe_app/model/update_trang_thai_quy_chuan_response.dart';
@@ -58,9 +59,7 @@ abstract class Api {
     String barcode,
   );
 
-  Future<GetKiemKhoResponse> getKiemKho(
-    int type,
-  );
+  Future<GetKiemKhoResponse> getKiemKho({required int type, String company});
 
   Future<GetCustomerByCompanyResponse> getCustomerByCompany({
     String company,
@@ -348,4 +347,6 @@ abstract class Api {
       required double latitude});
 
   Future<OrderLocationResponse> getLocationByOrder(String order);
+
+  Future<dynamic> updateDonBaoBinhLoi(UpdateBaoBinhLoiRequest request);
 }

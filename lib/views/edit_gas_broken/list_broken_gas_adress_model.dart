@@ -5,6 +5,7 @@ import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/create_bao_binh_loi_request.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
+import 'package:frappe_app/model/update_bap_binh_loi_request.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/views/base_viewmodel.dart';
@@ -18,6 +19,7 @@ class EditGasBrokenViewModel extends BaseViewModel {
   late bool isLoading = true;
   late List<Address> deliveryAddresses = [];
   late TextEditingController noteFieldController = TextEditingController();
+  late TextEditingController feedbackController = TextEditingController();
 
   initData() {
     noteFieldController.clear();
@@ -131,6 +133,22 @@ class EditGasBrokenViewModel extends BaseViewModel {
     return locator<Api>().createBaoBinhLoi(request);
   }
 
+  Future<dynamic> updateDonBaoBinhLoi(BuildContext context) async {
+    if (feedbackController.value.text.trim().length == 0) {
+      FrappeAlert.warnAlert(title: "Hãy nhập phản hồi", context: context);
+      return;
+    }
+
+    UpdateBaoBinhLoiRequest request = new UpdateBaoBinhLoiRequest(
+        customerCode: "",
+        listDonBaoLoiAddress: donBaoBinhLoi.listDonBaoLoiAddress ?? [],
+        notes: donBaoBinhLoi.description ?? "",
+        name: donBaoBinhLoi.name ?? "",
+        feedback: feedbackController.value.text);
+
+    return locator<Api>().updateDonBaoBinhLoi(request);
+  }
+
   Future<dynamic> deleteDonBinhBaoLoi(BuildContext context) async {
     String? name = donBaoBinhLoi.name;
     if (name != null && (donBaoBinhLoi.feedback ?? "").trim().length == 0) {
@@ -139,7 +157,7 @@ class EditGasBrokenViewModel extends BaseViewModel {
 
         FrappeAlert.successAlert(title: "Xóa thành công.", context: context);
       }).catchError((err) {
-        FrappeAlert.successAlert(
+        FrappeAlert.errorAlert(
             title: "Có lỗi xảy ra, vui lòng thử lại sau", context: context);
       });
     } else {
