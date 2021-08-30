@@ -1615,13 +1615,14 @@ class EditOrderViewModel extends BaseViewModel {
       // }
 
       return GiaoViecSignature(
-          address: address,
-          attachSignatureCustomerImage:
-              customerAttachmemts != null ? customerAttachmemts.fileUrl : '',
-          attachSignatureDeliverImage:
-              supplierAttachments != null ? supplierAttachments.fileUrl : '',
-          order: _order!.name,
-          status: status != null && status != '' ? status : _order!.status);
+        address: address,
+        attachSignatureCustomerImage:
+            customerAttachmemts != null ? customerAttachmemts.fileUrl : '',
+        attachSignatureDeliverImage:
+            supplierAttachments != null ? supplierAttachments.fileUrl : '',
+        order: _order!.name,
+        status: status != null && status != '' ? status : _order!.status,
+      );
 
       // notifyListeners();
     } catch (e) {
