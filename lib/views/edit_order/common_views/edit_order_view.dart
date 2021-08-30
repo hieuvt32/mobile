@@ -53,7 +53,10 @@ class _EditOrderViewState extends State<EditOrderView>
         await model.initPreData();
         model.setHaveDelivery(widget.haveDelivery);
         model.setIsRated(widget.isRated);
-        model.loadStoreData();
+        if (widget.isCreateScreen) {
+          model.isCreateScreen = widget.isCreateScreen;
+          model.loadStoreData();
+        }
         // this.initTab();
       },
       onModelClose: (model) {
