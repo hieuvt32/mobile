@@ -79,6 +79,7 @@ class EditOrderViewModel extends BaseViewModel {
   String? _title;
   late Config _config;
   bool isCreateScreen = false;
+  bool _isDontSave = true;
   // End: data store
 
   final String key = "order_template";
@@ -113,7 +114,8 @@ class EditOrderViewModel extends BaseViewModel {
         "is_rated": _isRated,
         "save_template": _saveTemplate,
         "name": _name,
-        "title": _title
+        "title": _title,
+        "is_dont_save": _isDontSave,
       };
 
       var jsonData = jsonEncode(editOrderViewModel);
@@ -129,92 +131,95 @@ class EditOrderViewModel extends BaseViewModel {
 
   loadStoreData() async {
     try {
-      Config.remove(key);
+      // Config.remove(key);
       if (Config.containsKey(key)) {
         var jsonData = Config.get(key);
 
         var data = jsonDecode(jsonData);
 
-        _order = Order.fromJson(data["order"]);
+        if (data["is_dont_save"] || data['save_template']) {
+          _order = Order.fromJson(data["order"]);
 
-        _products = (data["products"] as List<dynamic>)
-            .map((e) => Product.fromJson(e))
-            .toList();
+          _products = (data["products"] as List<dynamic>)
+              .map((e) => Product.fromJson(e))
+              .toList();
 
-        _productForLocations = (data["product_for_locations"] as List<dynamic>)
-            .map((e) => Product.fromJson(e))
-            .toList();
+          _productForLocations =
+              (data["product_for_locations"] as List<dynamic>)
+                  .map((e) => Product.fromJson(e))
+                  .toList();
 
-        _sellInWarehouse = data["sell_in_warehouse"];
+          _sellInWarehouse = data["sell_in_warehouse"];
 
-        _isNhaCungCap = data["is_nha_cung_cap"];
+          _isNhaCungCap = data["is_nha_cung_cap"];
 
-        // get total price of an order
-        _totalOrderPrice = data["total_order_price"];
+          // get total price of an order
+          _totalOrderPrice = data["total_order_price"];
 
-        _customerValue = data["customer_value"];
+          _customerValue = data["customer_value"];
 
-        _addresses = (data["addresses"] as List<dynamic>)
-            .map((e) => Address.fromJson(e))
-            .toList();
+          _addresses = (data["addresses"] as List<dynamic>)
+              .map((e) => Address.fromJson(e))
+              .toList();
 
-        _editAddresses = (data["edit_addresses"] as List<dynamic>)
-            .map((e) => Address.fromJson(e))
-            .toList();
+          _editAddresses = (data["edit_addresses"] as List<dynamic>)
+              .map((e) => Address.fromJson(e))
+              .toList();
 
-        if (_sellInWarehouse || _isNhaCungCap) {
-          for (var product in _products) {
-            _products.add(product);
-            _productEditControllers.add({
-              "kgController": TextEditingController(text: "${product.kg}"),
-              "quantityController":
-                  TextEditingController(text: "${product.quantity}")
-            });
-          }
-          // TODO: Nếu lỗi xem lại tại đây
-          // _readOnlyView = true;
-        } else {
-          var locations = [];
+          if (_sellInWarehouse || _isNhaCungCap) {
+            for (var product in _products) {
+              _products.add(product);
+              _productEditControllers.add({
+                "kgController": TextEditingController(text: "${product.kg}"),
+                "quantityController":
+                    TextEditingController(text: "${product.quantity}")
+              });
+            }
+            // TODO: Nếu lỗi xem lại tại đây
+            // _readOnlyView = true;
+          } else {
+            var locations = [];
 
-          var mapData = groupBy<Product, String>(
-              _productForLocations, (obj) => obj.address);
-          for (var product in _productForLocations) {
-            // _productForLocations.add(product);
+            var mapData = groupBy<Product, String>(
+                _productForLocations, (obj) => obj.address);
+            for (var product in _productForLocations) {
+              // _productForLocations.add(product);
 
-            if (!locations.contains(product.address)) {
-              locations.add(product.address);
+              if (!locations.contains(product.address)) {
+                locations.add(product.address);
 
-              _addressControllers.add(TextEditingController());
+                _addressControllers.add(TextEditingController());
 
-              // List<Address>? listAdrress = _addresses;
+                // List<Address>? listAdrress = _addresses;
 
-              // var elements = listAdrress
-              //     .where((element) => element.name == product.address)
-              //     .toList();
+                // var elements = listAdrress
+                //     .where((element) => element.name == product.address)
+                //     .toList();
 
-              // if (elements != null && elements.length > 0) {
-              //   _editAddresses.add(elements[0]);
-              // }
-              if (mapData.containsKey(product.address)) {
-                var products = mapData[product.address]!.toList();
-                List<Map<String, TextEditingController>> mapChildData = [];
-                for (int i = 0; i < products.length; i++) {
-                  mapChildData.add({
-                    "kgController":
-                        TextEditingController(text: "${products[i].kg}"),
-                    "quantityController":
-                        TextEditingController(text: "${products[i].quantity}")
-                  });
+                // if (elements != null && elements.length > 0) {
+                //   _editAddresses.add(elements[0]);
+                // }
+                if (mapData.containsKey(product.address)) {
+                  var products = mapData[product.address]!.toList();
+                  List<Map<String, TextEditingController>> mapChildData = [];
+                  for (int i = 0; i < products.length; i++) {
+                    mapChildData.add({
+                      "kgController":
+                          TextEditingController(text: "${products[i].kg}"),
+                      "quantityController":
+                          TextEditingController(text: "${products[i].quantity}")
+                    });
+                  }
+                  if (!_productForLocationEditControllerMap
+                      .containsKey(product.address))
+                    _productForLocationEditControllerMap[product.address] =
+                        mapChildData;
                 }
-                if (!_productForLocationEditControllerMap
-                    .containsKey(product.address))
-                  _productForLocationEditControllerMap[product.address] =
-                      mapChildData;
               }
             }
           }
+          changeState(isSaving: false);
         }
-        notifyListeners();
       }
     } catch (e) {
       print(e);
@@ -467,13 +472,13 @@ class EditOrderViewModel extends BaseViewModel {
     await getDonGiaMuaBans();
 
     _isLoading = false;
-    notifyListeners();
+    changeState();
   }
 
   setName(String? name) {
     _name = name;
     _title = ["", null, false, 0].contains(name) ? 'Tạo đơn hàng' : name;
-    notifyListeners();
+    changeState();
   }
 
   init() {
@@ -497,7 +502,7 @@ class EditOrderViewModel extends BaseViewModel {
           subtitle: "Có lỗi xảy ra, vui lòng thử lại sau!",
           context: context);
 
-      notifyListeners();
+      changeState();
     } catch (err) {
       FrappeAlert.errorAlert(
           title: "Thông báo",
@@ -518,7 +523,7 @@ class EditOrderViewModel extends BaseViewModel {
           subtitle: "Có lỗi xảy ra, vui lòng thử lại sau!",
           context: context);
 
-      notifyListeners();
+      changeState();
     } catch (err) {
       FrappeAlert.errorAlert(
           title: "Thông báo",
@@ -538,7 +543,7 @@ class EditOrderViewModel extends BaseViewModel {
             subtitle: "Xác nhận đơn hàng thành công",
             context: context);
 
-        notifyListeners();
+        changeState();
       } else {
         throw Error();
       }
@@ -576,7 +581,7 @@ class EditOrderViewModel extends BaseViewModel {
     //   Config.remove(key);
 
     _saveTemplate = enableToSave;
-    notifyListeners();
+    changeState();
   }
 
   // customer logic code;
@@ -586,7 +591,7 @@ class EditOrderViewModel extends BaseViewModel {
       if (customer != null) {
         _customers = [customer];
         _customerValue = customerCode;
-        notifyListeners();
+        changeState();
       }
     });
   }
@@ -617,7 +622,7 @@ class EditOrderViewModel extends BaseViewModel {
         ? response.donGiaMuaBans!
         : [];
 
-    notifyListeners();
+    changeState();
   }
 
   DonGiaMuaBan? getSingleDonGiaMuaBan(String realName) {
@@ -639,7 +644,7 @@ class EditOrderViewModel extends BaseViewModel {
         ? response.customers!
         : [];
 
-    notifyListeners();
+    changeState();
   }
 
   Future getManufactureByCompany() async {
@@ -649,7 +654,7 @@ class EditOrderViewModel extends BaseViewModel {
         ? response.customers!
         : [];
 
-    notifyListeners();
+    changeState();
   }
 
   Future getGiaoViecSignature() async {
@@ -659,7 +664,7 @@ class EditOrderViewModel extends BaseViewModel {
       _giaoViecSignatures =
           response != null && response.message != null ? response.message : [];
     }
-    notifyListeners();
+    changeState();
   }
 
   Future getNguyenVatLieuSanPham() async {
@@ -669,7 +674,7 @@ class EditOrderViewModel extends BaseViewModel {
         response != null && response.nguyenVatLieuSanPhams != null
             ? response.nguyenVatLieuSanPhams!
             : [];
-    notifyListeners();
+    changeState();
   }
 
   Future getVatTuSanPham() async {
@@ -678,7 +683,7 @@ class EditOrderViewModel extends BaseViewModel {
         response != null && response.nguyenVatLieuSanPhams != null
             ? response.nguyenVatLieuSanPhams!
             : [];
-    notifyListeners();
+    changeState();
   }
 
   Future getDSBienSoXe() async {
@@ -688,7 +693,7 @@ class EditOrderViewModel extends BaseViewModel {
             .map((e) => BienSoXe.fromJson(e))
             .toList()
         : [];
-    notifyListeners();
+    changeState();
   }
 
   Future getGiaoViec() async {
@@ -698,7 +703,7 @@ class EditOrderViewModel extends BaseViewModel {
           ? response.message!
           : giaoViec;
     }
-    notifyListeners();
+    changeState();
   }
 
   Future getDSEmployeeByCompany() async {
@@ -708,7 +713,7 @@ class EditOrderViewModel extends BaseViewModel {
             .map((e) => Employee.fromJson(e))
             .toList()
         : [];
-    notifyListeners();
+    changeState();
   }
 
   Future getChiTietDonHang() async {
@@ -788,7 +793,7 @@ class EditOrderViewModel extends BaseViewModel {
             }
           }
         }
-        notifyListeners();
+        changeState();
       }
     }
   }
@@ -822,7 +827,7 @@ class EditOrderViewModel extends BaseViewModel {
           }
         }
       }
-      notifyListeners();
+      changeState();
     }
   }
 
@@ -832,12 +837,12 @@ class EditOrderViewModel extends BaseViewModel {
     _addresses = response != null && response.addresses != null
         ? response.addresses!
         : [];
-    notifyListeners();
+    changeState();
   }
 
   sellInWarehouseSelection(bool? value) {
     _sellInWarehouse = value!;
-    notifyListeners();
+    changeState();
   }
 
   void disposed() {
@@ -897,7 +902,7 @@ class EditOrderViewModel extends BaseViewModel {
       "kgController": TextEditingController(),
       "quantityController": TextEditingController()
     });
-    notifyListeners();
+    changeState();
   }
 
   void addSanPhamByLocation(String address, String addressText) {
@@ -934,7 +939,7 @@ class EditOrderViewModel extends BaseViewModel {
       ];
     }
 
-    notifyListeners();
+    changeState();
   }
 
   addNhapKho({String address = ''}) {
@@ -951,7 +956,7 @@ class EditOrderViewModel extends BaseViewModel {
     _donNhapKhoEditControllers
         .add({"quantityController": TextEditingController()});
 
-    notifyListeners();
+    changeState();
   }
 
   addTraVe({String address = ''}) {
@@ -968,7 +973,7 @@ class EditOrderViewModel extends BaseViewModel {
     _donTraVeEditControllers
         .add({"quantityController": TextEditingController()});
 
-    notifyListeners();
+    changeState();
   }
 
   addAddress() {
@@ -984,8 +989,10 @@ class EditOrderViewModel extends BaseViewModel {
     _addressControllers.add(TextEditingController());
   }
 
-  changeState() {
-    storeData();
+  changeState({bool isSaving = true}) {
+    if (isSaving) {
+      storeData();
+    }
     notifyListeners();
   }
 
@@ -994,7 +1001,7 @@ class EditOrderViewModel extends BaseViewModel {
       penStrokeWidth: 5,
       penColor: Colors.black,
     );
-    notifyListeners();
+    changeState();
   }
 
   clearSignatureSupplier() {
@@ -1002,7 +1009,7 @@ class EditOrderViewModel extends BaseViewModel {
       penStrokeWidth: 5,
       penColor: Colors.black,
     );
-    notifyListeners();
+    changeState();
   }
 
   clearAllSignatures() {
@@ -1014,7 +1021,7 @@ class EditOrderViewModel extends BaseViewModel {
       penStrokeWidth: 5,
       penColor: Colors.black,
     );
-    notifyListeners();
+    changeState();
   }
 
   Future customerCreateOrder(BuildContext context) async {
@@ -1052,7 +1059,7 @@ class EditOrderViewModel extends BaseViewModel {
             createOrderResponse.responseData.data["total_amount"];
       }
 
-      notifyListeners();
+      changeState();
       FrappeAlert.successAlert(
           title: 'Tạo đơn thành công',
           context: context,
@@ -1236,8 +1243,8 @@ class EditOrderViewModel extends BaseViewModel {
           var code =
               "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
           await locator<Api>().createCongNoTienHoaDon(code, _name!);
-          if (!saveTemplate) Config.remove(key);
-          notifyListeners();
+          if (!saveTemplate) _isDontSave = false;
+          changeState();
         } else {
           FrappeAlert.errorAlert(
               title: 'Lỗi xảy ra',
@@ -1264,7 +1271,7 @@ class EditOrderViewModel extends BaseViewModel {
     var response = await locator<Api>().updateGiaoViec(_name, giaoViec.employee,
         giaoViec.supportEmployee, giaoViec.plate, giaoViec.deliverDate);
     giaoViec.name = response['message']["name"];
-    notifyListeners();
+    changeState();
   }
 
   calculateTotalPrice() {
@@ -1451,7 +1458,7 @@ class EditOrderViewModel extends BaseViewModel {
               await locator<Api>().updateDonNhapKho(_donNhapKho!);
           if (updateDonNhapKhoResponse != null &&
               updateDonNhapKhoResponse.responseData != null) {
-            notifyListeners();
+            changeState();
             FrappeAlert.successAlert(
                 title: 'Cập nhật thành công',
                 context: context,
@@ -1484,7 +1491,7 @@ class EditOrderViewModel extends BaseViewModel {
           subtitle: 'Không có khách hàng, xin hãy chọn khách hàng!',
         );
       }
-      notifyListeners();
+      changeState();
     } catch (e) {
       FrappeAlert.errorAlert(
           title: 'Lỗi xảy ra',
@@ -1626,7 +1633,7 @@ class EditOrderViewModel extends BaseViewModel {
         status: status != null && status != '' ? status : _order!.status,
       );
 
-      // notifyListeners();
+      // changeState();
     } catch (e) {
       return null;
     }

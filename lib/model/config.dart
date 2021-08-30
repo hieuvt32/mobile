@@ -96,6 +96,7 @@ class Config {
   }
 
   static Future remove(String k) async {
-    configContainer.delete(k);
+    await configContainer.delete(k);
+    var data = configContainer.containsKey(k);
   }
 }
