@@ -108,7 +108,7 @@ abstract class Api {
   Future<ListOrderResponse> getListOrderDieuPhois(int isDieuPhoi);
 
   Future<ListDonBaoBinhLoiRespone> getListDonBaoBinhLoi(
-      String customerCode, String status);
+      {String? customerCode, required String status});
 
   Future<UpdateTrangThaiQuyChuanResponse> updateTrangThaiQuyChuan(
     String key,

@@ -20,6 +20,7 @@ class EditGasBrokenViewModel extends BaseViewModel {
   late List<Address> deliveryAddresses = [];
   late TextEditingController noteFieldController = TextEditingController();
   late TextEditingController feedbackController = TextEditingController();
+  late String? customerCode;
 
   initData() {
     noteFieldController.clear();
@@ -42,7 +43,8 @@ class EditGasBrokenViewModel extends BaseViewModel {
     ];
   }
 
-  Future<void> initState(String? id) async {
+  Future<void> initState({String? id, String? customer}) async {
+    customerCode = customer;
     donBaoBinhLoi = SingleDonBaoBinhLoiRespone();
     noteFieldController.clear();
     enableEdit = true;
@@ -134,19 +136,36 @@ class EditGasBrokenViewModel extends BaseViewModel {
   }
 
   Future<dynamic> updateDonBaoBinhLoi(BuildContext context) async {
-    if (feedbackController.value.text.trim().length == 0) {
-      FrappeAlert.warnAlert(title: "Hãy nhập phản hồi", context: context);
+    try {
+      if (feedbackController.value.text.trim().length == 0) {
+        FrappeAlert.warnAlert(title: "Hãy nhập phản hồi", context: context);
+        return;
+      }
+
+      if (customerCode == null) {
+        FrappeAlert.errorAlert(
+            title: "Có lỗi xảy ra, vui lòng thử lại sau", context: context);
+        return;
+      }
+
+      UpdateBaoBinhLoiRequest request = new UpdateBaoBinhLoiRequest(
+          customerCode: customerCode ?? "",
+          listDonBaoLoiAddress: donBaoBinhLoi.listDonBaoLoiAddress ?? [],
+          notes: donBaoBinhLoi.description ?? "",
+          name: donBaoBinhLoi.name ?? "",
+          feedback: feedbackController.value.text,
+          status: "Đã phản hồi");
+
+      await locator<Api>().updateDonBaoBinhLoi(request);
+      fetchSingleDonbaoLoi(donBaoBinhLoi.name ?? "");
+
+      feedbackController.clear();
+      FrappeAlert.successAlert(title: "Đã gửi phản hồi", context: context);
+    } catch (err) {
+      FrappeAlert.errorAlert(
+          title: "Có lỗi xảy ra, vui lòng thử lại sau", context: context);
       return;
     }
-
-    UpdateBaoBinhLoiRequest request = new UpdateBaoBinhLoiRequest(
-        customerCode: "",
-        listDonBaoLoiAddress: donBaoBinhLoi.listDonBaoLoiAddress ?? [],
-        notes: donBaoBinhLoi.description ?? "",
-        name: donBaoBinhLoi.name ?? "",
-        feedback: feedbackController.value.text);
-
-    return locator<Api>().updateDonBaoBinhLoi(request);
   }
 
   Future<dynamic> deleteDonBinhBaoLoi(BuildContext context) async {

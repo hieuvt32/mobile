@@ -145,12 +145,9 @@ class ConfirmDialog {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Text(
-              'Alert',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            Text(
               content,
               style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

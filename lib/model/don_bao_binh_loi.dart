@@ -2,6 +2,7 @@ class DonBaoBinhLoi {
   late DateTime createdDate;
   late List<String> addresses;
   late String id;
+  late String customer;
 
   DonBaoBinhLoi({
     required this.createdDate,
@@ -14,6 +15,7 @@ class DonBaoBinhLoi {
         ? DateTime.tryParse(json['created_date'])
         : DateTime.now();
     createdDate = date == null ? DateTime.now() : date;
+    customer = json['customer'];
 
     id = json['id'];
     addresses = (json['addresses'] as List<dynamic>).map((e) {
