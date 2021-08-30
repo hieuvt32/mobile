@@ -104,6 +104,10 @@ dependency_overrides:
     git:
       url: https://github.com/sumitbhanushali/flutter_form_builder
       ref: e80fdaa31c6150bdb503f1437b9fa9cf127d0380
+  ai_barcode:
+    git:
+      url: https://github.com/hieuvt32/ai_barcode
+      ref: 0be94f7468f06fb019925b2498c2ec703f3a686a
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

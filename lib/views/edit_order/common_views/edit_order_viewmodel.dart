@@ -129,7 +129,7 @@ class EditOrderViewModel extends BaseViewModel {
 
   loadStoreData() async {
     try {
-      // Config.remove(key);
+      Config.remove(key);
       if (Config.containsKey(key)) {
         var jsonData = Config.get(key);
 
