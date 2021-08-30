@@ -56,6 +56,7 @@ class _TransportationEditState extends State<TransportationEdit>
     return BaseView<EditOrderViewModel>(
       onModelReady: (model) {
         // this.initTab();
+        model.isCreateScreen = false;
       },
       onModelClose: (model) {
         // model.disposed();

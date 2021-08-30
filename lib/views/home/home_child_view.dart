@@ -190,10 +190,27 @@ class _HomeChildViewState extends State<HomeChildView> {
     ),
     Item(
       icon: FrappeIcons.users,
-      childrens: [],
-      view: (context) {
-        return ListOrderView();
-      },
+      childrens: [
+        Item(
+          icon: FrappeIcons.danh_sach_don_loi,
+          visible: true,
+          text: "Danh sách đơn điều phối",
+          view: (context) {
+            return CoordinationListView();
+          },
+        ),
+        Item(
+          icon: FrappeIcons.bao_binh_loi,
+          visible: true,
+          text: "Tạo đơn điều phối",
+          view: (context) {
+            return CoordinationEditView();
+          },
+        ),
+      ],
+      // view: (context) {
+      //   return ListOrderView();
+      // },
       text: "Điều phối",
       roles: [
         "Giám Đốc",

@@ -112,15 +112,15 @@ class _InventoryViewState extends State<InventoryView>
     if (_bienBanKiemKho != null) {
       if (type == 0) {
         if (_bienBanKiemKho!.materialList.length > 0) {
-          return _bienBanKiemKho!.materialList
-              .where((element) => element.realName == name)
-              .first;
+          var data = _bienBanKiemKho!.materialList
+              .where((element) => element.realName == name);
+          if (data.length > 0) return data.first;
         }
       }
       if (_bienBanKiemKho!.semiProductList.length > 0) {
-        return _bienBanKiemKho!.semiProductList
-            .where((element) => element.realName == name)
-            .first;
+        var data = _bienBanKiemKho!.semiProductList
+            .where((element) => element.realName == name);
+        if (data.length > 0) return data.first;
       }
     }
     return null;

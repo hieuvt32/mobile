@@ -50,13 +50,14 @@ class _EditOrderViewState extends State<EditOrderView>
       onModelReady: (model) async {
         model.setName(widget.name);
         model.init();
-        await model.initPreData();
         model.setHaveDelivery(widget.haveDelivery);
         model.setIsRated(widget.isRated);
         if (widget.isCreateScreen) {
           model.isCreateScreen = widget.isCreateScreen;
           model.loadStoreData();
         }
+
+        await model.initPreData();
         // this.initTab();
       },
       onModelClose: (model) {

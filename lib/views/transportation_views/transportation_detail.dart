@@ -150,18 +150,19 @@ class _TransportationDetailState extends State<TransportationDetail> {
                   onTap: () {
                     if (model.order!.status != "Đã đặt hàng") {
                       var length = model.giaoViecSignatures
-                          .where(
-                              (element) => element.status == "Đang giao hàng")
+                          .where((element) => element.status == "Đã giao hàng")
                           .length;
+
+                      model.clearAllSignatures();
+                      var isLatest =
+                          length == datas.length - 1 || datas.length == 1;
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) {
-                            model.clearAllSignatures();
                             return TransportationEdit(
                               // name: item.name,
                               address: e.key,
-                              isLatest: length == datas.length - 1 ||
-                                  datas.length == 1,
+                              isLatest: isLatest,
                             );
                           },
                         ),

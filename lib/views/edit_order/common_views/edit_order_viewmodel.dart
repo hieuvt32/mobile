@@ -79,7 +79,7 @@ class EditOrderViewModel extends BaseViewModel {
   String? _title;
   late Config _config;
   bool isCreateScreen = false;
-  bool _isDontSave = true;
+  late bool _isSaved = false;
   // End: data store
 
   final String key = "order_template";
@@ -115,7 +115,7 @@ class EditOrderViewModel extends BaseViewModel {
         "save_template": _saveTemplate,
         "name": _name,
         "title": _title,
-        "is_dont_save": _isDontSave,
+        "is_saved": _isSaved,
       };
 
       var jsonData = jsonEncode(editOrderViewModel);
@@ -131,13 +131,13 @@ class EditOrderViewModel extends BaseViewModel {
 
   loadStoreData() async {
     try {
-      // Config.remove(key);
+      Config.remove(key);
       if (Config.containsKey(key)) {
         var jsonData = Config.get(key);
 
         var data = jsonDecode(jsonData);
 
-        if (data["is_dont_save"] || data['save_template']) {
+        if (!data["is_saved"] || data['save_template']) {
           _order = Order.fromJson(data["order"]);
 
           _products = (data["products"] as List<dynamic>)
@@ -219,7 +219,8 @@ class EditOrderViewModel extends BaseViewModel {
             }
           }
           changeState(isSaving: false);
-        }
+        } else
+          Config.remove(key);
       }
     } catch (e) {
       print(e);
@@ -385,6 +386,8 @@ class EditOrderViewModel extends BaseViewModel {
     _donTraVeEditControllers = [];
 
     _donHoanTraEditControllers = [];
+
+    _isSaved = false;
 
     _config = Config();
 
@@ -990,7 +993,7 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   changeState({bool isSaving = true}) {
-    if (isSaving) {
+    if (isSaving && isCreateScreen) {
       storeData();
     }
     notifyListeners();
@@ -1243,7 +1246,7 @@ class EditOrderViewModel extends BaseViewModel {
           var code =
               "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
           await locator<Api>().createCongNoTienHoaDon(code, _name!);
-          if (!saveTemplate) _isDontSave = false;
+          if (!saveTemplate) _isSaved = true;
           changeState();
         } else {
           FrappeAlert.errorAlert(

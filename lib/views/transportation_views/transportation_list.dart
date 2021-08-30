@@ -1,8 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/views/base_view.dart';
 import 'package:frappe_app/views/customize_app_bar.dart';
 import 'package:frappe_app/views/item_cart_order.dart';
@@ -162,7 +164,22 @@ class _TransportationListState extends State<TransportationList> {
           leftAction: () {
             Navigator.pop(context);
           },
-          actions: [],
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 24),
+              child: GestureDetector(
+                child: FrappeIcon(
+                  FrappeIcons.refresh,
+                  size: 20,
+                ),
+                onTap: () {
+                  setState(() {
+                    model.init();
+                  });
+                },
+              ),
+            )
+          ],
         ),
         body: !model.isLoading
             ? _buildTabContent()
