@@ -342,7 +342,7 @@ abstract class Api {
   Future<BaoCaoTaiSanResponse> getBaoCaoTaiSanGiamDoc(String company);
 
   Future updateCarLocation(
-      {required String order,
+      {required String employeeAccount,
       required double longitude,
       required double latitude});
 

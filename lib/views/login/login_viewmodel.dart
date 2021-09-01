@@ -43,7 +43,6 @@ class LoginViewModel extends BaseViewModel {
   }
 
   updateUserDetails(LoginResponse response) {
-    print("response response: $response");
     Config.set('isLoggedIn', true);
 
     Config.set(

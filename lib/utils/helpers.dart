@@ -375,10 +375,11 @@ String generateRandomHexColor() {
 }
 
 Future<bool> requestLocationPermission() async {
-  if (await Permission.location.status.isGranted) return true;
+  bool isGranted = await Permission.location.status.isGranted;
+  print("$isGranted");
+  if (isGranted) return true;
 
   if (Platform.isIOS) return true;
 
-  bool isGranted = await Permission.location.request().isGranted;
-  return isGranted;
+  return await Permission.location.request().isGranted;
 }
