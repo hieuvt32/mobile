@@ -18,9 +18,17 @@ import 'package:frappe_app/widgets/limit_text_length.dart';
 import 'package:injectable/injectable.dart';
 import 'package:intl/intl.dart';
 
-enum OrderStatus { awaitConfirm, ordered, delivery, delivered, cancelled }
+enum OrderStatus {
+  draft,
+  awaitConfirm,
+  ordered,
+  delivery,
+  delivered,
+  cancelled
+}
 
 final Map<OrderStatus, Color> mappingStatusColor = {
+  OrderStatus.draft: hexToColor("#FFEC44"),
   OrderStatus.awaitConfirm: hexToColor("#FFEC44"),
   OrderStatus.ordered: hexToColor("#0072BC"),
   OrderStatus.delivery: hexToColor("#FF0F00"),
@@ -36,6 +44,7 @@ class CustomerListOrderView extends StatefulWidget {
 class CustomerListOrderViewState extends State<CustomerListOrderView>
     with SingleTickerProviderStateMixin {
   final List<Widget> myTabs = [
+    "Đơn mẫu",
     "Chờ xác nhận",
     "Đã đặt",
     "Đang giao",
@@ -218,6 +227,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
   ListOrderResponse? _deliveryResponse;
   ListOrderResponse? _deliveredResponse;
   ListOrderResponse? _canceledResponse;
+  ListOrderResponse? _draftResponse;
 
   bool isLoading = true;
 
@@ -258,6 +268,11 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
           4,
           customer: customerCode,
           type: "B",
+        ),
+        locator<Api>().getListOrder(
+          6,
+          customer: customerCode,
+          type: "B",
         )
       ]);
 
@@ -267,6 +282,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
         _deliveredResponse = listResponse[2];
         _awaitConfirmRespone = listResponse[3];
         _canceledResponse = listResponse[4];
+        _draftResponse = listResponse[5];
         isLoading = false;
       });
     } catch (err) {
@@ -281,7 +297,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
     _scrollController = ScrollController();
     _scrollController.addListener(() {});
 
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     _tabController.addListener(_onTabListener);
 
     _awaitConfirmRespone = ListOrderResponse(orders: []);
@@ -305,7 +321,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 5,
+        length: 6,
         child: Scaffold(
           appBar: AppBar(
             title: Text("Dánh sách đơn hàng"),
@@ -339,6 +355,8 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                       child: TabBarView(
                       controller: _tabController,
                       children: [
+                        _buildTabContent(
+                            OrderStatus.draft, _draftResponse!.orders!),
                         _buildTabContent(OrderStatus.awaitConfirm,
                             _awaitConfirmRespone!.orders!),
                         _buildTabContent(

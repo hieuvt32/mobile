@@ -103,7 +103,7 @@ abstract class Api {
   );
 
   Future<ListOrderResponse> getListOrder(int status,
-      {customer, type, int? sellInWareHouse});
+      {sellInWareHouse, customer, type, employeeAccount});
 
   Future<ListOrderResponse> getListOrderDieuPhois(int isDieuPhoi);
 

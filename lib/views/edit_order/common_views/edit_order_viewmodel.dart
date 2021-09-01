@@ -241,6 +241,8 @@ class EditOrderViewModel extends BaseViewModel {
     return _sellInWarehouse;
   }
 
+  bool get isSaved => _isSaved;
+
   bool get readOnlyView {
     if (_order != null) {
       if (['Chờ xác nhận', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy']
@@ -314,6 +316,8 @@ class EditOrderViewModel extends BaseViewModel {
   OrderState calculateState() {
     if (_order != null) {
       switch (_order!.status) {
+        case "Đơn chờ":
+          return OrderState.PreNewOrder;
         case "Chờ xác nhận":
           return OrderState.WaitForComfirm;
         case "Đã đặt hàng":
@@ -1036,7 +1040,7 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.phone = customer.phone;
       _order!.products = _productForLocations;
       _order!.sellInWarehouse = 0;
-      _order!.status = "Chờ xác nhận";
+      _order!.status = saveTemplate ? "Đơn mẫu" : "Chờ xác nhận";
       _order!.taxId = customer.taxId;
 
       // calculateTotalPrice();
@@ -1079,6 +1083,8 @@ class EditOrderViewModel extends BaseViewModel {
     context, {
     String type = 'B',
     bool isNhaCungCap = false,
+    String? status,
+    bool isValidateSingature = true,
   }) async {
     try {
       if (_userRoles.contains(UserRole.KhachHang)) {
@@ -1088,7 +1094,7 @@ class EditOrderViewModel extends BaseViewModel {
 
       Attachments? customerAttachmemts;
       Attachments? supplierAttachments;
-      if (order!.sellInWarehouse == 1) {
+      if (order!.sellInWarehouse == 1 && isValidateSingature) {
         var imgId = Uuid().v1().toString();
         var customerBytes = await _signatureCustomerController.toPngBytes();
         if (customerBytes != null) {
@@ -1186,7 +1192,9 @@ class EditOrderViewModel extends BaseViewModel {
 
         // _order!.totalCost = _totalOrderPrice;
         _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
-        _order!.status = !_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng";
+        _order!.status = status != null
+            ? status
+            : (!_sellInWarehouse ? "Đã đặt hàng" : "Đã giao hàng");
         _order!.taxId = elements[0].taxId;
         _order!.vendor = elements[0].code;
 

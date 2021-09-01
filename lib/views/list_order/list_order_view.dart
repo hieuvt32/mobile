@@ -20,38 +20,7 @@ class ListOrderView extends StatefulWidget {
 class _ListOrderViewState extends State<ListOrderView>
     with SingleTickerProviderStateMixin {
   final bodyGlobalKey = GlobalKey();
-  final List<Widget> myTabs = [
-    Tab(
-      child: Text(
-        'Đã đặt hàng',
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    ),
-    Tab(
-      child: Text(
-        'Đang giao hàng',
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    ),
-    Tab(
-      child: Text(
-        'Đã giao hàng',
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    ),
-  ];
+  List<Widget> myTabs = [];
   late TabController _tabController;
   late ScrollController _scrollController;
   late bool fixedScroll;
@@ -65,6 +34,17 @@ class _ListOrderViewState extends State<ListOrderView>
   //   // Tab(text: 'fixed'),
   // ];
 
+  Widget getFirstTab() {
+    return Text(
+      widget.type == "customer" ? "Đơn mẫu" : 'Đơn chờ',
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w700,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
   _ListOrderViewState() {
     _scrollController = ScrollController();
   }
@@ -75,13 +55,51 @@ class _ListOrderViewState extends State<ListOrderView>
 
   ListOrderResponse? _responseDaGiaoHang;
 
+  ListOrderResponse? _responseDonCho;
+
+  ListOrderResponse? _responseDonMau;
+
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(_smoothScrollToTop);
-
+    myTabs = [
+      Tab(
+        child: getFirstTab(),
+      ),
+      Tab(
+        child: Text(
+          'Đã đặt hàng',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      Tab(
+        child: Text(
+          'Đang giao hàng',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      Tab(
+        child: Text(
+          'Đã giao hàng',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    ];
     // fixedScroll = true;
 
     super.initState();
@@ -95,6 +113,22 @@ class _ListOrderViewState extends State<ListOrderView>
     _responseDangGiaoHang = null;
 
     _responseDaGiaoHang = null;
+
+    _responseDonCho = null;
+
+    _responseDonMau = null;
+
+    locator<Api>().getListOrder(5).then((value) {
+      setState(() {
+        _responseDonCho = value;
+      });
+    });
+
+    locator<Api>().getListOrder(6).then((value) {
+      setState(() {
+        _responseDonMau = value;
+      });
+    });
 
     locator<Api>().getListOrder(0).then((value) {
       setState(() {
@@ -142,12 +176,16 @@ class _ListOrderViewState extends State<ListOrderView>
 
   _buildTabContext(int type) {
     switch (type) {
+      case 5:
+        return _buildContentTab(_responseDonCho, type);
       case 0:
         return _buildContentTab(_responseDaDatHang, type);
       case 1:
         return _buildContentTab(_responseDangGiaoHang, type);
       case 2:
         return _buildContentTab(_responseDaGiaoHang, type);
+      case 6:
+        return _buildContentTab(_responseDonMau, type);
       default:
     }
   }
@@ -368,6 +406,10 @@ class _ListOrderViewState extends State<ListOrderView>
 
   Color getColorByType(int type) {
     switch (type) {
+      case 5:
+        return hexToColor('#FFEC44');
+      case 6:
+        return hexToColor('#FFEC44');
       case 0:
         return hexToColor('#0072BC');
       case 1:
@@ -379,6 +421,10 @@ class _ListOrderViewState extends State<ListOrderView>
 
   String getTextByType(int type) {
     switch (type) {
+      case 5:
+        return 'Đơn chờ';
+      case 6:
+        return 'Đơn mẫu';
       case 0:
         return 'Đã đặt hàng';
       case 1:
@@ -391,7 +437,7 @@ class _ListOrderViewState extends State<ListOrderView>
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -431,7 +477,8 @@ class _ListOrderViewState extends State<ListOrderView>
         // body: AnswerButton(),
         body: _responseDaDatHang != null &&
                 _responseDangGiaoHang != null &&
-                _responseDaDatHang != null
+                _responseDaDatHang != null &&
+                _responseDonCho != null
             ? Padding(
                 padding: const EdgeInsets.only(top: 12, bottom: 12),
                 child: NestedScrollView(
@@ -444,7 +491,7 @@ class _ListOrderViewState extends State<ListOrderView>
                           automaticIndicatorColorAdjustment: true,
                           controller: _tabController,
                           labelColor: hexToColor('#FF0F00'),
-                          // isScrollable: true,
+                          isScrollable: true,
                           labelStyle: TextStyle(
                             color: hexToColor('#FF0F00'),
                             fontSize: 18,
@@ -461,6 +508,7 @@ class _ListOrderViewState extends State<ListOrderView>
                       child: TabBarView(
                     controller: _tabController,
                     children: [
+                      _buildTabContext(widget.type == "customer" ? 6 : 5),
                       _buildTabContext(0),
                       _buildTabContext(1),
                       _buildTabContext(2)

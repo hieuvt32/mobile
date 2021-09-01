@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frappe_app/utils/dialog.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/base_view.dart';
@@ -38,7 +39,8 @@ class _EditOrderViewState extends State<EditOrderView>
         return hexToColor("#1BBD5C");
       case "Đã hủy":
         return hexToColor("#000000");
-
+      case "Đơn chờ":
+        return hexToColor("#FFEC44");
       default:
         return hexToColor("#000000");
     }
@@ -71,7 +73,37 @@ class _EditOrderViewState extends State<EditOrderView>
         appBar: CustomizeAppBar(
           model.title,
           leftAction: () {
-            Navigator.pop(context);
+            if (widget.isCreateScreen) {
+              model.isCreateScreen = widget.isCreateScreen;
+              if (model.isSaved) {
+                Navigator.pop(context);
+              } else {
+                if (model.sellInWarehouse) {
+                  if (model.products.length > 0) {
+                    ConfirmDialog.showConfirmDialog(context, onCancel: () {
+                      Navigator.of(context, rootNavigator: true).pop(context);
+                      Navigator.pop(context);
+                    }, onConfirm: () async {
+                      model.createOrder(
+                        context,
+                        status: 'Đơn chờ',
+                        isValidateSingature: false,
+                      );
+                      Navigator.of(context, rootNavigator: true).pop(context);
+                      Navigator.pop(context);
+                    },
+                        content:
+                            "Bạn có muốn lưu lại đơn hiện tại làm đơn mẫu?");
+                  } else {
+                    Navigator.pop(context);
+                  }
+                } else {
+                  Navigator.pop(context);
+                }
+              }
+            } else {
+              Navigator.pop(context);
+            }
           },
           actions: [
             Padding(
