@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/config.dart';
+import 'package:frappe_app/services/background_location_service.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
@@ -88,6 +89,7 @@ class ProfileView extends StatelessWidget {
               GestureDetector(
                 onTap: () async {
                   await clearLoginInfo();
+                  await BackgroundLocationService().stopLocationService();
                   NavigationHelper.clearAllAndNavigateTo(
                     context: context,
                     page: Login(),

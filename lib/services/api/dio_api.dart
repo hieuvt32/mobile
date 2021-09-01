@@ -3291,7 +3291,9 @@ class DioApi implements Api {
         ),
       );
 
-      if (response.statusCode == 200) {
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 202) {
         return response.data;
       } else {
         throw ErrorResponse(
@@ -3300,6 +3302,7 @@ class DioApi implements Api {
         );
       }
     } catch (e) {
+      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {
