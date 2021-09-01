@@ -3,10 +3,12 @@ class CreateTrackingLocationRequest {
   late String address;
   late double? longitude;
   late double? latitude;
+  late String employeeAccount;
 
   CreateTrackingLocationRequest(
       {required this.address,
       required this.order,
+      required this.employeeAccount,
       this.longitude,
       this.latitude});
 
@@ -16,6 +18,7 @@ class CreateTrackingLocationRequest {
     data['address'] = address;
     data['longitude'] = longitude;
     data['latitude'] = latitude;
+    data['employee_account'] = employeeAccount;
 
     return data;
   }

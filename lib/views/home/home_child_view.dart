@@ -9,6 +9,7 @@ import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/services/background_location_service.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
@@ -447,11 +448,11 @@ class _HomeChildViewState extends State<HomeChildView> {
     }
   }
 
-  storeUserRoles(List<String>? userRoles) {
+  storeUserRoles(List<String> userRoles) {
     Config.set("roles", jsonEncode(userRoles));
 
-    if (Config().roles.contains(UserRole.GiaoVan)) {
-      requestLocationPermission();
+    if (userRoles.contains("Giao Vận")) {
+      BackgroundLocationService().startLocationService();
     }
   }
 
@@ -461,7 +462,9 @@ class _HomeChildViewState extends State<HomeChildView> {
     items = baseItems;
 
     locator<Api>().getRoles().then((value) {
-      storeUserRoles(value.roles);
+      if (value.roles != null && value.roles!.length > 0) {
+        storeUserRoles(value.roles ?? []);
+      }
 
       setState(() {
         _response = value;

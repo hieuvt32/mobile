@@ -1429,7 +1429,6 @@ class DioApi implements Api {
         throw ErrorResponse();
       }
     } catch (e) {
-      print(e);
       if (e is DioError) {
         var error = e.error;
         if (error is SocketException) {
@@ -3275,15 +3274,16 @@ class DioApi implements Api {
   }
 
   @override
-  Future updateCarLocation({order, longitude, latitude}) async {
+  Future updateCarLocation({employeeAccount, longitude, latitude}) async {
     try {
+      dynamic data = {
+        'employee_account': employeeAccount,
+        'longitude': longitude.toString(),
+        'latitude': latitude.toString(),
+      };
       final response = await DioHelper.dio.post(
         '/method/updateCarLocation',
-        queryParameters: {
-          'order': order,
-          'longitude': longitude,
-          'latitude': latitude
-        },
+        queryParameters: data,
         options: Options(
           validateStatus: (status) {
             return status < 500;

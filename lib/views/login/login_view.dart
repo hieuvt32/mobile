@@ -367,7 +367,7 @@ class _PasswordFieldState extends State<PasswordField> {
                 padding: MaterialStateProperty.all(
                     EdgeInsets.fromLTRB(16, 12, 16, 12))),
             child: Text(
-              _hidePassword ? "Hiện thị" : "Ẩn",
+              _hidePassword ? "Hiển thị" : "Ẩn",
               style: TextStyle(
                 color: hexToColor('#0072BC'),
               ),

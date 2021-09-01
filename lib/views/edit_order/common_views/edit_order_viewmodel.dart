@@ -25,6 +25,7 @@ import 'package:frappe_app/model/response_data.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/base_viewmodel.dart';
 import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:injectable/injectable.dart';
@@ -336,6 +337,13 @@ class EditOrderViewModel extends BaseViewModel {
     }
 
     return OrderState.PreNewOrder;
+  }
+
+  locationPermission() {
+    if (isAvailableRoles([UserRole.GiaoVan]) &&
+        order!.status == "Đã đặt hàng") {
+      requestLocationPermission();
+    }
   }
 
   String get orderStatus {
@@ -729,6 +737,9 @@ class EditOrderViewModel extends BaseViewModel {
 
       if (response != null && response.order != null) {
         _order = response.order;
+
+        // request location permission
+        locationPermission();
 
         if (_order!.products != null && _order!.products.length > 0) {
           // get total price of an order
@@ -1312,6 +1323,29 @@ class EditOrderViewModel extends BaseViewModel {
     });
   }
 
+  Future createLocationOrder() async {
+    String userId = Config().userId ?? "";
+    print(
+      "userId $userId",
+    );
+
+    List<CreateTrackingLocationRequest> locations = _order!.products
+        .map((e) => CreateTrackingLocationRequest(
+            address: e.diaChi, employeeAccount: userId, order: order!.name))
+        .toList();
+
+    LocationData currentLocation = await Location().getLocation();
+
+    locations.add(CreateTrackingLocationRequest(
+        address: "Xe",
+        employeeAccount: userId,
+        latitude: currentLocation.latitude,
+        longitude: currentLocation.longitude,
+        order: order!.name));
+
+    await locator<Api>().createTrackingLocation(locations);
+  }
+
   Future updateOrder(
     context, {
     String status = '',
@@ -1319,6 +1353,19 @@ class EditOrderViewModel extends BaseViewModel {
     bool isNhaCungCap = false,
     String statusDonNhapKho = 'Chờ nhập hàng',
   }) async {
+    if (status == "Đang giao hàng") {
+      bool isGranted = await requestLocationPermission();
+
+      if (!isGranted) {
+        FrappeAlert.warnAlert(
+            title: "Bạn cần chấp thuận chia sẻ vị trí để bắt đầu giao hàng",
+            context: context);
+        return;
+      }
+
+      createLocationOrder();
+    }
+
     try {
       Attachments? customerAttachmemts;
       Attachments? supplierAttachments;
@@ -1445,21 +1492,6 @@ class EditOrderViewModel extends BaseViewModel {
               uploadHoaDonMuaBan.responseData.data["total_amount"];
           _order!.totalCost =
               uploadHoaDonMuaBan.responseData.data["total_amount"];
-          if (status == "Đang giao hàng") {
-            List<CreateTrackingLocationRequest> locations = _order!.products
-                .map((e) => CreateTrackingLocationRequest(
-                    address: e.diaChi, order: order!.name))
-                .toList();
-
-            LocationData currentLocation = await Location().getLocation();
-            locations.add(CreateTrackingLocationRequest(
-                address: "Xe",
-                order: _order!.name,
-                latitude: currentLocation.latitude,
-                longitude: currentLocation.longitude));
-
-            await locator<Api>().createTrackingLocation(locations);
-          }
 
           _donNhapKho!.codeOrders = _name!;
           _donNhapKho!.status = statusDonNhapKho;
