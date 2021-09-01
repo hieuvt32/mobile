@@ -319,6 +319,8 @@ class EditOrderViewModel extends BaseViewModel {
       switch (_order!.status) {
         case "Đơn chờ":
           return OrderState.PreNewOrder;
+        case "Đơn mẫu":
+          return OrderState.PreNewOrder;
         case "Chờ xác nhận":
           return OrderState.WaitForComfirm;
         case "Đã đặt hàng":
@@ -383,6 +385,8 @@ class EditOrderViewModel extends BaseViewModel {
 
     _addressControllers = [];
 
+    _sellInWarehouse = false;
+
     _signatureSupplierController = SignatureController(
       penStrokeWidth: 5,
       penColor: Colors.black,
@@ -391,6 +395,7 @@ class EditOrderViewModel extends BaseViewModel {
       penStrokeWidth: 5,
       penColor: Colors.black,
     );
+    _isSaved = false;
     _productEditControllers = [];
     _productForLocationEditControllerMap = Map();
 
@@ -1051,7 +1056,7 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.phone = customer.phone;
       _order!.products = _productForLocations;
       _order!.sellInWarehouse = 0;
-      _order!.status = saveTemplate ? "Đơn mẫu" : "Chờ xác nhận";
+      _order!.status = "Chờ xác nhận";
       _order!.taxId = customer.taxId;
 
       // calculateTotalPrice();
@@ -1077,6 +1082,8 @@ class EditOrderViewModel extends BaseViewModel {
             createOrderResponse.responseData.data["total_amount"];
       }
 
+      _isSaved = true;
+
       changeState();
       FrappeAlert.successAlert(
           title: 'Tạo đơn thành công',
@@ -1095,7 +1102,7 @@ class EditOrderViewModel extends BaseViewModel {
     String type = 'B',
     bool isNhaCungCap = false,
     String? status,
-    bool isValidateSingature = true,
+    bool isValidate = true,
   }) async {
     try {
       if (_userRoles.contains(UserRole.KhachHang)) {
@@ -1105,7 +1112,7 @@ class EditOrderViewModel extends BaseViewModel {
 
       Attachments? customerAttachmemts;
       Attachments? supplierAttachments;
-      if (order!.sellInWarehouse == 1 && isValidateSingature) {
+      if (order!.sellInWarehouse == 1 && isValidate) {
         var imgId = Uuid().v1().toString();
         var customerBytes = await _signatureCustomerController.toPngBytes();
         if (customerBytes != null) {
@@ -1191,7 +1198,7 @@ class EditOrderViewModel extends BaseViewModel {
 
         var quantity = _order!.products.fold<int>(
             0, (previousValue, element) => previousValue + element.quantity);
-        if (_order!.products.length <= 0 || quantity <= 0) {
+        if ((_order!.products.length <= 0 || quantity <= 0) && isValidate) {
           FrappeAlert.errorAlert(
               title: 'Lỗi xảy ra',
               context: context,
@@ -1684,6 +1691,7 @@ class EditOrderViewModel extends BaseViewModel {
 }
 
 enum OrderState {
+  Draft,
   WaitForComfirm,
   PreNewOrder,
   NewOrder,

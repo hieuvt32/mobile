@@ -592,9 +592,16 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                     type: "M");
               }
             } else {
-              if (widget.model.orderState == OrderState.PreNewOrder)
-                await widget.model.createOrder(context);
-              else {
+              if (widget.model.orderState == OrderState.PreNewOrder) {
+                if (widget.model.order!.status == "Đơn mẫu")
+                  await widget.model
+                      .updateOrder(context, status: "Chờ xác nhận");
+                else if (widget.model.order!.status == "Đơn chờ")
+                  await widget.model
+                      .updateOrder(context, status: "Đã đặt hàng");
+                else
+                  await widget.model.createOrder(context);
+              } else {
                 await widget.model.updateOrder(context);
               }
             }

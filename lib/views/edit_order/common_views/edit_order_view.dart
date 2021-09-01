@@ -79,7 +79,9 @@ class _EditOrderViewState extends State<EditOrderView>
                 Navigator.pop(context);
               } else {
                 if (model.sellInWarehouse) {
-                  if (model.products.length > 0) {
+                  if (model.products.length > 0 ||
+                      model.nhapKhos.length > 0 ||
+                      model.traVes.length > 0) {
                     ConfirmDialog.showConfirmDialog(context, onCancel: () {
                       Navigator.of(context, rootNavigator: true).pop(context);
                       Navigator.pop(context);
@@ -87,7 +89,7 @@ class _EditOrderViewState extends State<EditOrderView>
                       model.createOrder(
                         context,
                         status: 'Đơn chờ',
-                        isValidateSingature: false,
+                        isValidate: false,
                       );
                       Navigator.of(context, rootNavigator: true).pop(context);
                       Navigator.pop(context);
@@ -98,7 +100,28 @@ class _EditOrderViewState extends State<EditOrderView>
                     Navigator.pop(context);
                   }
                 } else {
-                  Navigator.pop(context);
+                  if (model.isAvailableRoles([UserRole.KhachHang])) {
+                    if (model.productForLocations.length > 0) {
+                      ConfirmDialog.showConfirmDialog(context, onCancel: () {
+                        Navigator.of(context, rootNavigator: true).pop(context);
+                        Navigator.pop(context);
+                      }, onConfirm: () async {
+                        model.createOrder(
+                          context,
+                          status: 'Đơn chờ',
+                          isValidate: false,
+                        );
+                        Navigator.of(context, rootNavigator: true).pop(context);
+                        Navigator.pop(context);
+                      },
+                          content:
+                              "Bạn có muốn lưu lại đơn hiện tại làm đơn mẫu?");
+                    } else {
+                      Navigator.pop(context);
+                    }
+                  } else {
+                    Navigator.pop(context);
+                  }
                 }
               }
             } else {
