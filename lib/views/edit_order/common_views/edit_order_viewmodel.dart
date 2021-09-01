@@ -82,150 +82,150 @@ class EditOrderViewModel extends BaseViewModel {
   late bool _isSaved = false;
   // End: data store
 
-  final String key = "order_template";
+  // final String key = "order_template";
 
-  storeData() {
-    try {
-      var editOrderViewModel = {
-        "order": _order,
-        // "user_roles": _userRoles,
-        "products": products,
-        "product_for_locations": _productForLocations,
-        "nhap_khos": _nhapKhos,
-        "hoan_tras": _hoanTras,
-        "tra_ves": _traVes,
-        "don_nhap_kho": _donNhapKho,
-        "addresses": _addresses,
-        "edit_addresses": _editAddresses,
-        "customers": _customers,
-        "manufactures": _manufactures,
-        "don_gia_mua_bans": _donGiaMuaBans,
-        "nguyen_vat_lieu_vat_tus": _nguyenVatLieuVatTus,
-        "nguyen_vat_lieu_san_phams": _nguyenVatLieuSanPhams,
-        "giao_viec_signatures": _giaoViecSignatures,
-        "bien_so_xes": _bienSoXes,
-        "employees": _employees,
-        "total_order_price": _totalOrderPrice,
-        "is_nha_cung_cap": _isNhaCungCap,
-        "giao_viec": giaoViec,
-        "customer_value": _customerValue,
-        "sell_in_warehouse": _sellInWarehouse,
-        "have_delivery": _haveDelivery,
-        "is_rated": _isRated,
-        "save_template": _saveTemplate,
-        "name": _name,
-        "title": _title,
-        "is_saved": _isSaved,
-      };
+  // storeData() {
+  //   try {
+  //     var editOrderViewModel = {
+  //       "order": _order,
+  //       // "user_roles": _userRoles,
+  //       "products": products,
+  //       "product_for_locations": _productForLocations,
+  //       "nhap_khos": _nhapKhos,
+  //       "hoan_tras": _hoanTras,
+  //       "tra_ves": _traVes,
+  //       "don_nhap_kho": _donNhapKho,
+  //       "addresses": _addresses,
+  //       "edit_addresses": _editAddresses,
+  //       "customers": _customers,
+  //       "manufactures": _manufactures,
+  //       "don_gia_mua_bans": _donGiaMuaBans,
+  //       "nguyen_vat_lieu_vat_tus": _nguyenVatLieuVatTus,
+  //       "nguyen_vat_lieu_san_phams": _nguyenVatLieuSanPhams,
+  //       "giao_viec_signatures": _giaoViecSignatures,
+  //       "bien_so_xes": _bienSoXes,
+  //       "employees": _employees,
+  //       "total_order_price": _totalOrderPrice,
+  //       "is_nha_cung_cap": _isNhaCungCap,
+  //       "giao_viec": giaoViec,
+  //       "customer_value": _customerValue,
+  //       "sell_in_warehouse": _sellInWarehouse,
+  //       "have_delivery": _haveDelivery,
+  //       "is_rated": _isRated,
+  //       "save_template": _saveTemplate,
+  //       "name": _name,
+  //       "title": _title,
+  //       "is_saved": _isSaved,
+  //     };
 
-      var jsonData = jsonEncode(editOrderViewModel);
+  //     var jsonData = jsonEncode(editOrderViewModel);
 
-      Config.set(
-        key,
-        jsonData,
-      );
-    } catch (e) {
-      print(e);
-    }
-  }
+  //     Config.set(
+  //       key,
+  //       jsonData,
+  //     );
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
-  loadStoreData() async {
-    try {
-      Config.remove(key);
-      if (Config.containsKey(key)) {
-        var jsonData = Config.get(key);
+  // loadStoreData() async {
+  //   try {
+  //     Config.remove(key);
+  //     if (Config.containsKey(key)) {
+  //       var jsonData = Config.get(key);
 
-        var data = jsonDecode(jsonData);
+  //       var data = jsonDecode(jsonData);
 
-        if (!data["is_saved"] || data['save_template']) {
-          _order = Order.fromJson(data["order"]);
+  //       if (!data["is_saved"] || data['save_template']) {
+  //         _order = Order.fromJson(data["order"]);
 
-          _products = (data["products"] as List<dynamic>)
-              .map((e) => Product.fromJson(e))
-              .toList();
+  //         _products = (data["products"] as List<dynamic>)
+  //             .map((e) => Product.fromJson(e))
+  //             .toList();
 
-          _productForLocations =
-              (data["product_for_locations"] as List<dynamic>)
-                  .map((e) => Product.fromJson(e))
-                  .toList();
+  //         _productForLocations =
+  //             (data["product_for_locations"] as List<dynamic>)
+  //                 .map((e) => Product.fromJson(e))
+  //                 .toList();
 
-          _sellInWarehouse = data["sell_in_warehouse"];
+  //         _sellInWarehouse = data["sell_in_warehouse"];
 
-          _isNhaCungCap = data["is_nha_cung_cap"];
+  //         _isNhaCungCap = data["is_nha_cung_cap"];
 
-          // get total price of an order
-          _totalOrderPrice = data["total_order_price"];
+  //         // get total price of an order
+  //         _totalOrderPrice = data["total_order_price"];
 
-          _customerValue = data["customer_value"];
+  //         _customerValue = data["customer_value"];
 
-          _addresses = (data["addresses"] as List<dynamic>)
-              .map((e) => Address.fromJson(e))
-              .toList();
+  //         _addresses = (data["addresses"] as List<dynamic>)
+  //             .map((e) => Address.fromJson(e))
+  //             .toList();
 
-          _editAddresses = (data["edit_addresses"] as List<dynamic>)
-              .map((e) => Address.fromJson(e))
-              .toList();
+  //         _editAddresses = (data["edit_addresses"] as List<dynamic>)
+  //             .map((e) => Address.fromJson(e))
+  //             .toList();
 
-          if (_sellInWarehouse || _isNhaCungCap) {
-            for (var product in _products) {
-              _products.add(product);
-              _productEditControllers.add({
-                "kgController": TextEditingController(text: "${product.kg}"),
-                "quantityController":
-                    TextEditingController(text: "${product.quantity}")
-              });
-            }
-            // TODO: Nếu lỗi xem lại tại đây
-            // _readOnlyView = true;
-          } else {
-            var locations = [];
+  //         if (_sellInWarehouse || _isNhaCungCap) {
+  //           for (var product in _products) {
+  //             _products.add(product);
+  //             _productEditControllers.add({
+  //               "kgController": TextEditingController(text: "${product.kg}"),
+  //               "quantityController":
+  //                   TextEditingController(text: "${product.quantity}")
+  //             });
+  //           }
+  //           // TODO: Nếu lỗi xem lại tại đây
+  //           // _readOnlyView = true;
+  //         } else {
+  //           var locations = [];
 
-            var mapData = groupBy<Product, String>(
-                _productForLocations, (obj) => obj.address);
-            for (var product in _productForLocations) {
-              // _productForLocations.add(product);
+  //           var mapData = groupBy<Product, String>(
+  //               _productForLocations, (obj) => obj.address);
+  //           for (var product in _productForLocations) {
+  //             // _productForLocations.add(product);
 
-              if (!locations.contains(product.address)) {
-                locations.add(product.address);
+  //             if (!locations.contains(product.address)) {
+  //               locations.add(product.address);
 
-                _addressControllers.add(TextEditingController());
+  //               _addressControllers.add(TextEditingController());
 
-                // List<Address>? listAdrress = _addresses;
+  //               // List<Address>? listAdrress = _addresses;
 
-                // var elements = listAdrress
-                //     .where((element) => element.name == product.address)
-                //     .toList();
+  //               // var elements = listAdrress
+  //               //     .where((element) => element.name == product.address)
+  //               //     .toList();
 
-                // if (elements != null && elements.length > 0) {
-                //   _editAddresses.add(elements[0]);
-                // }
-                if (mapData.containsKey(product.address)) {
-                  var products = mapData[product.address]!.toList();
-                  List<Map<String, TextEditingController>> mapChildData = [];
-                  for (int i = 0; i < products.length; i++) {
-                    mapChildData.add({
-                      "kgController":
-                          TextEditingController(text: "${products[i].kg}"),
-                      "quantityController":
-                          TextEditingController(text: "${products[i].quantity}")
-                    });
-                  }
-                  if (!_productForLocationEditControllerMap
-                      .containsKey(product.address))
-                    _productForLocationEditControllerMap[product.address] =
-                        mapChildData;
-                }
-              }
-            }
-          }
-          changeState(isSaving: false);
-        } else
-          Config.remove(key);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
+  //               // if (elements != null && elements.length > 0) {
+  //               //   _editAddresses.add(elements[0]);
+  //               // }
+  //               if (mapData.containsKey(product.address)) {
+  //                 var products = mapData[product.address]!.toList();
+  //                 List<Map<String, TextEditingController>> mapChildData = [];
+  //                 for (int i = 0; i < products.length; i++) {
+  //                   mapChildData.add({
+  //                     "kgController":
+  //                         TextEditingController(text: "${products[i].kg}"),
+  //                     "quantityController":
+  //                         TextEditingController(text: "${products[i].quantity}")
+  //                   });
+  //                 }
+  //                 if (!_productForLocationEditControllerMap
+  //                     .containsKey(product.address))
+  //                   _productForLocationEditControllerMap[product.address] =
+  //                       mapChildData;
+  //               }
+  //             }
+  //           }
+  //         }
+  //         changeState(isSaving: false);
+  //       } else
+  //         Config.remove(key);
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   // Start: public get value
   double get totalOrderPrice => _totalOrderPrice;
@@ -578,7 +578,7 @@ class EditOrderViewModel extends BaseViewModel {
       // }).toList();
 
       // Config.set(key, jsonEncode(listProduct));
-      storeData();
+      // storeData();
     }
     // else
     //   Config.remove(key);
@@ -993,9 +993,9 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   changeState({bool isSaving = true}) {
-    if (isSaving && isCreateScreen) {
-      storeData();
-    }
+    // if (isSaving && isCreateScreen) {
+    //   storeData();
+    // }
     notifyListeners();
   }
 

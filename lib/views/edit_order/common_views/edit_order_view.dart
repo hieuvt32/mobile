@@ -54,7 +54,7 @@ class _EditOrderViewState extends State<EditOrderView>
         model.setIsRated(widget.isRated);
         if (widget.isCreateScreen) {
           model.isCreateScreen = widget.isCreateScreen;
-          model.loadStoreData();
+          // model.loadStoreData();
         }
 
         await model.initPreData();

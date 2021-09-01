@@ -1386,7 +1386,7 @@ class DioApi implements Api {
 
   @override
   Future<ListOrderResponse> getListOrder(int status,
-      {sellInWareHouse, customer, type}) async {
+      {sellInWareHouse, customer, type, employeeAccount}) async {
     try {
       Map<String, dynamic> data = {
         "status": status,
@@ -1402,6 +1402,10 @@ class DioApi implements Api {
 
       if (type != null) {
         data['type'] = type;
+      }
+
+      if (employeeAccount != null) {
+         data['employee_account'] = employeeAccount;
       }
 
       final response = await DioHelper.dio.get(

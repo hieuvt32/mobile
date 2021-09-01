@@ -27,10 +27,12 @@ class _TransportationListState extends State<TransportationList> {
     return Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(4),
-                bottomRight: Radius.circular(4))),
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(4),
+            bottomRight: Radius.circular(4),
+          ),
+        ),
         child: Column(
           children: [
             head,
@@ -38,16 +40,16 @@ class _TransportationListState extends State<TransportationList> {
                 .map((value) => Padding(
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Expanded(child: Text("Địa chỉ:")),
                           Expanded(
-                            child: LimitTextLength(
-                              text: value.key,
+                            child: LimitTextLengthNoneFlexible(
+                              text: value.key != null ? value.key : "",
                             ),
                           ),
                           Expanded(
-                              child: LimitTextLength(
+                              child: LimitTextLengthNoneFlexible(
                             text: "${value.value}",
                             textAlign: TextAlign.end,
                           )),
@@ -98,13 +100,15 @@ class _TransportationListState extends State<TransportationList> {
                             child: Text("Khách hàng:"),
                           ),
                           Expanded(
-                            child: LimitTextLength(
-                              text: item.vendorName,
+                            child: LimitTextLengthNoneFlexible(
+                              text: item.vendorName != null
+                                  ? item.vendorName
+                                  : "",
                             ),
                           ),
                           Expanded(
-                              child: LimitTextLength(
-                            text: item.vendor,
+                              child: LimitTextLengthNoneFlexible(
+                            text: item.vendor != null ? item.vendor : "",
                             textAlign: TextAlign.end,
                           )),
                         ],
@@ -187,6 +191,28 @@ class _TransportationListState extends State<TransportationList> {
                 child: CircularProgressIndicator(),
               ),
       ),
+    );
+  }
+}
+
+class LimitTextLengthNoneFlexible extends StatelessWidget {
+  LimitTextLengthNoneFlexible(
+      {required this.text, this.style, this.textAlign = TextAlign.start});
+
+  final TextStyle? style;
+  final String text;
+  final TextAlign textAlign;
+  @override
+  Widget build(BuildContext context) {
+    return RichText(
+      overflow: TextOverflow.ellipsis,
+      strutStyle: StrutStyle(fontSize: 10.0),
+      text: TextSpan(
+          style: style == null
+              ? TextStyle(color: Colors.black, fontWeight: FontWeight.bold)
+              : style,
+          text: text),
+      textAlign: this.textAlign,
     );
   }
 }
