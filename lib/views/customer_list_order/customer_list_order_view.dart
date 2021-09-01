@@ -43,24 +43,7 @@ class CustomerListOrderView extends StatefulWidget {
 
 class CustomerListOrderViewState extends State<CustomerListOrderView>
     with SingleTickerProviderStateMixin {
-  final List<Widget> myTabs = [
-    "Đơn mẫu",
-    "Chờ xác nhận",
-    "Đã đặt",
-    "Đang giao",
-    "Đã giao",
-    "Đã hủy"
-  ].map((tabName) {
-    return Tab(
-      child: Text(
-        tabName,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }).toList();
+  List<Widget> myTabs = [];
 
   late TabController _tabController;
   late ScrollController _scrollController;
@@ -292,12 +275,45 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
     }
   }
 
+  // List<Widget> bodyTabs = [];
+
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(() {});
 
-    _tabController = TabController(length: 6, vsync: this);
+    var isDieuPhoi =
+        Config().roles.any((element) => [UserRole.DieuPhoi].contains(element));
+
+    var data = isDieuPhoi
+        ? [
+            "Chờ xác nhận",
+            "Đã đặt",
+            "Đang giao",
+            "Đã giao",
+            "Đã hủy",
+          ]
+        : [
+            "Đơn mẫu",
+            "Chờ xác nhận",
+            "Đã đặt",
+            "Đang giao",
+            "Đã giao",
+            "Đã hủy"
+          ];
+    myTabs = data.map((tabName) {
+      return Tab(
+        child: Text(
+          tabName,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+    }).toList();
+
+    _tabController = TabController(length: isDieuPhoi ? 5 : 6, vsync: this);
     _tabController.addListener(_onTabListener);
 
     _awaitConfirmRespone = ListOrderResponse(orders: []);
@@ -320,8 +336,10 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
 
   @override
   Widget build(BuildContext context) {
+    var isDieuPhoi =
+        Config().roles.any((element) => [UserRole.DieuPhoi].contains(element));
     return DefaultTabController(
-        length: 6,
+        length: isDieuPhoi ? 5 : 6,
         child: Scaffold(
           appBar: AppBar(
             title: Text("Dánh sách đơn hàng"),
@@ -354,20 +372,33 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                   ? Container(
                       child: TabBarView(
                       controller: _tabController,
-                      children: [
-                        _buildTabContent(
-                            OrderStatus.draft, _draftResponse!.orders!),
-                        _buildTabContent(OrderStatus.awaitConfirm,
-                            _awaitConfirmRespone!.orders!),
-                        _buildTabContent(
-                            OrderStatus.ordered, _orderedResponse!.orders!),
-                        _buildTabContent(
-                            OrderStatus.delivery, _deliveryResponse!.orders!),
-                        _buildTabContent(
-                            OrderStatus.delivered, _deliveredResponse!.orders!),
-                        _buildTabContent(
-                            OrderStatus.cancelled, _canceledResponse!.orders!),
-                      ],
+                      children: isDieuPhoi
+                          ? [
+                              _buildTabContent(OrderStatus.awaitConfirm,
+                                  _awaitConfirmRespone!.orders!),
+                              _buildTabContent(OrderStatus.ordered,
+                                  _orderedResponse!.orders!),
+                              _buildTabContent(OrderStatus.delivery,
+                                  _deliveryResponse!.orders!),
+                              _buildTabContent(OrderStatus.delivered,
+                                  _deliveredResponse!.orders!),
+                              _buildTabContent(OrderStatus.cancelled,
+                                  _canceledResponse!.orders!),
+                            ]
+                          : [
+                              _buildTabContent(
+                                  OrderStatus.draft, _draftResponse!.orders!),
+                              _buildTabContent(OrderStatus.awaitConfirm,
+                                  _awaitConfirmRespone!.orders!),
+                              _buildTabContent(OrderStatus.ordered,
+                                  _orderedResponse!.orders!),
+                              _buildTabContent(OrderStatus.delivery,
+                                  _deliveryResponse!.orders!),
+                              _buildTabContent(OrderStatus.delivered,
+                                  _deliveredResponse!.orders!),
+                              _buildTabContent(OrderStatus.cancelled,
+                                  _canceledResponse!.orders!),
+                            ],
                     ))
                   : Center(
                       child: CircularProgressIndicator(),
