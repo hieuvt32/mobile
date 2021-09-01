@@ -11,7 +11,7 @@ class BackgroundLocationService {
   Future startLocationService() async {
     await requestLocationPermission();
 
-    await BackgroundLocation.startLocationService(distanceFilter: 200);
+    await BackgroundLocation.startLocationService(distanceFilter: 50);
 
     String? userId = Config().userId;
 
