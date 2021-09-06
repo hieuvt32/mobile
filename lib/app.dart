@@ -15,6 +15,8 @@ import 'services/connectivity_service.dart';
 
 import 'views/login/login_view.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+
 class FrappeApp extends StatefulWidget {
   @override
   _FrappeAppState createState() => _FrappeAppState();
@@ -60,6 +62,7 @@ class _FrappeAppState extends State<FrappeApp> {
                 'vi',
               ),
             ],
+            navigatorKey: navigatorKey,
             builder: EasyLoading.init(),
             debugShowCheckedModeBanner: false,
             title: 'Frappe',

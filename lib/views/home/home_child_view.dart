@@ -14,12 +14,14 @@ import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/utils/navigation_helper.dart';
 import 'package:frappe_app/views/barcode_scanner/barcode_scanner_view.dart';
 import 'package:frappe_app/views/coordination_views/coordination_edit.dart';
 import 'package:frappe_app/views/coordination_views/coordination_list.dart';
 import 'package:frappe_app/views/customer_list_order/customer_list_order_view.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
+import 'package:frappe_app/views/login/login_view.dart';
 import 'package:frappe_app/views/reports/Incoming_and_spending_view.dart';
 import 'package:frappe_app/views/reports/asset_report_view.dart';
 import 'package:frappe_app/views/reports/manufacturing_report_view.dart';
@@ -468,6 +470,15 @@ class _HomeChildViewState extends State<HomeChildView> {
 
       setState(() {
         _response = value;
+        if (_response != null && _response!.roles != null) {
+          if (_response!.roles!.length == 1 &&
+              _response!.roles!.contains("Guest")) {
+            NavigationHelper.clearAllAndNavigateTo(
+              context: context,
+              page: Login(),
+            );
+          }
+        }
       });
     });
 
