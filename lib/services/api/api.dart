@@ -32,10 +32,12 @@ import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/giao_van_location_response.dart';
 import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
+import 'package:frappe_app/model/hoa_don_mua_ban_hidden_status.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
+import 'package:frappe_app/model/phan_kho12.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/model/bao_cao_loi_nhuan_response.dart';
 import 'package:frappe_app/model/rating_order_request.dart';
@@ -349,4 +351,16 @@ abstract class Api {
   Future<OrderLocationResponse> getLocationByOrder(String order);
 
   Future<dynamic> updateDonBaoBinhLoi(UpdateBaoBinhLoiRequest request);
+
+  Future<ResponseData> getHoaDonMuaBanHiddenStatus(
+    String order,
+  );
+
+  Future<ResponseData> updateHoaDonMuaBanHiddenStatus(
+    HoaDonMuaBanHiddenStatus model,
+  );
+
+  Future<ResponseData> getKho12();
+
+  Future<ResponseData> setKho12(PhanKho12 model);
 }

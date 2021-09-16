@@ -390,10 +390,298 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
             ),
           ],
         );
-
+      case OrderState.Waiting:
+        return buildButtonThuKho12();
       default:
         return Container();
     }
+  }
+
+  Widget buildButtonThuKho12() {
+    if (widget.model.isThuKho1) {
+      if ([
+        // HiddenOrderState.Temporary,
+        // HiddenOrderState.WaitingOrderAccept1,
+        HiddenOrderState.Waiting1,
+        HiddenOrderState.Waiting2,
+        HiddenOrderState.WaitingOrderAccept2,
+      ].contains(widget.model.hiddenOrderState)) {
+        return Container();
+      }
+
+      if ([
+        // HiddenOrderState.Temporary,
+        // HiddenOrderState.WaitingOrderAccept1,
+        HiddenOrderState.WaitingOrderAccept1,
+        HiddenOrderState.WaitingOrderReject1,
+        HiddenOrderState.WaitingOrderReject2,
+      ].contains(widget.model.hiddenOrderState)) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: hexToColor('#FF0F00'),
+                // side: BorderSide(
+                //   width: 1.0,
+                // ),
+                minimumSize: Size(120, 32),
+                // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  // side: BorderSide(
+                  //   color: hexToColor('#0072BC'),
+                  // ),
+                ),
+              ),
+              onPressed: () {
+                // showModalBottomSheet(
+                //   context: context,
+                //   builder: (_) {
+                //     return GestureDetector(
+                //       onTap: () {},
+                //       child: EditOrderNotConfirmModal(),
+                //       behavior: HitTestBehavior.opaque,
+                //     );
+                //   },
+                // );
+              },
+              child: Text(
+                'Hủy',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: hexToColor('#0072BC'),
+                // side: BorderSide(
+                //   width: 1.0,
+                // ),
+
+                minimumSize: Size(120, 32),
+                // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  // side: BorderSide(
+                  //   color: hexToColor('#FF0F00'),
+                  // ),
+                ),
+              ),
+              onPressed: () async {
+                if (widget.model.orderState == OrderState.PreNewOrder)
+                  await widget.model.createOrder(context);
+                else {
+                  if ([
+                    // HiddenOrderState.Temporary,
+                    // HiddenOrderState.WaitingOrderAccept1,
+                    HiddenOrderState.WaitingOrderAccept1,
+                    // HiddenOrderState.WaitingOrderReject1,
+                    HiddenOrderState.WaitingOrderReject2,
+                  ].contains(widget.model.hiddenOrderState)) {
+                    widget.model.hoaDonMuaBanHiddenStatus!.status = "Đơn chờ 2";
+                    widget.model.hoaDonMuaBanHiddenStatus!.realName =
+                        "Đơn chờ 2";
+                  }
+
+                  if ([
+                    // HiddenOrderState.Temporary,
+                    // HiddenOrderState.WaitingOrderAccept1,
+                    HiddenOrderState.WaitingOrderReject1,
+                    // HiddenOrderState.WaitingOrderReject1,
+                    // HiddenOrderState.WaitingOrderReject2,
+                  ].contains(widget.model.hiddenOrderState)) {
+                    widget.model.hoaDonMuaBanHiddenStatus!.status = "Đơn chờ 1";
+                    widget.model.hoaDonMuaBanHiddenStatus!.realName =
+                        "Đơn chờ 1";
+                  }
+                  if ([
+                    // HiddenOrderState.Temporary,
+                    // HiddenOrderState.WaitingOrderAccept1,
+                    HiddenOrderState.Waiting1,
+                    HiddenOrderState.Waiting2,
+                    // HiddenOrderState.WaitingOrderReject1,
+                    // HiddenOrderState.WaitingOrderReject2,
+                  ].contains(widget.model.hiddenOrderState)) {
+                    await widget.model.updateOrder(context, status: "Đơn chờ");
+                  }
+
+                  await widget.model.updateHoaDonMuaBanHiddenStatus();
+                  widget.model.changeState();
+                }
+              },
+              child: Text(
+                'Hoàn thành',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          ],
+        );
+      }
+    }
+
+    if (widget.model.isThuKho2) {
+      if ([
+        // HiddenOrderState.Temporary,
+        // HiddenOrderState.WaitingOrderAccept1,
+        HiddenOrderState.Waiting1,
+        HiddenOrderState.Waiting2,
+        // HiddenOrderState.WaitingOrderAccept2,
+      ].contains(widget.model.hiddenOrderState)) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: hexToColor('#FF0F00'),
+                // side: BorderSide(
+                //   width: 1.0,
+                // ),
+                minimumSize: Size(120, 32),
+                // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  // side: BorderSide(
+                  //   color: hexToColor('#0072BC'),
+                  // ),
+                ),
+              ),
+              onPressed: () async {
+                // showModalBottomSheet(
+                //   context: context,
+                //   builder: (_) {
+                //     return GestureDetector(
+                //       onTap: () {},
+                //       child: EditOrderNotConfirmModal(),
+                //       behavior: HitTestBehavior.opaque,
+                //     );
+                //   },
+                // );
+                if ([
+                  // HiddenOrderState.Temporary,
+                  // HiddenOrderState.WaitingOrderAccept1,
+                  HiddenOrderState.Waiting1,
+                  // HiddenOrderState.WaitingOrderReject1,
+                  // HiddenOrderState.WaitingOrderReject2,
+                ].contains(widget.model.hiddenOrderState)) {
+                  widget.model.hoaDonMuaBanHiddenStatus!.status =
+                      "Đơn chờ không xác nhận 1";
+                  widget.model.hoaDonMuaBanHiddenStatus!.realName =
+                      "Đơn chờ không xác nhận 1";
+                }
+
+                if ([
+                  // HiddenOrderState.Temporary,
+                  // HiddenOrderState.WaitingOrderAccept1,
+                  HiddenOrderState.Waiting2,
+                  // HiddenOrderState.WaitingOrderReject1,
+                  // HiddenOrderState.WaitingOrderReject2,
+                ].contains(widget.model.hiddenOrderState)) {
+                  widget.model.hoaDonMuaBanHiddenStatus!.status =
+                      "Đơn chờ không xác nhận 2";
+                  widget.model.hoaDonMuaBanHiddenStatus!.realName =
+                      "Đơn chờ không xác nhận 2";
+                }
+                await widget.model.updateHoaDonMuaBanHiddenStatus();
+
+                widget.model.changeState();
+              },
+              child: Text(
+                'Không xác nhận',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: hexToColor('#0072BC'),
+                // side: BorderSide(
+                //   width: 1.0,
+                // ),
+
+                minimumSize: Size(120, 32),
+                // padding: EdgeInsets.fromLTRB(20, 12, 20, 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  // side: BorderSide(
+                  //   color: hexToColor('#FF0F00'),
+                  // ),
+                ),
+              ),
+              onPressed: () async {
+                if (widget.model.orderState == OrderState.PreNewOrder)
+                  await widget.model.createOrder(context);
+                else {
+                  if ([
+                    // HiddenOrderState.Temporary,
+                    // HiddenOrderState.WaitingOrderAccept1,
+                    HiddenOrderState.Waiting1,
+                    // HiddenOrderState.WaitingOrderReject1,
+                    // HiddenOrderState.WaitingOrderReject2,
+                  ].contains(widget.model.hiddenOrderState)) {
+                    widget.model.hoaDonMuaBanHiddenStatus!.status =
+                        "Đơn chờ đã xác nhận 1";
+                    widget.model.hoaDonMuaBanHiddenStatus!.realName =
+                        "Đơn chờ đã xác nhận 1";
+                  }
+
+                  if ([
+                    // HiddenOrderState.Temporary,
+                    // HiddenOrderState.WaitingOrderAccept1,
+                    HiddenOrderState.Waiting2,
+                    // HiddenOrderState.WaitingOrderReject1,
+                    // HiddenOrderState.WaitingOrderReject2,
+                  ].contains(widget.model.hiddenOrderState)) {
+                    widget.model.hoaDonMuaBanHiddenStatus!.status =
+                        "Đơn chờ đã xác nhận 2";
+                    widget.model.hoaDonMuaBanHiddenStatus!.realName =
+                        "Đơn chờ đã xác nhận 2";
+                    await widget.model.updateOrder(
+                      context,
+                      status: "Đã giao hàng",
+                      isUpdateImage: false,
+                    );
+                  }
+                  await widget.model.updateHoaDonMuaBanHiddenStatus();
+
+                  widget.model.changeState();
+                }
+              },
+              child: Text(
+                'Xác nhận',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            )
+          ],
+        );
+      }
+
+      // if ([
+      //   // HiddenOrderState.Temporary,
+      //   // HiddenOrderState.WaitingOrderAccept1,
+      //   HiddenOrderState.WaitingOrderAccept1,
+      //   HiddenOrderState.WaitingOrderAccept2,
+      //   HiddenOrderState.WaitingOrderReject1,
+      //   HiddenOrderState.WaitingOrderReject2,
+      // ].contains(widget.model.hiddenOrderState)) {
+      //   return Container();
+      // }
+    }
+    return Container();
   }
 
   String getTextButtonPrimary() {
@@ -472,9 +760,24 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                           type: "M");
                     }
                   } else {
-                    if (widget.model.orderState == OrderState.PreNewOrder)
-                      await widget.model.createOrder(context);
-                    else {
+                    if (widget.model.orderState == OrderState.PreNewOrder) {
+                      if (widget.model.sellInWarehouse) {
+                        if (widget.model.isThuKho1) {
+                          await widget.model.createOrder(
+                            context,
+                            status: "Đơn chờ",
+                            isValidate: false,
+                          );
+                          widget.model.hoaDonMuaBanHiddenStatus!.status =
+                              "Đơn chờ 1";
+                          widget.model.hoaDonMuaBanHiddenStatus!.realName =
+                              "Đơn chờ 1";
+                          await widget.model.updateHoaDonMuaBanHiddenStatus();
+                        }
+                      } else {
+                        await widget.model.createOrder(context);
+                      }
+                    } else {
                       await widget.model.updateOrder(context);
                     }
                   }
@@ -599,8 +902,24 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                 else if (widget.model.order!.status == "Đơn chờ")
                   await widget.model
                       .updateOrder(context, status: "Đã đặt hàng");
-                else
-                  await widget.model.createOrder(context);
+                else {
+                  if (widget.model.sellInWarehouse) {
+                    if (widget.model.isThuKho1) {
+                      await widget.model.createOrder(
+                        context,
+                        status: "Đơn chờ",
+                        isValidate: false,
+                      );
+                      widget.model.hoaDonMuaBanHiddenStatus!.status =
+                          "Đơn chờ 1";
+                      widget.model.hoaDonMuaBanHiddenStatus!.realName =
+                          "Đơn chờ 1";
+                      await widget.model.updateHoaDonMuaBanHiddenStatus();
+                    }
+                  } else {
+                    await widget.model.createOrder(context);
+                  }
+                }
               } else {
                 await widget.model.updateOrder(context);
               }

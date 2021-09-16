@@ -50,8 +50,8 @@ class _EditOrderViewState extends State<EditOrderView>
   Widget build(BuildContext context) {
     return BaseView<EditOrderViewModel>(
       onModelReady: (model) async {
-        model.setName(widget.name);
         model.init();
+        model.setName(widget.name);
         model.setHaveDelivery(widget.haveDelivery);
         model.setIsRated(widget.isRated);
         if (widget.isCreateScreen) {

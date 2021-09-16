@@ -17,9 +17,11 @@ import 'package:frappe_app/model/get_customer_by_company_response.dart';
 import 'package:frappe_app/model/get_delivery_address_response.dart';
 import 'package:frappe_app/model/get_guyen_vat_lieu_san_pham_response.dart';
 import 'package:frappe_app/model/giao_viec_signature.dart';
+import 'package:frappe_app/model/hoa_don_mua_ban_hidden_status.dart';
 import 'package:frappe_app/model/nguyen_vat_lieu_san_pham.dart';
 import 'package:frappe_app/model/offline_storage.dart';
 import 'package:frappe_app/model/order.dart';
+import 'package:frappe_app/model/phan_kho12.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/model/response_data.dart';
 import 'package:frappe_app/services/api/api.dart';
@@ -62,6 +64,8 @@ class EditOrderViewModel extends BaseViewModel {
   late List<Customer> _customers;
   late List<Customer> _manufactures;
   late List<DonGiaMuaBan> _donGiaMuaBans;
+  late HoaDonMuaBanHiddenStatus? _hoaDonMuaBanHiddenStatus;
+  late PhanKho12? _phanKho12;
   late List<NguyenVatLieuSanPham> _nguyenVatLieuVatTus;
   late List<NguyenVatLieuSanPham> _nguyenVatLieuSanPhams;
   late List<GiaoViecSignature> _giaoViecSignatures;
@@ -83,151 +87,6 @@ class EditOrderViewModel extends BaseViewModel {
   late bool _isSaved = false;
   // End: data store
 
-  // final String key = "order_template";
-
-  // storeData() {
-  //   try {
-  //     var editOrderViewModel = {
-  //       "order": _order,
-  //       // "user_roles": _userRoles,
-  //       "products": products,
-  //       "product_for_locations": _productForLocations,
-  //       "nhap_khos": _nhapKhos,
-  //       "hoan_tras": _hoanTras,
-  //       "tra_ves": _traVes,
-  //       "don_nhap_kho": _donNhapKho,
-  //       "addresses": _addresses,
-  //       "edit_addresses": _editAddresses,
-  //       "customers": _customers,
-  //       "manufactures": _manufactures,
-  //       "don_gia_mua_bans": _donGiaMuaBans,
-  //       "nguyen_vat_lieu_vat_tus": _nguyenVatLieuVatTus,
-  //       "nguyen_vat_lieu_san_phams": _nguyenVatLieuSanPhams,
-  //       "giao_viec_signatures": _giaoViecSignatures,
-  //       "bien_so_xes": _bienSoXes,
-  //       "employees": _employees,
-  //       "total_order_price": _totalOrderPrice,
-  //       "is_nha_cung_cap": _isNhaCungCap,
-  //       "giao_viec": giaoViec,
-  //       "customer_value": _customerValue,
-  //       "sell_in_warehouse": _sellInWarehouse,
-  //       "have_delivery": _haveDelivery,
-  //       "is_rated": _isRated,
-  //       "save_template": _saveTemplate,
-  //       "name": _name,
-  //       "title": _title,
-  //       "is_saved": _isSaved,
-  //     };
-
-  //     var jsonData = jsonEncode(editOrderViewModel);
-
-  //     Config.set(
-  //       key,
-  //       jsonData,
-  //     );
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
-  // loadStoreData() async {
-  //   try {
-  //     Config.remove(key);
-  //     if (Config.containsKey(key)) {
-  //       var jsonData = Config.get(key);
-
-  //       var data = jsonDecode(jsonData);
-
-  //       if (!data["is_saved"] || data['save_template']) {
-  //         _order = Order.fromJson(data["order"]);
-
-  //         _products = (data["products"] as List<dynamic>)
-  //             .map((e) => Product.fromJson(e))
-  //             .toList();
-
-  //         _productForLocations =
-  //             (data["product_for_locations"] as List<dynamic>)
-  //                 .map((e) => Product.fromJson(e))
-  //                 .toList();
-
-  //         _sellInWarehouse = data["sell_in_warehouse"];
-
-  //         _isNhaCungCap = data["is_nha_cung_cap"];
-
-  //         // get total price of an order
-  //         _totalOrderPrice = data["total_order_price"];
-
-  //         _customerValue = data["customer_value"];
-
-  //         _addresses = (data["addresses"] as List<dynamic>)
-  //             .map((e) => Address.fromJson(e))
-  //             .toList();
-
-  //         _editAddresses = (data["edit_addresses"] as List<dynamic>)
-  //             .map((e) => Address.fromJson(e))
-  //             .toList();
-
-  //         if (_sellInWarehouse || _isNhaCungCap) {
-  //           for (var product in _products) {
-  //             _products.add(product);
-  //             _productEditControllers.add({
-  //               "kgController": TextEditingController(text: "${product.kg}"),
-  //               "quantityController":
-  //                   TextEditingController(text: "${product.quantity}")
-  //             });
-  //           }
-  //           // TODO: Nếu lỗi xem lại tại đây
-  //           // _readOnlyView = true;
-  //         } else {
-  //           var locations = [];
-
-  //           var mapData = groupBy<Product, String>(
-  //               _productForLocations, (obj) => obj.address);
-  //           for (var product in _productForLocations) {
-  //             // _productForLocations.add(product);
-
-  //             if (!locations.contains(product.address)) {
-  //               locations.add(product.address);
-
-  //               _addressControllers.add(TextEditingController());
-
-  //               // List<Address>? listAdrress = _addresses;
-
-  //               // var elements = listAdrress
-  //               //     .where((element) => element.name == product.address)
-  //               //     .toList();
-
-  //               // if (elements != null && elements.length > 0) {
-  //               //   _editAddresses.add(elements[0]);
-  //               // }
-  //               if (mapData.containsKey(product.address)) {
-  //                 var products = mapData[product.address]!.toList();
-  //                 List<Map<String, TextEditingController>> mapChildData = [];
-  //                 for (int i = 0; i < products.length; i++) {
-  //                   mapChildData.add({
-  //                     "kgController":
-  //                         TextEditingController(text: "${products[i].kg}"),
-  //                     "quantityController":
-  //                         TextEditingController(text: "${products[i].quantity}")
-  //                   });
-  //                 }
-  //                 if (!_productForLocationEditControllerMap
-  //                     .containsKey(product.address))
-  //                   _productForLocationEditControllerMap[product.address] =
-  //                       mapChildData;
-  //               }
-  //             }
-  //           }
-  //         }
-  //         changeState(isSaving: false);
-  //       } else
-  //         Config.remove(key);
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
-
   // Start: public get value
   double get totalOrderPrice => _totalOrderPrice;
   List<GiaoViecSignature> get giaoViecSignatures => _giaoViecSignatures;
@@ -236,7 +95,10 @@ class EditOrderViewModel extends BaseViewModel {
   List<DonGiaMuaBan> get donGiaMuaBans => _donGiaMuaBans;
   DonNhapKho? get donNhapKho => _donNhapKho;
   bool get isLoading => _isLoading;
+  PhanKho12? get phanKho12 => _phanKho12;
   String get title => _title ?? '';
+  HoaDonMuaBanHiddenStatus? get hoaDonMuaBanHiddenStatus =>
+      _hoaDonMuaBanHiddenStatus;
   bool get sellInWarehouse {
     _order!.sellInWarehouse = _sellInWarehouse ? 1 : 0;
     return _sellInWarehouse;
@@ -246,6 +108,28 @@ class EditOrderViewModel extends BaseViewModel {
 
   bool get readOnlyView {
     if (_order != null) {
+      if (_order!.sellInWarehouse == 1) {
+        if (isThuKho1) {
+          if ([
+            HiddenOrderState.Waiting1,
+            HiddenOrderState.Waiting2,
+            HiddenOrderState.WaitingOrderAccept2
+          ].contains(hiddenOrderState)) return true;
+        }
+
+        if (isThuKho2) {
+          if ([
+            HiddenOrderState.Temporary,
+            HiddenOrderState.Waiting1,
+            HiddenOrderState.Waiting2,
+            HiddenOrderState.WaitingOrderAccept1,
+            HiddenOrderState.WaitingOrderAccept2,
+            HiddenOrderState.WaitingOrderReject1,
+            HiddenOrderState.WaitingOrderReject2,
+          ].contains(hiddenOrderState)) return true;
+        }
+      }
+
       if (['Chờ xác nhận', 'Đang giao hàng', 'Đã giao hàng', 'Đã hủy']
           .contains(_order!.status)) return true;
 
@@ -267,9 +151,6 @@ class EditOrderViewModel extends BaseViewModel {
   bool get haveDelivery => _haveDelivery;
   int get isRated => _isRated;
   bool get saveTemplate => _saveTemplate;
-  OrderState get orderState {
-    return calculateState();
-  }
 
   List<Map<String, TextEditingController>> get productEditControllers =>
       _productEditControllers;
@@ -314,11 +195,15 @@ class EditOrderViewModel extends BaseViewModel {
       _signatureCustomerController;
   SignatureController get signatureSupplierController =>
       _signatureSupplierController;
+  OrderState get orderState {
+    return calculateState();
+  }
+
   OrderState calculateState() {
     if (_order != null) {
       switch (_order!.status) {
         case "Đơn chờ":
-          return OrderState.PreNewOrder;
+          return OrderState.Waiting;
         case "Đơn mẫu":
           return OrderState.PreNewOrder;
         case "Chờ xác nhận":
@@ -341,6 +226,34 @@ class EditOrderViewModel extends BaseViewModel {
     return OrderState.PreNewOrder;
   }
 
+  HiddenOrderState get hiddenOrderState {
+    return calculateHiddenOrderState();
+  }
+
+  HiddenOrderState calculateHiddenOrderState() {
+    if (_hoaDonMuaBanHiddenStatus != null) {
+      switch (_hoaDonMuaBanHiddenStatus!.status) {
+        case "Đơn chờ 1":
+          return HiddenOrderState.Waiting1;
+        case "Đơn chờ đã xác nhận 1":
+          return HiddenOrderState.WaitingOrderAccept1;
+        case "Đơn chờ không xác nhận 1":
+          return HiddenOrderState.WaitingOrderReject1;
+        case "Đơn chờ 2":
+          return HiddenOrderState.Waiting2;
+        case "Đơn chờ đã xác nhận 2":
+          return HiddenOrderState.WaitingOrderAccept2;
+        case "Đơn chờ không xác nhận 2":
+          return HiddenOrderState.WaitingOrderReject2;
+        // case "Đã hủy":
+        //   return OrderState.Cancelled;
+        default:
+      }
+    }
+
+    return HiddenOrderState.Temporary;
+  }
+
   locationPermission() {
     if (isAvailableRoles([UserRole.GiaoVan]) &&
         order!.status == "Đã đặt hàng") {
@@ -354,6 +267,26 @@ class EditOrderViewModel extends BaseViewModel {
     }
 
     return '';
+  }
+
+  bool get isThuKho1 {
+    if (_phanKho12 != null) {
+      var thuKho1 = _phanKho12!.incharge1
+          .where((element) => element.account == Config().userId);
+      return thuKho1.length > 0;
+    }
+
+    return false;
+  }
+
+  bool get isThuKho2 {
+    if (_phanKho12 != null) {
+      var thuKho2 = _phanKho12!.incharge2
+          .where((element) => element.account == Config().userId);
+      return thuKho2.length > 0;
+    }
+
+    return false;
   }
   // End: public get value
 
@@ -458,6 +391,9 @@ class EditOrderViewModel extends BaseViewModel {
       listShell: [],
       reasonEdit: '',
     );
+
+    _hoaDonMuaBanHiddenStatus =
+        HoaDonMuaBanHiddenStatus('', 'Đơn tạm', "Đơn tạm");
   }
 
   setIsRated(int isRated) {
@@ -491,6 +427,10 @@ class EditOrderViewModel extends BaseViewModel {
 
     await getDonGiaMuaBans();
 
+    await getHoaDonBanHangHiddenStatus();
+
+    await getPhanKho12();
+
     _isLoading = false;
     changeState();
   }
@@ -498,6 +438,7 @@ class EditOrderViewModel extends BaseViewModel {
   setName(String? name) {
     _name = name;
     _title = ["", null, false, 0].contains(name) ? 'Tạo đơn hàng' : name;
+    _hoaDonMuaBanHiddenStatus!.order = name!;
     changeState();
   }
 
@@ -641,6 +582,26 @@ class EditOrderViewModel extends BaseViewModel {
     _donGiaMuaBans = response != null && response.donGiaMuaBans != null
         ? response.donGiaMuaBans!
         : [];
+
+    changeState();
+  }
+
+  Future getHoaDonBanHangHiddenStatus() async {
+    var response = await locator<Api>().getHoaDonMuaBanHiddenStatus(_name!);
+
+    _hoaDonMuaBanHiddenStatus = response != null && response.data != null
+        ? HoaDonMuaBanHiddenStatus.fromJson(response.data)
+        : HoaDonMuaBanHiddenStatus(_name!, 'Đơn tạm', "Đơn tạm");
+
+    changeState();
+  }
+
+  Future getPhanKho12() async {
+    var response = await locator<Api>().getKho12();
+
+    _phanKho12 = response != null && response.data != null
+        ? PhanKho12.fromJson(response.data)
+        : null;
 
     changeState();
   }
@@ -1013,9 +974,6 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   changeState({bool isSaving = true}) {
-    // if (isSaving && isCreateScreen) {
-    //   storeData();
-    // }
     notifyListeners();
   }
 
@@ -1074,6 +1032,8 @@ class EditOrderViewModel extends BaseViewModel {
       if (createOrderResponse != null &&
           createOrderResponse.responseData != null) {
         _name = createOrderResponse.responseData.data["name"];
+        _hoaDonMuaBanHiddenStatus!.order =
+            createOrderResponse.responseData.data["name"];
         _title = createOrderResponse.responseData.data["name"];
         _order!.name = createOrderResponse.responseData.data["name"];
         _totalOrderPrice =
@@ -1237,6 +1197,8 @@ class EditOrderViewModel extends BaseViewModel {
           _donNhapKho!.status = "Chờ nhập hàng";
           _donNhapKho!.listShell = [...nhapKhos, ...traVes];
           _name = createOrderResponse.responseData.data["name"];
+          _hoaDonMuaBanHiddenStatus!.order =
+              createOrderResponse.responseData.data["name"];
           _title = createOrderResponse.responseData.data["name"];
           _order!.name = createOrderResponse.responseData.data["name"];
           _totalOrderPrice =
@@ -1359,6 +1321,7 @@ class EditOrderViewModel extends BaseViewModel {
     String type = 'B',
     bool isNhaCungCap = false,
     String statusDonNhapKho = 'Chờ nhập hàng',
+    bool isUpdateImage = true,
   }) async {
     if (status == "Đang giao hàng") {
       bool isGranted = await requestLocationPermission();
@@ -1376,7 +1339,7 @@ class EditOrderViewModel extends BaseViewModel {
     try {
       Attachments? customerAttachmemts;
       Attachments? supplierAttachments;
-      if (order!.sellInWarehouse == 1) {
+      if (order!.sellInWarehouse == 1 && isUpdateImage) {
         var imgId = Uuid().v1().toString();
         var customerBytes = await _signatureCustomerController.toPngBytes();
         if (customerBytes != null) {
@@ -1484,11 +1447,13 @@ class EditOrderViewModel extends BaseViewModel {
         _order!.type = type;
 
         _order!.vendorName = elements[0].realName;
-        _order!.attachSignatureCustomerImage =
-            customerAttachmemts != null ? customerAttachmemts.fileUrl : '';
+        if (isUpdateImage) {
+          _order!.attachSignatureCustomerImage =
+              customerAttachmemts != null ? customerAttachmemts.fileUrl : '';
 
-        _order!.attachSignatureSupplierImage =
-            supplierAttachments != null ? supplierAttachments.fileUrl : '';
+          _order!.attachSignatureSupplierImage =
+              supplierAttachments != null ? supplierAttachments.fileUrl : '';
+        }
 
         var uploadHoaDonMuaBan =
             await locator<Api>().updateHoaDonMuaBan(_order!);
@@ -1499,6 +1464,8 @@ class EditOrderViewModel extends BaseViewModel {
               uploadHoaDonMuaBan.responseData.data["total_amount"];
           _order!.totalCost =
               uploadHoaDonMuaBan.responseData.data["total_amount"];
+
+          _hoaDonMuaBanHiddenStatus!.order = _name!;
 
           _donNhapKho!.codeOrders = _name!;
           _donNhapKho!.status = statusDonNhapKho;
@@ -1688,10 +1655,18 @@ class EditOrderViewModel extends BaseViewModel {
       return null;
     }
   }
+
+  Future updateHoaDonMuaBanHiddenStatus() async {
+    if (_hoaDonMuaBanHiddenStatus != null) {
+      var responseData = await locator<Api>()
+          .updateHoaDonMuaBanHiddenStatus(_hoaDonMuaBanHiddenStatus!);
+    }
+  }
 }
 
 enum OrderState {
   Draft,
+  Waiting,
   WaitForComfirm,
   PreNewOrder,
   NewOrder,
@@ -1699,4 +1674,14 @@ enum OrderState {
   Delivering,
   Delivered,
   Cancelled
+}
+
+enum HiddenOrderState {
+  Temporary,
+  Waiting1,
+  WaitingOrderAccept1,
+  WaitingOrderReject1,
+  Waiting2,
+  WaitingOrderAccept2,
+  WaitingOrderReject2,
 }

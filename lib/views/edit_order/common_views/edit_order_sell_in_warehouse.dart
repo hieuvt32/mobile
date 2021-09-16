@@ -24,42 +24,124 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
     with TickerProviderStateMixin {
   late ScrollController _scrollController;
   late TabController _tabController;
-  final List<Widget> mainTabs = [
-    Tab(
-      child: Text('Vỏ nhận',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-          )),
-    ),
-    Tab(
-        child: Text('Sản phẩm',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ))),
-    Tab(
-      child: Text(
-        'Ký xác nhận',
-        style: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    ),
-  ];
 
   @override
   void initState() {
-    _tabController = TabController(length: 3, vsync: this);
     _scrollController = new ScrollController();
     super.initState();
   }
 
+  Map<String, dynamic> rebuildWidget() {
+    List<Widget> mainTabs;
+    List<Widget> body;
+    int length;
+    if ([
+          HiddenOrderState.Temporary,
+          // HiddenOrderState.WaitingOrderAccept1,
+          HiddenOrderState.Waiting1,
+          HiddenOrderState.WaitingOrderReject1,
+        ].contains(widget.model.hiddenOrderState) ||
+        (widget.model.isThuKho2 &&
+            [
+              HiddenOrderState.WaitingOrderAccept1,
+            ].contains(widget.model.hiddenOrderState))) {
+      mainTabs = [
+        Tab(
+          child: Text(
+            'Vỏ nhận',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        Tab(
+          child: Text(
+            'Sản phẩm',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        // Tab(
+        //   child: Text(
+        //     'Ký xác nhận',
+        //     style: TextStyle(
+        //       fontSize: 14,
+        //       fontWeight: FontWeight.w700,
+        //     ),
+        //   ),
+        // ),
+      ];
+      body = [
+        ReceivingShellTab(),
+        ProductTab(),
+        // SignatureTab(),
+      ];
+      length = 2;
+    } else {
+      mainTabs = [
+        Tab(
+          child: Text(
+            'Vỏ nhận',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        Tab(
+          child: Text(
+            'Sản phẩm',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        Tab(
+          child: Text(
+            'Ký xác nhận',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ];
+      body = [
+        ReceivingShellTab(),
+        ProductTab(),
+        SignatureTab(),
+      ];
+
+      length = 3;
+      // _tabController.length = 3;
+    }
+    // var tabLength = 2;
+    // if ([
+    //   HiddenOrderState.WaitingOrderAccept1,
+    //   HiddenOrderState.Waiting2,
+    //   HiddenOrderState.WaitingOrderAccept2,
+    //   HiddenOrderState.WaitingOrderReject2,
+    // ].contains(widget.model.hiddenOrderState) ) {
+    //   tabLength = 3;
+    // }
+    _tabController = TabController(length: length, vsync: this);
+
+    return {
+      "tabs": mainTabs,
+      "body": body,
+      "length": length,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
+    var data = rebuildWidget();
     return DefaultTabController(
-      length: 3,
+      length: data["length"],
       child: Padding(
         padding: const EdgeInsets.fromLTRB(24, 25, 24, 16),
         child: NestedScrollView(
@@ -81,7 +163,7 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
                   ),
                   unselectedLabelColor: hexToColor('#00478B'),
                   indicatorColor: Colors.transparent,
-                  tabs: mainTabs,
+                  tabs: data["tabs"],
                 ),
               ),
             ];
@@ -97,11 +179,7 @@ class _EditOrderSellInWareHouseState extends State<EditOrderSellInWareHouse>
                         child: TabBarView(
                           physics: NeverScrollableScrollPhysics(),
                           controller: _tabController,
-                          children: [
-                            ReceivingShellTab(),
-                            ProductTab(),
-                            SignatureTab(),
-                          ],
+                          children: data["body"],
                         ),
                       ),
                     ),

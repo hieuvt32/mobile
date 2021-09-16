@@ -40,10 +40,12 @@ import 'package:frappe_app/model/get_roles_response.dart';
 import 'package:frappe_app/model/giao_van_location_response.dart';
 import 'package:frappe_app/model/giao_viec_signature.dart';
 import 'package:frappe_app/model/group_by_count_response.dart';
+import 'package:frappe_app/model/hoa_don_mua_ban_hidden_status.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
 import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/login_request.dart';
 import 'package:frappe_app/model/order.dart';
+import 'package:frappe_app/model/phan_kho12.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/model/rating_order_request.dart';
 import 'package:frappe_app/model/response_data.dart';
@@ -3401,6 +3403,184 @@ class DioApi implements Api {
           throw ErrorResponse(
             statusCode: error.statusCode,
             statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<ResponseData> getHoaDonMuaBanHiddenStatus(
+    String order,
+  ) async {
+    var data = {
+      'order': order,
+    };
+
+    try {
+      var response = await DioHelper.dio.post(
+        '/method/getOrderHiddenStatus',
+        data: data,
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseData.fromJson(response.data["message"]);
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<ResponseData> updateHoaDonMuaBanHiddenStatus(
+    HoaDonMuaBanHiddenStatus model,
+  ) async {
+    try {
+      var response = await DioHelper.dio.post(
+        '/method/updateOrderHiddenStatus',
+        data: model.toJson(),
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseData.fromJson(response.data["message"]);
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<ResponseData> getKho12() async {
+    try {
+      var response = await DioHelper.dio.post(
+        '/method/getKho12',
+        data: {},
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return ResponseData.fromJson(response.data["message"]);
+      } else {
+        throw Exception('Something went wrong');
+      }
+    } catch (e) {
+      if (e is DioError) {
+        var error;
+        if (e.response != null) {
+          error = e.response;
+        } else {
+          error = e.error;
+        }
+
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusCode: error.statusCode,
+            statusMessage: error.statusMessage,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<ResponseData> setKho12(PhanKho12 model) async {
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/setKho12',
+        queryParameters: model.toJson(),
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        return ResponseData.fromJson(response.data["message"]);
+      } else {
+        throw ErrorResponse(
+          statusCode: response.statusCode,
+          statusMessage: response.data["message"],
+        );
+      }
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
           );
         }
       } else {
