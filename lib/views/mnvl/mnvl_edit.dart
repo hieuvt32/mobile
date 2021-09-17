@@ -24,8 +24,8 @@ class _MnvlEditViewState extends State<MnvlEditView> {
   Widget build(BuildContext context) {
     return BaseView<EditOrderViewModel>(
       onModelReady: (model) async {
-        model.setName(widget.name);
         model.init();
+        model.setName(widget.name);
         model.setIsNhaCungCap(true);
         await model.initPreData();
         // this.initTab();

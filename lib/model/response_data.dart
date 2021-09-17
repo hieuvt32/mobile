@@ -45,20 +45,24 @@ class Employee {
   late String name;
 
   late String employeeName;
+  late String userId;
   Employee({
     required this.name,
     required this.employeeName,
+    required this.userId,
   });
 
   Employee.fromJson(Map<dynamic, dynamic> json) {
     name = json['name'];
     employeeName = json['employee_name'];
+    userId = json['user_id'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['name'] = this.name;
     data['employee_name'] = this.employeeName;
+    data['user_id'] = this.userId;
     return data;
   }
 }

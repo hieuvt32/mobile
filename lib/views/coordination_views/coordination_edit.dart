@@ -31,8 +31,8 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
   Widget build(BuildContext context) {
     return BaseView<EditOrderViewModel>(
       onModelReady: (model) async {
-        model.setName(widget.name);
         model.init();
+        model.setName(widget.name);
         await model.initPreData();
         // this.initTab();
       },
@@ -178,9 +178,25 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                                         )
                                                       : FieldData(
                                                           fieldType: 3,
-                                                          value: model.giaoViec
-                                                                  .employee ??
-                                                              '',
+                                                          value: model.employees
+                                                                      .where((element) =>
+                                                                          element
+                                                                              .name ==
+                                                                          model
+                                                                              .giaoViec
+                                                                              .employee)
+                                                                      .length >
+                                                                  0
+                                                              ? model.employees
+                                                                  .where((element) =>
+                                                                      element
+                                                                          .name ==
+                                                                      model
+                                                                          .giaoViec
+                                                                          .employee)
+                                                                  .first
+                                                                  .employeeName
+                                                              : '',
                                                         ),
                                                   // Visibility(
                                                   //     visible: false,
@@ -241,8 +257,25 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                                                         )
                                                       : FieldData(
                                                           fieldType: 3,
-                                                          value: model.giaoViec
-                                                              .supportEmployee,
+                                                          value: model.employees
+                                                                      .where((element) =>
+                                                                          element
+                                                                              .name ==
+                                                                          model
+                                                                              .giaoViec
+                                                                              .supportEmployee)
+                                                                      .length >
+                                                                  0
+                                                              ? model.employees
+                                                                  .where((element) =>
+                                                                      element
+                                                                          .name ==
+                                                                      model
+                                                                          .giaoViec
+                                                                          .supportEmployee)
+                                                                  .first
+                                                                  .employeeName
+                                                              : '',
                                                         ),
                                                   // Visibility(
                                                   //     visible: false,

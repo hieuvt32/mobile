@@ -27,6 +27,7 @@ import 'package:frappe_app/views/reports/asset_report_view.dart';
 import 'package:frappe_app/views/reports/manufacturing_report_view.dart';
 import 'package:frappe_app/views/reports/profit_report_view.dart';
 import 'package:frappe_app/views/reports/warehouse_report_search_view.dart';
+import 'package:frappe_app/views/set_thukho12/set_thukho12.dart';
 import 'package:frappe_app/views/transportation_views/transportation_list.dart';
 import 'package:frappe_app/views/home/Item.dart';
 import 'package:frappe_app/views/inventory/inventory_view.dart';
@@ -215,6 +216,17 @@ class _HomeChildViewState extends State<HomeChildView> {
       //   return ListOrderView();
       // },
       text: "Điều phối",
+      roles: [
+        "Giám Đốc",
+      ],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.users,
+      view: (context) {
+        return SetThuKho12View();
+      },
+      text: "Cấu hình quản kho",
       roles: [
         "Giám Đốc",
       ],

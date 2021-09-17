@@ -95,7 +95,7 @@ class _EditOrderViewState extends State<EditOrderView>
                       Navigator.pop(context);
                     },
                         content:
-                            "Bạn có muốn lưu lại đơn hiện tại làm đơn mẫu?");
+                            "Bạn có muốn lưu lại đơn hiện tại làm đơn chờ?");
                   } else {
                     Navigator.pop(context);
                   }
@@ -108,7 +108,7 @@ class _EditOrderViewState extends State<EditOrderView>
                       }, onConfirm: () async {
                         model.createOrder(
                           context,
-                          status: 'Đơn chờ',
+                          status: 'Đơn mẫu',
                           isValidate: false,
                         );
                         Navigator.of(context, rootNavigator: true).pop(context);

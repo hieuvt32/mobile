@@ -75,6 +75,8 @@ dependencies:
   month_picker_dialog: ^0.4.0
   date_format: ^2.0.4
   ai_barcode: ^3.0.1
+  multi_select_flutter: ^4.0.0
+  flutter_multiselect: ^1.0.0
   flutter:
     sdk: flutter
   flutter_localizations: # Add this line

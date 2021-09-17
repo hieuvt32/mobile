@@ -3550,7 +3550,7 @@ class DioApi implements Api {
     try {
       final response = await DioHelper.dio.post(
         '/method/setKho12',
-        queryParameters: model.toJson(),
+        data: model.toJson(),
         options: Options(
           validateStatus: (status) {
             return status < 500;

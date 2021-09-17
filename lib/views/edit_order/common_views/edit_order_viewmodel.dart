@@ -71,7 +71,7 @@ class EditOrderViewModel extends BaseViewModel {
   late List<GiaoViecSignature> _giaoViecSignatures;
   late List<BienSoXe> _bienSoXes;
   late List<Employee> _employees;
-  late double _totalOrderPrice = 0;
+  late double _totalOrderPrice;
   late bool _isNhaCungCap = false;
   late GiaoViec giaoViec;
   String? _customerValue;
@@ -316,6 +316,8 @@ class EditOrderViewModel extends BaseViewModel {
 
     _donGiaMuaBans = [];
 
+    _totalOrderPrice = 0;
+
     _addressControllers = [];
 
     _sellInWarehouse = false;
@@ -438,7 +440,7 @@ class EditOrderViewModel extends BaseViewModel {
   setName(String? name) {
     _name = name;
     _title = ["", null, false, 0].contains(name) ? 'Tạo đơn hàng' : name;
-    _hoaDonMuaBanHiddenStatus!.order = name!;
+    _hoaDonMuaBanHiddenStatus!.order = name ?? "";
     changeState();
   }
 
@@ -587,13 +589,15 @@ class EditOrderViewModel extends BaseViewModel {
   }
 
   Future getHoaDonBanHangHiddenStatus() async {
-    var response = await locator<Api>().getHoaDonMuaBanHiddenStatus(_name!);
+    if (!["", null, false, 0].contains(_name)) {
+      var response = await locator<Api>().getHoaDonMuaBanHiddenStatus(_name!);
 
-    _hoaDonMuaBanHiddenStatus = response != null && response.data != null
-        ? HoaDonMuaBanHiddenStatus.fromJson(response.data)
-        : HoaDonMuaBanHiddenStatus(_name!, 'Đơn tạm', "Đơn tạm");
+      _hoaDonMuaBanHiddenStatus = response != null && response.data != null
+          ? HoaDonMuaBanHiddenStatus.fromJson(response.data)
+          : HoaDonMuaBanHiddenStatus(_name!, 'Đơn tạm', "Đơn tạm");
 
-    changeState();
+      changeState();
+    }
   }
 
   Future getPhanKho12() async {
@@ -707,7 +711,8 @@ class EditOrderViewModel extends BaseViewModel {
         // request location permission
         locationPermission();
 
-        if (_order!.products != null && _order!.products.length > 0) {
+        if ((_order!.products != null && _order!.products.length > 0) ||
+            (_order!.sellInWarehouse != 0 && _order!.status == "Đơn chờ")) {
           // get total price of an order
           _totalOrderPrice = _order!.totalCost;
 
@@ -1005,7 +1010,7 @@ class EditOrderViewModel extends BaseViewModel {
     changeState();
   }
 
-  Future customerCreateOrder(BuildContext context) async {
+  Future<bool> customerCreateOrder({String? status}) async {
     try {
       Customer customer = _customers[0];
 
@@ -1014,7 +1019,7 @@ class EditOrderViewModel extends BaseViewModel {
       _order!.phone = customer.phone;
       _order!.products = _productForLocations;
       _order!.sellInWarehouse = 0;
-      _order!.status = "Chờ xác nhận";
+      _order!.status = status != null ? status : "Chờ xác nhận";
       _order!.taxId = customer.taxId;
 
       // calculateTotalPrice();
@@ -1045,15 +1050,17 @@ class EditOrderViewModel extends BaseViewModel {
       _isSaved = true;
 
       changeState();
-      FrappeAlert.successAlert(
-          title: 'Tạo đơn thành công',
-          context: context,
-          subtitle: 'Tạo đơn hàng thành công.');
+      return true;
+      // FrappeAlert.successAlert(
+      //     title: 'Tạo đơn thành công',
+      //     context: context,
+      //     subtitle: 'Tạo đơn hàng thành công.');
     } catch (err) {
-      FrappeAlert.errorAlert(
-          title: 'Error',
-          context: context,
-          subtitle: 'Có lỗi xảy ra, vui lòng thử lại sau.');
+      return true;
+      // FrappeAlert.errorAlert(
+      //     title: 'Error',
+      //     context: context,
+      //     subtitle: 'Có lỗi xảy ra, vui lòng thử lại sau.');
     }
   }
 
@@ -1066,7 +1073,18 @@ class EditOrderViewModel extends BaseViewModel {
   }) async {
     try {
       if (_userRoles.contains(UserRole.KhachHang)) {
-        await customerCreateOrder(context);
+        var isSuccess = await customerCreateOrder(status: status);
+        if (isSuccess) {
+          FrappeAlert.successAlert(
+              title: 'Thông báo',
+              context: context,
+              subtitle: 'Tạo mới đơn thành công.');
+        } else {
+          FrappeAlert.errorAlert(
+              title: 'Thông báo',
+              context: context,
+              subtitle: 'Tạo mới đơn không thành công.');
+        }
         return;
       }
 
