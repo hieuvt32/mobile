@@ -917,7 +917,12 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                       await widget.model.updateHoaDonMuaBanHiddenStatus();
                     }
                   } else {
-                    await widget.model.createOrder(context);
+                    if (widget.model.userRoles.contains(UserRole.KhachHang)) {
+                      await widget.model
+                          .createOrder(context, status: "Chờ xác nhận");
+                    } else {
+                      await widget.model.createOrder(context);
+                    }
                   }
                 }
               } else {

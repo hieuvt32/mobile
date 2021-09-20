@@ -706,6 +706,7 @@ class EditOrderViewModel extends BaseViewModel {
       var response = await locator<Api>().getSingleHoaDonBanHang(_name!);
 
       if (response != null && response.order != null) {
+        // initState();
         _order = response.order;
 
         // request location permission
@@ -1072,21 +1073,21 @@ class EditOrderViewModel extends BaseViewModel {
     bool isValidate = true,
   }) async {
     try {
-      if (_userRoles.contains(UserRole.KhachHang)) {
-        var isSuccess = await customerCreateOrder(status: status);
-        if (isSuccess) {
-          FrappeAlert.successAlert(
-              title: 'Thông báo',
-              context: context,
-              subtitle: 'Tạo mới đơn thành công.');
-        } else {
-          FrappeAlert.errorAlert(
-              title: 'Thông báo',
-              context: context,
-              subtitle: 'Tạo mới đơn không thành công.');
-        }
-        return;
-      }
+      // if (_userRoles.contains(UserRole.KhachHang)) {
+      //   var isSuccess = await customerCreateOrder(status: status);
+      //   if (isSuccess) {
+      //     FrappeAlert.successAlert(
+      //         title: 'Thông báo',
+      //         context: context,
+      //         subtitle: 'Tạo mới đơn thành công.');
+      //   } else {
+      //     FrappeAlert.errorAlert(
+      //         title: 'Thông báo',
+      //         context: context,
+      //         subtitle: 'Tạo mới đơn không thành công.');
+      //   }
+      //   return;
+      // }
 
       Attachments? customerAttachmemts;
       Attachments? supplierAttachments;
@@ -1199,6 +1200,14 @@ class EditOrderViewModel extends BaseViewModel {
         _order!.type = type;
 
         _order!.vendorName = elements[0].realName;
+
+        if (_userRoles.contains(UserRole.KhachHang)) {
+          Customer customer = _customers[0];
+          _order!.email = customer.email;
+          _order!.vendor = customer.code;
+          _order!.vendorName = customer.realName;
+        }
+
         _order!.attachSignatureCustomerImage =
             customerAttachmemts != null ? customerAttachmemts.fileUrl : '';
 
