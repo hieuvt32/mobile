@@ -162,36 +162,54 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
         if (widget.model
             .isAvailableRoles([UserRole.KhachHang, UserRole.DieuPhoi]))
           return SizedBox();
-
-        return ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: hexToColor('#FF0F00'),
-            // side: BorderSide(
-            //   width: 1.0,
-            // ),
-            minimumSize: Size(double.infinity, 48),
-            // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(4.0),
+        if (widget.model.order!.status == "Đã đặt hàng" &&
+            (widget.model.donNhapKho!.status == "Đợi xác nhận xuất kho" ||
+                widget.model.donNhapKho!.status == "Chờ nhập hàng"))
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: hexToColor('#FF0F00'),
               // side: BorderSide(
-              //   color: hexToColor('#0072BC'),
+              //   width: 1.0,
               // ),
+              minimumSize: Size(double.infinity, 48),
+              // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4.0),
+                // side: BorderSide(
+                //   color: hexToColor('#0072BC'),
+                // ),
+              ),
             ),
-          ),
-          onPressed: () async {
-            await widget.model.updateOrder(context, status: 'Đang giao hàng');
-          },
-          child: Text(
-            'Xác nhận xuất kho',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+            onPressed: () async {
+              if (widget.model.donNhapKho!.status == "Chờ nhập hàng" &&
+                  widget.model.order!.status == "Đã đặt hàng") {
+                await widget.model.updateOrder(context,
+                    status: "Đã đặt hàng",
+                    statusDonNhapKho: "Đợi xác nhận giao hàng");
+              }
+
+              if (widget.model.donNhapKho!.status == "Đợi xác nhận xuất kho" &&
+                  widget.model.order!.status == "Đã đặt hàng") {
+                await widget.model.updateOrder(context,
+                    status: "Đang giao hàng",
+                    statusDonNhapKho: "Đồng ý từ 2 bên");
+              }
+            },
+            child: Text(
+              'Xác nhận xuất kho',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
+              ),
             ),
-          ),
-        );
+          );
+
+        return SizedBox();
 
       case OrderState.Delivering:
+        if (widget.model.isAvailableRoles([UserRole.ThuKho])) return SizedBox();
+
         return Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
@@ -321,9 +339,21 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                       if (widget.model.orderState == OrderState.PreNewOrder)
                         await widget.model.createOrder(context);
                       else {
-                        await widget.model.updateOrder(context,
+                        if (widget.model.sellInWarehouse) {
+                          await widget.model.updateOrder(
+                            context,
                             status: "Đã giao hàng",
-                            statusDonNhapKho: "Hoàn thành");
+                            statusDonNhapKho: "Hoàn thành",
+                            isUpdateCongNoTienTaiKho: true,
+                          );
+                        } else {
+                          await widget.model.updateOrder(
+                            context,
+                            status: "Đã giao hàng",
+                            statusDonNhapKho: "Hoàn thành",
+                            isUpdateCongNoTienKhongTaiKho: true,
+                          );
+                        }
                       }
                     },
                     child: Text(

@@ -7,6 +7,7 @@ import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
+import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/widgets/frappe_bottom_sheet.dart';
 import 'package:frappe_app/widgets/frappe_button.dart';
 
@@ -54,6 +55,8 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
     return Scaffold(
         appBar: AppBar(
           title: Text("Báo nhầm lẫn"),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
         body: Stack(
           children: [
@@ -75,7 +78,7 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
                           Row(
                             children: [
                               Expanded(
-                                flex: 2,
+                                flex: 3,
                                 child: Text(
                                   "Tên khách hàng:",
                                   style: TextStyle(
@@ -102,7 +105,7 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
                           Row(
                             children: [
                               Expanded(
-                                flex: 2,
+                                flex: 3,
                                 child: Text(
                                   "Mã khách hàng:",
                                   style: TextStyle(
@@ -133,7 +136,7 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
                                 Row(
                                   children: [
                                     Expanded(
-                                      flex: 2,
+                                      flex: 3,
                                       child: Text(
                                         "Loại báo nhầm lẫn:",
                                         style: TextStyle(
@@ -144,37 +147,40 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
                                     ),
                                     Expanded(
                                       flex: 3,
-                                      child: FormBuilderDropdown(
-                                        name: 'reason',
-                                        decoration: InputDecoration(
-                                          contentPadding:
-                                              const EdgeInsets.fromLTRB(
-                                                  10, 0, 10, 0),
-                                          border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.greenAccent)),
+                                      child: SizedBox(
+                                        height: 32,
+                                        child: FormBuilderDropdown(
+                                          name: 'reason',
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                const EdgeInsets.fromLTRB(
+                                                    10, 0, 10, 0),
+                                            border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.black)),
+                                          ),
+                                          // initialValue: 'Male',
+                                          allowClear: true,
+                                          hint: Text(
+                                            'Chọn lý do',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                          validator:
+                                              FormBuilderValidators.compose([
+                                            FormBuilderValidators.required(
+                                                context,
+                                                errorText: "Hãy chọn lý do")
+                                          ]),
+                                          items: [
+                                            "Nhầm lẫn chi tiêu",
+                                            "Nhầm lẫn bình"
+                                          ]
+                                              .map((reason) => DropdownMenuItem(
+                                                    value: reason,
+                                                    child: Text('$reason'),
+                                                  ))
+                                              .toList(),
                                         ),
-                                        // initialValue: 'Male',
-                                        allowClear: true,
-                                        hint: Text(
-                                          'Chọn lý do',
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                        validator:
-                                            FormBuilderValidators.compose([
-                                          FormBuilderValidators.required(
-                                              context,
-                                              errorText: "Hãy chọn lý do")
-                                        ]),
-                                        items: [
-                                          "Nhầm lẫn chi tiêu",
-                                          "Nhầm lẫn bình"
-                                        ]
-                                            .map((reason) => DropdownMenuItem(
-                                                  value: reason,
-                                                  child: Text('$reason'),
-                                                ))
-                                            .toList(),
                                       ),
                                     ),
                                   ],
@@ -214,22 +220,29 @@ class _ReportMistakeViewState extends State<ReportMistakeView> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: FrappeFlatButton(
-                    minWidth: 328,
+                  padding: const EdgeInsets.all(16),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: hexToColor("#FF0F00")),
                     height: 48,
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        _formKey.currentState!.save();
-                        String reason = _formKey.currentState!.value['reason'];
-                        String content =
-                            _formKey.currentState!.value['content'];
-                        createDonBaoLoi(reason: reason, content: content);
-                      } else {}
-                    },
-                    buttonType: ButtonType.primary,
-                    title: "Báo cáo nhầm lẫn"),
-              ),
+                    width: double.infinity,
+                    child: TextButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            String reason =
+                                _formKey.currentState!.value['reason'];
+                            String content =
+                                _formKey.currentState!.value['content'];
+                            createDonBaoLoi(reason: reason, content: content);
+                          } else {}
+                        },
+                        child: Text(
+                          "Báo cáo nhầm lẫn",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        )),
+                  )),
             )
           ],
         ));

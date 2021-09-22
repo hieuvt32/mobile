@@ -247,7 +247,8 @@ class _TransportationSignatureTabState
                           await widget.model.updateOrder(context,
                               status: widget.isLatest
                                   ? "Đã giao hàng"
-                                  : widget.model.order!.status);
+                                  : widget.model.order!.status,
+                              isUpdateCongNoTienGiaoVan: true);
 
                           widget.model.addGiaoViecSignature(model);
                         }

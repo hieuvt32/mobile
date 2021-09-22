@@ -74,6 +74,8 @@ class _LiabilityReportState extends State<LiabilityReportView> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Báo cáo công nợ"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),

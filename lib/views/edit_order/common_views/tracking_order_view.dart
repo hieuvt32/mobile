@@ -180,8 +180,8 @@ class MapSampleState extends State<TrackingOrderView> {
             : SafeArea(
                 child: GoogleMap(
                   buildingsEnabled: true,
-                  zoomControlsEnabled: false,
-                  zoomGesturesEnabled: false,
+                  zoomControlsEnabled: true,
+                  zoomGesturesEnabled: true,
                   compassEnabled: false,
                   mapToolbarEnabled: false,
                   myLocationButtonEnabled: false,

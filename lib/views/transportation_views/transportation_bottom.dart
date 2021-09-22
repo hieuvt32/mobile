@@ -19,7 +19,9 @@ class _TransportationBottomState extends State<TransportationBottom> {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Visibility(
-        visible: widget.model.order!.status == "Đã đặt hàng",
+        visible: widget.model.order!.status == "Đã đặt hàng" &&
+            (widget.model.donNhapKho!.status == "Đợi xác nhận giao hàng" ||
+                widget.model.donNhapKho!.status == "Chờ nhập hàng"),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
           child: Container(
@@ -40,8 +42,20 @@ class _TransportationBottomState extends State<TransportationBottom> {
                 ),
               ),
               onPressed: () async {
-                await widget.model
-                    .updateOrder(context, status: "Đang giao hàng");
+                if (widget.model.donNhapKho!.status == "Chờ nhập hàng" &&
+                    widget.model.order!.status == "Đã đặt hàng") {
+                  await widget.model.updateOrder(context,
+                      status: "Đã đặt hàng",
+                      statusDonNhapKho: "Đợi xác nhận xuất kho");
+                }
+
+                if (widget.model.donNhapKho!.status ==
+                        "Đợi xác nhận giao hàng" &&
+                    widget.model.order!.status == "Đã đặt hàng") {
+                  await widget.model.updateOrder(context,
+                      status: "Đang giao hàng",
+                      statusDonNhapKho: "Đồng ý từ 2 bên");
+                }
               },
               child: Text(
                 'Giao hàng',

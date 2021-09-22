@@ -1261,6 +1261,15 @@ class EditOrderViewModel extends BaseViewModel {
           var code =
               "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
           await locator<Api>().createCongNoTienHoaDon(code, _name!);
+          // for (var product in _order!.products) {
+          //   if (!["", null, false, 0].contains(product.material)) {
+          //     await createCongNoTaiSan(
+          //         product.material!,
+          //         product.quantity - product.actualQuantity,
+          //         0,
+          //         product.kg - product.actualKg);
+          //   }
+          // }
           if (!saveTemplate) _isSaved = true;
           changeState();
         } else {
@@ -1349,6 +1358,9 @@ class EditOrderViewModel extends BaseViewModel {
     bool isNhaCungCap = false,
     String statusDonNhapKho = 'Chờ nhập hàng',
     bool isUpdateImage = true,
+    bool isUpdateCongNoTienGiaoVan = false,
+    bool isUpdateCongNoTienTaiKho = false,
+    bool isUpdateCongNoTienKhongTaiKho = false,
   }) async {
     if (status == "Đang giao hàng") {
       bool isGranted = await requestLocationPermission();
@@ -1513,13 +1525,49 @@ class EditOrderViewModel extends BaseViewModel {
               "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
           await locator<Api>().createCongNoTienHoaDon(code, _name!);
 
-          for (var product in _order!.products) {
-            if (!["", null, false, 0].contains(product.material)) {
-              await createCongNoTaiSan(
-                  product.material!,
-                  product.quantity - product.actualQuantity,
-                  0,
-                  product.kg - product.actualKg);
+          if (isUpdateCongNoTienGiaoVan) {
+            for (var product in _order!.products) {
+              if (!["", null, false, 0].contains(product.material)) {
+                await createCongNoTaiSan(product.material!,
+                    product.actualQuantity, 0, product.actualKg);
+              }
+            }
+          }
+
+          if (isUpdateCongNoTienKhongTaiKho) {
+            for (var nhapKho in nhapKhos) {
+              if (!["", null, false, 0].contains(nhapKho.realName)) {
+                await createCongNoTaiSan(
+                    nhapKho.realName!, 0, nhapKho.amount, 0);
+              }
+            }
+
+            for (var traVe in traVes) {
+              if (!["", null, false, 0].contains(traVe.realName)) {
+                await createCongNoTaiSan(traVe.realName!, 0, -traVe.amount, 0);
+              }
+            }
+          }
+
+          if (isUpdateCongNoTienTaiKho) {
+            for (var product in _order!.products) {
+              if (!["", null, false, 0].contains(product.material)) {
+                await createCongNoTaiSan(product.material!,
+                    product.actualQuantity, 0, product.actualKg);
+              }
+            }
+
+            for (var nhapKho in nhapKhos) {
+              if (!["", null, false, 0].contains(nhapKho.realName)) {
+                await createCongNoTaiSan(
+                    nhapKho.realName!, 0, nhapKho.amount, 0);
+              }
+            }
+
+            for (var traVe in traVes) {
+              if (!["", null, false, 0].contains(traVe.realName)) {
+                await createCongNoTaiSan(traVe.realName!, 0, -traVe.amount, 0);
+              }
             }
           }
         } else {

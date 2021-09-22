@@ -38,7 +38,7 @@
             android:value="2" />
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyBdFn8ikhtWPWo0jeVNATCX5w1rKmazmmE"/>
+               android:value="AIzaSyAjgz5rMkxd-Fj1GCnEmTAdC3uGI9Q2TrY"/>
 
         <provider
             android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"

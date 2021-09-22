@@ -630,18 +630,18 @@ class _ListProductLocationItemViewState
                                         .toList(),
                                     value: values[i].material,
                                     selectionHandler: (value) {
-                                      var firstItem = widget
-                                          .model.nguyenVatLieuVatTus
-                                          .where((element) {
-                                            return element.realName == value;
-                                          })
-                                          .toList()
-                                          .first;
+                                      // var firstItem = widget
+                                      //     .model.nguyenVatLieuVatTus
+                                      //     .where((element) {
+                                      //       return element.realName == value;
+                                      //     })
+                                      //     .toList()
+                                      //     .first;
                                       setState(() {
                                         values[i].material = value;
-                                        values[i].unit = firstItem.unit;
-                                        values[i].enabledKG =
-                                            firstItem.unit == "Kg";
+                                        // values[i].unit = firstItem.unit;
+                                        // values[i].enabledKG =
+                                        //     firstItem.unit == "Kg";
 
                                         values[i].validator.isMaterialRequired =
                                             false;
