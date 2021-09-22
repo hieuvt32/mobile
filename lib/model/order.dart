@@ -9,6 +9,7 @@ class Order {
   late String employeeName;
   late String plate;
   late List<Product> products;
+  late List<DiaChiTongTien> totalAmountByAddress;
 
   late bool coGiaoVanVien;
 
@@ -58,6 +59,7 @@ class Order {
       this.cancelDate,
       required this.cancelPerson,
       required this.cancelReason,
+      required this.totalAmountByAddress,
       this.isRated}) {
     coGiaoVanVien = false;
     creation = DateTime.now();
@@ -82,6 +84,13 @@ class Order {
             return Product.fromJson(e);
           }).toList()
         : [];
+
+    totalAmountByAddress = json['total_amount_by_address'] != null
+        ? (json['total_amount_by_address'] as List<dynamic>).map((e) {
+            return DiaChiTongTien.fromJson(e);
+          }).toList()
+        : [];
+
     company = json['company'] == null ? '' : json['company'];
     paymentStatus =
         json['payment_status'] == null ? '' : json['payment_status'];
@@ -147,6 +156,25 @@ class Order {
 
     // data['plate'] = this.plate;
     // data['employee_name'] = this.employeeName;
+    return data;
+  }
+}
+
+class DiaChiTongTien {
+  late String diaChi;
+  late double tongTien;
+
+  DiaChiTongTien(this.diaChi, this.tongTien);
+
+  DiaChiTongTien.fromJson(Map<dynamic, dynamic> json) {
+    diaChi = json['dia_chi'];
+    tongTien = json['Tong tien'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['Dia chi'] = this.diaChi;
+    data['Tong tien'] = this.tongTien;
     return data;
   }
 }

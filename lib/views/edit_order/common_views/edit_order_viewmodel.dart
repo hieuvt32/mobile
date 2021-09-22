@@ -374,6 +374,7 @@ class EditOrderViewModel extends BaseViewModel {
         phone: '',
         plate: '',
         products: [],
+        totalAmountByAddress: [],
         sellInWarehouse: 0,
         status: '',
         taxId: '',

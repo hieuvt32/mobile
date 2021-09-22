@@ -55,8 +55,9 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
   //   }
   // }
 
-  Widget buildCardContent(List<Product> products, int sellInWarehouse) {
-    Map<String, double> totalPriceByAddress = {};
+  Widget buildCardContent(List<Product> products,
+      List<DiaChiTongTien> diaChiTongTiens, int sellInWarehouse) {
+    // Map<String, double> totalPriceByAddress = {};
 
     int totalQuantity = 0;
     double totalPrice = 0;
@@ -65,8 +66,8 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
       totalQuantity += product.quantity;
       totalPrice += product.unitPrice;
 
-      totalPriceByAddress[product.diaChi] =
-          totalPriceByAddress[product.diaChi] ?? 0 + product.unitPrice;
+      // totalPriceByAddress[product.diaChi] =
+      //     totalPriceByAddress[product.diaChi] ?? 0 + product.unitPrice;
     });
 
     return Container(
@@ -117,8 +118,8 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                 ],
               )
             : Column(
-                children: totalPriceByAddress.keys
-                    .map((address) => Padding(
+                children: diaChiTongTiens
+                    .map((item) => Padding(
                           padding: const EdgeInsets.only(top: 8, bottom: 8),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,7 +133,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                                         width: 8,
                                       ),
                                       LimitTextLength(
-                                        text: address,
+                                        text: item.diaChi,
                                       ),
                                     ],
                                   )),
@@ -147,8 +148,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                               Expanded(
                                   flex: 3,
                                   child: Text(
-                                    formatCurrency(
-                                        totalPriceByAddress[address]),
+                                    formatCurrency(item.tongTien),
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: hexToColor("#FF0F00")),
@@ -187,8 +187,8 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
               },
               child: ItemCardOrder(
                 headerColor: headerColor,
-                cartContent:
-                    buildCardContent(item.products, item.sellInWarehouse),
+                cartContent: buildCardContent(item.products,
+                    item.totalAmountByAddress, item.sellInWarehouse),
                 leftHeaderText: item.name,
                 rightHeaderText: DateFormat('dd/MM/yyyy').format(item.creation),
               ),
