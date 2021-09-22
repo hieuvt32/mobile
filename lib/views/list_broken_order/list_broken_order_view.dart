@@ -115,7 +115,7 @@ class _ListBrokenOrderViewState extends State<ListBrokenOrderView>
                 cartContent: buildCardContent(item.addresses),
                 leftHeaderText: item.id,
                 rightHeaderText:
-                    DateFormat('dd/MM/yyyy').format(item.createdDate),
+                    DateFormat('dd/MM/yyyy HH:mm').format(item.createdDate),
               ),
             );
           }),

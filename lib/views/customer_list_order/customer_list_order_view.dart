@@ -190,7 +190,8 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                 cartContent: buildCardContent(item.products,
                     item.totalAmountByAddress, item.sellInWarehouse),
                 leftHeaderText: item.name,
-                rightHeaderText: DateFormat('dd/MM/yyyy').format(item.creation),
+                rightHeaderText:
+                    DateFormat('dd/MM/yyyy HH:mm').format(item.creation),
               ),
             );
           }),

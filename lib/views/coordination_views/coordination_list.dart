@@ -206,7 +206,8 @@ class _CoordinationListViewState extends State<CoordinationListView>
                   addresses,
                 ),
                 leftHeaderText: item.name,
-                rightHeaderText: DateFormat('dd/MM/yyyy').format(item.creation),
+                rightHeaderText:
+                    DateFormat('dd/MM/yyyy HH:mm').format(item.creation),
                 headerColor: getHeaderColor(item.status),
               ),
             );

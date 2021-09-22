@@ -381,7 +381,7 @@ class _InventoryViewState extends State<InventoryView>
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd/MM/yyyy').format(now);
+    String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(now);
     return DefaultTabController(
       length: 2,
       child: Scaffold(

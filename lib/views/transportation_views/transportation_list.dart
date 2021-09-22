@@ -115,7 +115,8 @@ class _TransportationListState extends State<TransportationList> {
                       ),
                     )),
                 leftHeaderText: item.name,
-                rightHeaderText: DateFormat('dd/MM/yyyy').format(item.creation),
+                rightHeaderText:
+                    DateFormat('dd/MM/yyyy HH:mm').format(item.creation),
                 headerColor: getHeaderColor(item.status),
               ),
             );

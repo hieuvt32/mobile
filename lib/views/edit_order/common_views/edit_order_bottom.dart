@@ -385,7 +385,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
               children: [
                 Text("Thời gian hủy: "),
                 Text(
-                    "${DateFormat('dd/MM/yyyy').format(widget.model.order!.cancelDate ?? DateTime.now())}",
+                    "${DateFormat('dd/MM/yyyy HH:mm').format(widget.model.order!.cancelDate ?? DateTime.now())}",
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))
               ],
             ),
