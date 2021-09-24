@@ -90,7 +90,7 @@ class _HomeViewState extends State<HomeView> {
           color: FrappePalette.grey[500],
         ),
         icon: FrappeIcon(
-          FrappeIcons.card_collection,
+          FrappeIcons.profile,
           size: 15,
         ),
         activeColorPrimary: FrappePalette.grey[800]!,

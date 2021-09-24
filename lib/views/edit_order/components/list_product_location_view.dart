@@ -15,6 +15,7 @@ import 'package:frappe_app/views/edit_order/components/field_data.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
 import 'package:frappe_app/views/edit_order/tabs/receiving_shell_delivered_tab.dart';
 import 'package:frappe_app/views/expansion_custom_panel.dart';
+import 'package:frappe_app/views/transportation_views/transportation_list.dart';
 
 class ListProductLocationView extends StatefulWidget {
   final EditOrderViewModel model = locator<EditOrderViewModel>();
@@ -133,10 +134,21 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
               e.isExpanded, // isExpanded ?
               (isExpanded) {
                 e.isExpanded = isExpanded;
+                var total = 0;
+                if (widget.model.isAvailableRoles([UserRole.KhachHang]) &&
+                    widget.model.orderState == OrderState.Delivered) {
+                  total = widget.model.productForLocations
+                      .where((element) => element.address == values[i].name)
+                      .fold<int>(0, (sum, item) => sum + item.actualQuantity);
+                } else {
+                  total = widget.model.productForLocations
+                      .where((element) => element.address == values[i].name)
+                      .fold<int>(0, (sum, item) => sum + item.quantity);
+                }
 
-                var total = widget.model.productForLocations
-                    .where((element) => element.address == values[i].name)
-                    .fold<int>(0, (sum, item) => sum + item.quantity);
+                // total = widget.model.productForLocations
+                //     .where((element) => element.address == values[i].name)
+                //     .fold<int>(0, (sum, item) => sum + item.quantity);
 
                 widget.model.addressControllers[i].text = values[i].diaChi;
                 return Container(
@@ -231,29 +243,38 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                           )
                         : Row(
                             children: [
-                              Text('SL: ',
+                              Flexible(
+                                child: Text('SL: ',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      // fontWeight: FontWeight.w700,
+                                      color: Color.fromRGBO(0, 0, 0, 0.75),
+                                    )),
+                              ),
+                              Flexible(
+                                child: Text(
+                                  '$total,',
                                   style: TextStyle(
                                     fontSize: 16,
-                                    // fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w700,
                                     color: Color.fromRGBO(0, 0, 0, 0.75),
-                                  )),
-                              Text(
-                                '$total,',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color.fromRGBO(0, 0, 0, 0.75),
+                                  ),
                                 ),
+                                flex: 2,
                               ),
                               SizedBox(
                                 width: 12,
                               ),
-                              Text(
-                                '${widget.model.editAddresses[i].diaChi}',
-                                style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color.fromRGBO(0, 0, 0, 0.75)),
+                              Flexible(
+                                child: Text(
+                                  '${widget.model.editAddresses[i].diaChi}',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color.fromRGBO(0, 0, 0, 0.75)),
+                                  // overflow: TextOverflow.ellipsis,
+                                ),
+                                flex: 7,
                               ),
                             ],
                           ),
@@ -400,7 +421,12 @@ class _ListProductLocationItemViewState
   @override
   Widget build(BuildContext context) {
     var expansionItems = _buildExpansionItems();
-    var total = values.fold<int>(0, (sum, item) => sum + item.quantity);
+    var total = 0;
+    if (widget.model.isAvailableRoles([UserRole.KhachHang])) {
+      total = values.fold<int>(0, (sum, item) => sum + item.actualQuantity);
+    } else {
+      total = values.fold<int>(0, (sum, item) => sum + item.quantity);
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -443,7 +469,9 @@ class _ListProductLocationItemViewState
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          '${values[i].product != null ? values[i].product : 'Chọn sản phẩm'}, SL: ${values[i].quantity}',
+                          '${values[i].product != null ? values[i].product : 'Chọn sản phẩm'}, SL: ${widget.model.isAvailableRoles([
+                                    UserRole.KhachHang
+                                  ]) && widget.model.orderState == OrderState.Delivered ? '${values[i].actualQuantity}' : '${values[i].quantity}'}',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w600),
                         ),
@@ -699,7 +727,12 @@ class _ListProductLocationItemViewState
                                   })
                               : FieldData(
                                   fieldType: 3,
-                                  value: '${values[i].kg}',
+                                  value: widget.model.isAvailableRoles(
+                                              [UserRole.KhachHang]) &&
+                                          widget.model.orderState ==
+                                              OrderState.Delivered
+                                      ? '${values[i].actualKg}'
+                                      : '${values[i].kg}',
                                 ),
                           Visibility(
                               visible: values[i].validator.isKgRequired,
@@ -755,7 +788,12 @@ class _ListProductLocationItemViewState
                                   })
                               : FieldData(
                                   fieldType: 3,
-                                  value: '${values[i].quantity}',
+                                  value: widget.model.isAvailableRoles(
+                                              [UserRole.KhachHang]) &&
+                                          widget.model.orderState ==
+                                              OrderState.Delivered
+                                      ? '${values[i].actualQuantity}'
+                                      : '${values[i].quantity}',
                                 ),
                           Visibility(
                               visible: values[i].validator.isQuantityRequired,

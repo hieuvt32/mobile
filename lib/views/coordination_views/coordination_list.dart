@@ -1,10 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/list_order_response.dart';
 import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/coordination_views/coordination_edit.dart';
 import 'package:frappe_app/views/item_cart_order.dart';
@@ -73,6 +75,10 @@ class _CoordinationListViewState extends State<CoordinationListView>
 
     super.initState();
 
+    reload();
+  }
+
+  void reload() {
     _responseChuaDieuPhoi = null;
 
     _responseDaDieuPhoi = null;
@@ -262,7 +268,22 @@ class _CoordinationListViewState extends State<CoordinationListView>
               Navigator.pop(context);
             },
           ),
-          actions: [],
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 24),
+              child: GestureDetector(
+                child: FrappeIcon(
+                  FrappeIcons.refresh,
+                  size: 20,
+                ),
+                onTap: () {
+                  setState(() {
+                    reload();
+                  });
+                },
+              ),
+            ),
+          ],
           title: Text(
             'Danh sách đơn bán hàng',
             style: TextStyle(

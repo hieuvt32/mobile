@@ -1281,6 +1281,28 @@ class EditOrderViewModel extends BaseViewModel {
             //         product.kg - product.actualKg);
             //   }
             // }
+            // if (sellInWarehouse) {
+            //   for (var product in _order!.products) {
+            //     if (!["", null, false, 0].contains(product.material)) {
+            //       await createCongNoTaiSan(product.material!,
+            //           product.actualQuantity, 0, product.actualKg);
+            //     }
+            //   }
+
+            //   for (var nhapKho in nhapKhos) {
+            //     if (!["", null, false, 0].contains(nhapKho.realName)) {
+            //       await createCongNoTaiSan(
+            //           nhapKho.realName!, 0, nhapKho.amount, 0);
+            //     }
+            //   }
+
+            //   for (var traVe in traVes) {
+            //     if (!["", null, false, 0].contains(traVe.realName)) {
+            //       await createCongNoTaiSan(
+            //           traVe.realName!, 0, -traVe.amount, 0);
+            //     }
+            //   }
+            // }
             if (!saveTemplate) _isSaved = true;
             changeState();
           } else {

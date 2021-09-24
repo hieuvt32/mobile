@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/config.dart';
 import 'package:frappe_app/model/don_bao_binh_loi.dart';
 import 'package:frappe_app/model/list_don_bao_binh_loi_response.dart';
@@ -8,6 +9,7 @@ import 'package:frappe_app/model/order.dart';
 import 'package:frappe_app/model/product.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/enums.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_gas_broken/list_broken_gas_address.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_view.dart';
@@ -344,6 +346,24 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
         child: Scaffold(
           appBar: AppBar(
             title: Text("Dánh sách đơn hàng"),
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 24),
+                child: GestureDetector(
+                  child: FrappeIcon(
+                    FrappeIcons.refresh,
+                    size: 20,
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _onFetchData();
+                    });
+                  },
+                ),
+              ),
+            ],
+            backgroundColor: Colors.transparent,
+            elevation: 0,
           ),
           body: NestedScrollView(
               controller: _scrollController,

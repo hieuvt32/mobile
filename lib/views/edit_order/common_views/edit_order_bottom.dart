@@ -4,6 +4,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:frappe_app/app/locator.dart';
 import 'package:frappe_app/utils/dialog.dart';
 import 'package:frappe_app/utils/enums.dart';
+import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_not_confirm_modal.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
@@ -680,6 +681,7 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                       context,
                       status: "Đã giao hàng",
                       isUpdateImage: false,
+                      isUpdateCongNoTienTaiKho: true,
                     );
                   }
                   await widget.model.updateHoaDonMuaBanHiddenStatus();
@@ -945,6 +947,12 @@ class _EditOrderBottomState extends State<EditOrderBottom> {
                       widget.model.hoaDonMuaBanHiddenStatus!.realName =
                           "Đơn chờ 1";
                       await widget.model.updateHoaDonMuaBanHiddenStatus();
+                    } else {
+                      FrappeAlert.errorAlert(
+                          title: 'Không có quyền hạn',
+                          context: context,
+                          subtitle:
+                              'Bạn cần có quyền thủ kho 1 để thực hiện tính năng này.');
                     }
                   } else {
                     if (widget.model.userRoles.contains(UserRole.KhachHang)) {

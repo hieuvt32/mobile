@@ -65,7 +65,7 @@ class _FrappeAppState extends State<FrappeApp> {
             navigatorKey: navigatorKey,
             builder: EasyLoading.init(),
             debugShowCheckedModeBanner: false,
-            title: 'Frappe',
+            title: 'Hạ Long Gas',
             theme: new ThemeData(
               // textTheme: GoogleFonts.interTextTheme(
               //   Theme.of(context).textTheme.apply(

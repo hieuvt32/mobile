@@ -364,7 +364,7 @@ class _ListOrderViewState extends State<ListOrderView>
                                         fontWeight: FontWeight.bold,
                                         fontSize: 10)),
                                 Text(
-                                    DateFormat('dd/MM/yyyy')
+                                    DateFormat('dd/MM/yyyy HH:mm')
                                         .format(stores[index].creation),
                                     style: TextStyle(
                                         color: hexToColor("#14142B"),

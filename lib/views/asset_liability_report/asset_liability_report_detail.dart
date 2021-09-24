@@ -27,8 +27,8 @@ class _AssetLiabilityReportDetailState
         DateFormat('MMyy').format(DateTime(now.year, now.month - 1, now.day));
 
     String customerCode = widget.customer ?? Config().customerCode;
-    String key = ["CNTS", customerCode, currentDate].join("-");
-    String preKey = ["CNTS", customerCode, preDate].join("-");
+    String key = ["CNB", customerCode, currentDate].join("-");
+    String preKey = ["CNB", customerCode, preDate].join("-");
 
 //CNTS-00091-0821&previouskey=CNTS-00091-0821&assetname=Bình%20thép%
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/bang_thong_ke_kho.dart';
 import 'package:frappe_app/model/bien_ban_kiem_kho.dart';
 import 'package:frappe_app/model/get_bien_ban_kiem_kho_response.dart';
@@ -7,6 +8,7 @@ import 'package:frappe_app/model/get_kiem_kho_response.dart';
 import 'package:frappe_app/model/report_quy_chuan_thong_tin.dart';
 import 'package:frappe_app/services/api/api.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:frappe_app/views/inventory/store.dart';
 import 'package:intl/intl.dart';
@@ -50,7 +52,7 @@ class _InventoryViewState extends State<InventoryView>
 
   BienBanKiemKho? _bienBanKiemKho = null;
 
-  final List<bool> _loading = [];
+  List<bool> _loading = [];
 
   // final List<Store> stores = [
   //   Store(name: 'Van A', system: 30, reality: 0),
@@ -71,17 +73,9 @@ class _InventoryViewState extends State<InventoryView>
   // _InventoryViewState() {
   //   _scrollController = ScrollController();
   // }
-  @override
-  void initState() {
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(_smoothScrollToTop);
-    fixedScroll = false;
 
-    _readOnly = false;
-
-    super.initState();
+  reloadScreen() {
+    _loading = [];
     locator<Api>().getKiemKho(type: 0).then((value) {
       setState(() {
         _vatTus = (value.thongKeKhos != null ? value.thongKeKhos : []) ?? [];
@@ -106,6 +100,21 @@ class _InventoryViewState extends State<InventoryView>
         _loading.add(true);
       });
     });
+  }
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_smoothScrollToTop);
+    fixedScroll = false;
+
+    _readOnly = false;
+
+    super.initState();
+
+    reloadScreen();
   }
 
   KiemKhoDanhSach? getDetailBienBanKiemKho(int type, String name) {
@@ -381,7 +390,7 @@ class _InventoryViewState extends State<InventoryView>
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(now);
+    String formattedDate = DateFormat('dd/MM/yyyy').format(now);
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -395,7 +404,22 @@ class _InventoryViewState extends State<InventoryView>
               Navigator.pop(context);
             },
           ),
-          actions: [],
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 24),
+              child: GestureDetector(
+                child: FrappeIcon(
+                  FrappeIcons.refresh,
+                  size: 20,
+                ),
+                onTap: () {
+                  setState(() {
+                    reloadScreen();
+                  });
+                },
+              ),
+            )
+          ],
           title: Text(
             'Kiểm kho ($formattedDate)',
             style: TextStyle(

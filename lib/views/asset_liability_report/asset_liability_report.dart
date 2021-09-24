@@ -27,7 +27,7 @@ class _AssetLiabilityReportState extends State<AssetLiabilityReport> {
 
       String customerCode = widget.customer ?? Config().customerCode;
 
-      String key = ["CNTS", customerCode, formarttedDate].join("-");
+      String key = ["CNB", customerCode, formarttedDate].join("-");
 
       var response = await locator<Api>().getBaoCaoCongNoChoKH(key);
       setState(() {

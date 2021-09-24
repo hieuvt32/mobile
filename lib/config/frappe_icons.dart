@@ -69,6 +69,8 @@ class FrappeIcons {
   static const add_no_border = '$_basePath/add_no_border.svg';
   static const shopping_cart = '$_basePath/shopping_cart.svg';
   static const clipboard_text = '$_basePath/clipboard_text.svg';
+
+  static const list_order_remake = '$_basePath/list_order_remake.svg';
   static const gear_six = '$_basePath/gear_six.svg';
   static const truck = '$_basePath/truck.svg';
   static const users = '$_basePath/users.svg';
@@ -81,4 +83,16 @@ class FrappeIcons {
   static const line_chart = '$_basePath/line_chart.svg';
   static const note_book = '$_basePath/note_book.svg';
   static const column_chart = '$_basePath/column_chart.svg';
+
+  static const barcode_remake = '$_basePath/barcode_remake.svg';
+
+  static const search_remake = '$_basePath/search_remake.svg';
+
+  static const giaovan_remake = '$_basePath/giaovan_remake.svg';
+
+  static const mua_nvl = '$_basePath/mua_nvl.svg';
+  static const tao_mnvl = '$_basePath/tao_mnvl.svg';
+  static const account_box = '$_basePath/account_box.svg';
+
+  static const profile = '$_basePath/profile.svg';
 }

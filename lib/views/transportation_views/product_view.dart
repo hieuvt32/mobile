@@ -74,8 +74,9 @@ class _ProductItemState extends State<ProductItem> {
   Map<String, List<Map<String, TextEditingController>>> map = Map();
   @override
   Widget build(BuildContext context) {
-    var total = values.fold<int>(0, (sum, item) => sum + item.actualQuantity);
     var expansionItems = _buildExpansionItems();
+
+    var total = values.fold<int>(0, (sum, item) => sum + item.actualQuantity);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

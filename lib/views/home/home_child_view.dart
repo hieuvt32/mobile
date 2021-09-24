@@ -54,7 +54,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       icon: FrappeIcons.shopping_cart,
       childrens: [
         Item(
-          icon: FrappeIcons.clipboard_text,
+          icon: FrappeIcons.list_order_remake,
           view: (context) {
             return ListOrderView(
               type: 'stocker',
@@ -95,16 +95,7 @@ class _HomeChildViewState extends State<HomeChildView> {
       icon: FrappeIcons.gear_six,
       childrens: [
         Item(
-          icon: FrappeIcons.giao_van,
-          view: (context) {
-            return ProductionReportView();
-          },
-          text: "Báo cáo sản xuất",
-          visible: true,
-          roles: ["Giám Đốc", "Quản Đốc"],
-        ),
-        Item(
-          icon: FrappeIcons.barcode_red,
+          icon: FrappeIcons.barcode_remake,
           text: "Quét mã vạch",
           visible: true,
           roles: ["Giám Đốc", "Quản Đốc"],
@@ -117,7 +108,16 @@ class _HomeChildViewState extends State<HomeChildView> {
           text: "Tra cứu",
           visible: true,
           roles: ["Giám Đốc", "Quản Đốc"],
-        )
+        ),
+        Item(
+          icon: FrappeIcons.giaovan_remake,
+          view: (context) {
+            return ProductionReportView();
+          },
+          text: "Báo cáo sản xuất",
+          visible: true,
+          roles: ["Giám Đốc", "Quản Đốc"],
+        ),
       ],
       view: (context) {
         return InventoryView();
@@ -222,17 +222,6 @@ class _HomeChildViewState extends State<HomeChildView> {
       visible: true,
     ),
     Item(
-      icon: FrappeIcons.users,
-      view: (context) {
-        return SetThuKho12View();
-      },
-      text: "Cấu hình quản kho",
-      roles: [
-        "Giám Đốc",
-      ],
-      visible: true,
-    ),
-    Item(
       visible: true,
       icon: FrappeIcons.shopping_bag,
       childrens: [
@@ -257,69 +246,7 @@ class _HomeChildViewState extends State<HomeChildView> {
             }),
       ],
     ),
-    Item(
-      icon: FrappeIcons.mua_hang,
-      childrens: [
-        Item(
-          icon: FrappeIcons.danh_sach_don_loi,
-          visible: true,
-          text: "Danh sách đơn mua",
-          view: (context) {
-            return MnvlListView();
-          },
-        ),
-        Item(
-          icon: FrappeIcons.bao_binh_loi,
-          visible: true,
-          text: "Tạo đơn mua NVL",
-          view: (context) {
-            return MnvlEditView();
-          },
-        ),
-      ],
-      // view: CreateOrderView(),
-      text: "Mua nguyên vật liệu",
-      roles: ["Giám Đốc"],
-      visible: true,
-    ),
-    Item(
-        view: (context) {
-          return CustomerListOrderView();
-        },
-        icon: FrappeIcons.don_hang,
-        visible: true,
-        text: "Đơn hàng",
-        roles: ["Điều Phối Viên"],
-        childrens: []),
-    Item(
-      icon: FrappeIcons.users,
-      childrens: [
-        Item(
-          icon: FrappeIcons.danh_sach_don_loi,
-          visible: true,
-          text: "Danh sách đơn điều phối",
-          view: (context) {
-            return CoordinationListView();
-          },
-        ),
-        Item(
-          icon: FrappeIcons.bao_binh_loi,
-          visible: true,
-          text: "Tạo đơn điều phối",
-          view: (context) {
-            return CoordinationEditView();
-          },
-        ),
-      ],
-      view: (context) {
-        return ListOrderView();
-      },
-      text: "Điều phối",
-      roles: [
-        "Điều Phối Viên",
-      ],
-      visible: true,
-    ),
+
     Item(
       icon: FrappeIcons.chart_pie_slice,
       childrens: [
@@ -371,6 +298,80 @@ class _HomeChildViewState extends State<HomeChildView> {
       text: "Báo cáo",
       roles: [
         "Giám Đốc",
+      ],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.mua_nvl,
+      childrens: [
+        Item(
+          icon: FrappeIcons.clipboard_text,
+          visible: true,
+          text: "Danh sách đơn mua",
+          view: (context) {
+            return MnvlListView();
+          },
+        ),
+        Item(
+          icon: FrappeIcons.tao_mnvl,
+          visible: true,
+          text: "Tạo đơn mua NVL",
+          view: (context) {
+            return MnvlEditView();
+          },
+        ),
+      ],
+      // view: CreateOrderView(),
+      text: "Mua nguyên vật liệu",
+      roles: ["Giám Đốc"],
+      visible: true,
+    ),
+    Item(
+      icon: FrappeIcons.account_box,
+      view: (context) {
+        return SetThuKho12View();
+      },
+      text: "Cấu hình quản kho",
+      roles: [
+        "Điều Phối Viên",
+      ],
+      visible: true,
+    ),
+    Item(
+        view: (context) {
+          return CustomerListOrderView();
+        },
+        icon: FrappeIcons.don_hang,
+        visible: true,
+        text: "Đơn hàng",
+        roles: ["Điều Phối Viên"],
+        childrens: []),
+    Item(
+      icon: FrappeIcons.users,
+      childrens: [
+        Item(
+          icon: FrappeIcons.danh_sach_don_loi,
+          visible: true,
+          text: "Danh sách đơn điều phối",
+          view: (context) {
+            return CoordinationListView();
+          },
+        ),
+        Item(
+          icon: FrappeIcons.bao_binh_loi,
+          visible: true,
+          text: "Tạo đơn điều phối",
+          view: (context) {
+            return CoordinationEditView();
+          },
+        ),
+      ],
+      view: (context) {
+        return ListOrderView();
+      },
+      text: "Điều phối",
+      roles: [
+        "Điều Phối Viên",
       ],
       visible: true,
     ),

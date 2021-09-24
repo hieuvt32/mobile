@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
+import 'package:frappe_app/config/frappe_icons.dart';
 import 'package:frappe_app/model/get_list_quy_chuan_thong_tin_response.dart';
 import 'package:frappe_app/services/api/api.dart';
+import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:intl/intl.dart';
 
@@ -16,6 +18,10 @@ class _ProductionReportViewState extends State<ProductionReportView> {
   @override
   void initState() {
     super.initState();
+    reload();
+  }
+
+  void reload() {
     _response = null;
     locator<Api>().getReportSanXuat().then((value) {
       setState(() {
@@ -44,7 +50,22 @@ class _ProductionReportViewState extends State<ProductionReportView> {
             Navigator.pop(context);
           },
         ),
-        actions: [],
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 24),
+            child: GestureDetector(
+              child: FrappeIcon(
+                FrappeIcons.refresh,
+                size: 20,
+              ),
+              onTap: () {
+                setState(() {
+                  reload();
+                });
+              },
+            ),
+          ),
+        ],
         title: Text(
           'Báo cáo sản xuất ($formattedDate)',
           style: TextStyle(
