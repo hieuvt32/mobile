@@ -21,6 +21,7 @@ import 'package:frappe_app/model/create_bao_binh_loi_request.dart';
 import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
+import 'package:frappe_app/model/doi_tru_thong_ke_kho.dart';
 import 'package:frappe_app/model/don_gia_mua_ban.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
@@ -3567,6 +3568,96 @@ class DioApi implements Api {
           statusCode: response.statusCode,
           statusMessage: response.data["message"],
         );
+      }
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<ResponseData> doiTruThongKeKho(List<DoiTruThongKeKho> requests) async {
+    try {
+      var data = requests.map((e) => e.toJson()).toList();
+      final response = await DioHelper.dio.post(
+        '/method/doiTruKho',
+        data: {"data": data},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        return ResponseData.fromJson(response.data["message"]);
+      } else {
+        return ResponseData(
+            code: response.statusCode,
+            data: "Khong thanh cong",
+            message: "Khong thanh cong");
+      }
+    } catch (e) {
+      print(e);
+      if (e is DioError) {
+        var error = e.error;
+        if (error is SocketException) {
+          throw ErrorResponse(
+            statusCode: HttpStatus.serviceUnavailable,
+            statusMessage: error.message,
+          );
+        } else {
+          throw ErrorResponse(
+            statusMessage: error.message,
+            statusCode: error,
+          );
+        }
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  @override
+  Future<ResponseData> congDonKho(List<CongDonKho> requests) async {
+    var data = requests.map((e) => e.toJson()).toList();
+    try {
+      final response = await DioHelper.dio.post(
+        '/method/congDonKho',
+        data: {"data": data},
+        options: Options(
+          validateStatus: (status) {
+            return status < 500;
+          },
+        ),
+      );
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 202) {
+        return ResponseData.fromJson(response.data["message"]);
+      } else {
+        return ResponseData(
+            code: response.statusCode,
+            data: "Khong thanh cong",
+            message: "Khong thanh cong");
       }
     } catch (e) {
       print(e);

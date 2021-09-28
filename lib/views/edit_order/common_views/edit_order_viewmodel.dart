@@ -10,6 +10,7 @@ import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/create_tracking_request.dart';
 import 'package:frappe_app/model/customer.dart';
 import 'package:frappe_app/model/danh_sach_nhap_kho.dart';
+import 'package:frappe_app/model/doi_tru_thong_ke_kho.dart';
 import 'package:frappe_app/model/don_gia_mua_ban.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/file_upload_response.dart';
@@ -1272,37 +1273,6 @@ class EditOrderViewModel extends BaseViewModel {
             var code =
                 "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
             await locator<Api>().createCongNoTienHoaDon(code, _name!);
-            // for (var product in _order!.products) {
-            //   if (!["", null, false, 0].contains(product.material)) {
-            //     await createCongNoTaiSan(
-            //         product.material!,
-            //         product.quantity - product.actualQuantity,
-            //         0,
-            //         product.kg - product.actualKg);
-            //   }
-            // }
-            // if (sellInWarehouse) {
-            //   for (var product in _order!.products) {
-            //     if (!["", null, false, 0].contains(product.material)) {
-            //       await createCongNoTaiSan(product.material!,
-            //           product.actualQuantity, 0, product.actualKg);
-            //     }
-            //   }
-
-            //   for (var nhapKho in nhapKhos) {
-            //     if (!["", null, false, 0].contains(nhapKho.realName)) {
-            //       await createCongNoTaiSan(
-            //           nhapKho.realName!, 0, nhapKho.amount, 0);
-            //     }
-            //   }
-
-            //   for (var traVe in traVes) {
-            //     if (!["", null, false, 0].contains(traVe.realName)) {
-            //       await createCongNoTaiSan(
-            //           traVe.realName!, 0, -traVe.amount, 0);
-            //     }
-            //   }
-            // }
             if (!saveTemplate) _isSaved = true;
             changeState();
           } else {
@@ -1572,6 +1542,23 @@ class EditOrderViewModel extends BaseViewModel {
                       product.actualQuantity, 0, product.actualKg);
                 }
               }
+
+              await locator<Api>().doiTruThongKeKho(_order!.products
+                  .where((element) =>
+                      !["", null, false, 0].contains(element.material))
+                  .map((e) => DoiTruThongKeKho(
+                      product: e.product,
+                      material: e.material,
+                      amount: -double.parse("${e.actualQuantity}")))
+                  .toList());
+
+              await locator<Api>().congDonKho(_order!.products
+                  .where((element) =>
+                      ["", null, false, 0].contains(element.material))
+                  .map((e) => CongDonKho(
+                      material: e.product,
+                      amount: -double.parse("${e.actualQuantity}")))
+                  .toList());
             }
 
             if (isUpdateCongNoTienKhongTaiKho) {
@@ -1588,6 +1575,16 @@ class EditOrderViewModel extends BaseViewModel {
                       traVe.realName!, 0, -traVe.amount, 0);
                 }
               }
+              await locator<Api>().congDonKho(_nhapKhos
+                  .map((e) => CongDonKho(
+                      material: e.realName,
+                      amount: double.parse("${e.amount}")))
+                  .toList());
+              await locator<Api>().congDonKho(_traVes
+                  .map((e) => CongDonKho(
+                      material: e.realName,
+                      amount: -double.parse("${e.amount}")))
+                  .toList());
             }
 
             if (isUpdateCongNoTienTaiKho) {
@@ -1611,6 +1608,33 @@ class EditOrderViewModel extends BaseViewModel {
                       traVe.realName!, 0, -traVe.amount, 0);
                 }
               }
+
+              await locator<Api>().doiTruThongKeKho(_order!.products
+                  .where((element) =>
+                      !["", null, false, 0].contains(element.material))
+                  .map((e) => DoiTruThongKeKho(
+                      product: e.product,
+                      material: e.material,
+                      amount: -double.parse("${e.actualQuantity}")))
+                  .toList());
+
+              await locator<Api>().congDonKho(_order!.products
+                  .where((element) =>
+                      ["", null, false, 0].contains(element.material))
+                  .map((e) => CongDonKho(
+                      material: e.product,
+                      amount: -double.parse("${e.actualQuantity}")))
+                  .toList());
+              await locator<Api>().congDonKho(_nhapKhos
+                  .map((e) => CongDonKho(
+                      material: e.realName,
+                      amount: double.parse("${e.amount}")))
+                  .toList());
+              await locator<Api>().congDonKho(_traVes
+                  .map((e) => CongDonKho(
+                      material: e.realName,
+                      amount: -double.parse("${e.amount}")))
+                  .toList());
             }
           } else {
             FrappeAlert.errorAlert(

@@ -13,6 +13,7 @@ import 'package:frappe_app/model/create_bao_nham_lan_request.dart';
 import 'package:frappe_app/model/create_hoa_don_mua_ban_response.dart';
 import 'package:frappe_app/model/create_new_delivery_address_response.dart';
 import 'package:frappe_app/model/create_tracking_request.dart';
+import 'package:frappe_app/model/doi_tru_thong_ke_kho.dart';
 import 'package:frappe_app/model/don_gia_mua_ban.dart';
 import 'package:frappe_app/model/don_nhap_kho.dart';
 import 'package:frappe_app/model/don_nhap_kho_response.dart';
@@ -351,6 +352,10 @@ abstract class Api {
   Future<OrderLocationResponse> getLocationByOrder(String order);
 
   Future<dynamic> updateDonBaoBinhLoi(UpdateBaoBinhLoiRequest request);
+
+  Future<ResponseData> doiTruThongKeKho(List<DoiTruThongKeKho> requests);
+
+  Future<ResponseData> congDonKho(List<CongDonKho> requests);
 
   Future<ResponseData> getHoaDonMuaBanHiddenStatus(
     String order,

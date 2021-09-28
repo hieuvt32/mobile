@@ -596,7 +596,7 @@ class _HomeChildViewState extends State<HomeChildView> {
                                           });
                                         } else {
                                           if (item.icon ==
-                                              FrappeIcons.barcode_red) {
+                                              FrappeIcons.barcode_remake) {
                                             // scanBarcodeNormal();
                                             if (_isGranted) {
                                               Navigator.of(context).push(
