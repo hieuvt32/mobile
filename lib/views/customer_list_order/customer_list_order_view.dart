@@ -57,30 +57,36 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
   //   }
   // }
 
-  Widget buildCardContent(List<Product> products,
-      List<DiaChiTongTien> diaChiTongTiens, int sellInWarehouse) {
+  Widget buildCardContent(
+      // List<Product> products,
+      //   List<DiaChiTongTien> diaChiTongTiens, int sellInWarehouse
+      Order item) {
     // Map<String, double> totalPriceByAddress = {};
 
     int totalQuantity = 0;
-    double totalPrice = 0;
+    double totalPrice = item.totalCost;
 
-    products.forEach((product) {
+    item.products.forEach((product) {
       totalQuantity += product.quantity;
-      totalPrice += product.unitPrice;
 
       // totalPriceByAddress[product.diaChi] =
       //     totalPriceByAddress[product.diaChi] ?? 0 + product.unitPrice;
     });
 
+    // item.products,
+    //   item.totalAmountByAddress, item.sellInWarehouse
+
     return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(4),
-                bottomRight: Radius.circular(4))),
-        child: sellInWarehouse == 1
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(4),
+            bottomRight: Radius.circular(4),
+          ),
+        ),
+        child: item.sellInWarehouse == 1
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -120,7 +126,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
                 ],
               )
             : Column(
-                children: diaChiTongTiens
+                children: item.totalAmountByAddress
                     .map((item) => Padding(
                           padding: const EdgeInsets.only(top: 8, bottom: 8),
                           child: Row(
@@ -189,8 +195,7 @@ class CustomerListOrderViewState extends State<CustomerListOrderView>
               },
               child: ItemCardOrder(
                 headerColor: headerColor,
-                cartContent: buildCardContent(item.products,
-                    item.totalAmountByAddress, item.sellInWarehouse),
+                cartContent: buildCardContent(item),
                 leftHeaderText: item.name,
                 rightHeaderText:
                     DateFormat('dd/MM/yyyy HH:mm').format(item.creation),

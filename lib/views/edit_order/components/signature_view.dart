@@ -58,12 +58,13 @@ class _SignatureViewState extends State<SignatureView> {
               ),
               Container(
                 height: 160,
+                // color: Colors.white,
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: hexToColor('#B3D5EB'),
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                ),
+                    border: Border.all(
+                      color: hexToColor('#B3D5EB'),
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                    color: Colors.white),
                 child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -91,6 +92,7 @@ class _SignatureViewState extends State<SignatureView> {
                       ),
                       widget.model.readOnlyView
                           ? Container(
+                              color: Colors.white,
                               width: double.infinity,
                               height: 110,
                               child: Image.network(
@@ -130,6 +132,7 @@ class _SignatureViewState extends State<SignatureView> {
                     color: hexToColor('#B3D5EB'),
                   ),
                   borderRadius: BorderRadius.circular(4),
+                  color: Colors.white,
                 ),
                 child: SingleChildScrollView(
                   child: Column(
@@ -160,6 +163,7 @@ class _SignatureViewState extends State<SignatureView> {
                           ? Container(
                               width: double.infinity,
                               height: 110,
+                              color: Colors.white,
                               child: Image.network(
                                   '${widget.model.config!.baseUrl}$attachImage'),
                             )

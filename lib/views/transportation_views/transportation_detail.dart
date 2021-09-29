@@ -148,26 +148,24 @@ class _TransportationDetailState extends State<TransportationDetail> {
                     ),
                   ),
                   onTap: () {
-                    if (model.order!.status != "Đã đặt hàng") {
-                      var length = model.giaoViecSignatures
-                          .where((element) => element.status == "Đã giao hàng")
-                          .length;
+                    var length = model.giaoViecSignatures
+                        .where((element) => element.status == "Đã giao hàng")
+                        .length;
 
-                      model.clearAllSignatures();
-                      var isLatest =
-                          length == datas.length - 1 || datas.length == 1;
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return TransportationEdit(
-                              // name: item.name,
-                              address: e.key,
-                              isLatest: isLatest,
-                            );
-                          },
-                        ),
-                      );
-                    }
+                    model.clearAllSignatures();
+                    var isLatest =
+                        length == datas.length - 1 || datas.length == 1;
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return TransportationEdit(
+                            // name: item.name,
+                            address: e.key,
+                            isLatest: isLatest,
+                          );
+                        },
+                      ),
+                    );
                   },
                 ),
               );

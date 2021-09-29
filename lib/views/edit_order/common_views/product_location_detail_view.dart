@@ -183,6 +183,8 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
     return Scaffold(
         appBar: AppBar(
           title: Text(products[0].diaChi),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
         ),
         body: SingleChildScrollView(
             padding: const EdgeInsets.all(16),

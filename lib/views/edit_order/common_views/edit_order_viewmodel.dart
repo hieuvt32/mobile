@@ -1549,7 +1549,7 @@ class EditOrderViewModel extends BaseViewModel {
                   .map((e) => DoiTruThongKeKho(
                       product: e.product,
                       material: e.material,
-                      amount: -double.parse("${e.actualQuantity}")))
+                      amount: double.parse("${e.actualQuantity}")))
                   .toList());
 
               await locator<Api>().congDonKho(_order!.products
@@ -1557,7 +1557,7 @@ class EditOrderViewModel extends BaseViewModel {
                       ["", null, false, 0].contains(element.material))
                   .map((e) => CongDonKho(
                       material: e.product,
-                      amount: -double.parse("${e.actualQuantity}")))
+                      amount: double.parse("${e.actualQuantity}")))
                   .toList());
             }
 
@@ -1615,7 +1615,7 @@ class EditOrderViewModel extends BaseViewModel {
                   .map((e) => DoiTruThongKeKho(
                       product: e.product,
                       material: e.material,
-                      amount: -double.parse("${e.actualQuantity}")))
+                      amount: double.parse("${e.actualQuantity}")))
                   .toList());
 
               await locator<Api>().congDonKho(_order!.products
@@ -1623,7 +1623,7 @@ class EditOrderViewModel extends BaseViewModel {
                       ["", null, false, 0].contains(element.material))
                   .map((e) => CongDonKho(
                       material: e.product,
-                      amount: -double.parse("${e.actualQuantity}")))
+                      amount: double.parse("${e.actualQuantity}")))
                   .toList());
               await locator<Api>().congDonKho(_nhapKhos
                   .map((e) => CongDonKho(

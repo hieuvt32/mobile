@@ -45,7 +45,9 @@ class _InventoryViewState extends State<InventoryView>
   // GetKiemKhoResponse? _responseThanhPham;
 
   //GetBienBanKiemKhoResponse? _responsebienBanKiemKho;
-  var _readOnly = false;
+  var _readOnlyType0 = false;
+
+  var _readOnlyType1 = false;
 
   List<BangThongKeKho> _vatTus = [];
   List<BangThongKeKho> _thanhPhams = [];
@@ -95,7 +97,8 @@ class _InventoryViewState extends State<InventoryView>
       setState(() {
         if (value != null && value.bienBanKiemKho != null) {
           _bienBanKiemKho = value.bienBanKiemKho;
-          _readOnly = true;
+          _readOnlyType0 = true;
+          _readOnlyType1 = true;
         }
         _loading.add(true);
       });
@@ -110,7 +113,9 @@ class _InventoryViewState extends State<InventoryView>
     _tabController.addListener(_smoothScrollToTop);
     fixedScroll = false;
 
-    _readOnly = false;
+    _readOnlyType0 = false;
+
+    _readOnlyType1 = false;
 
     super.initState();
 
@@ -272,7 +277,7 @@ class _InventoryViewState extends State<InventoryView>
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                !_readOnly
+                                (type == 0 ? !_readOnlyType0 : !_readOnlyType1)
                                     ? Container(
                                         width: 80,
                                         height: 32,
@@ -336,7 +341,7 @@ class _InventoryViewState extends State<InventoryView>
             ),
           ),
           Visibility(
-              visible: !_readOnly,
+              visible: type == 0 && !_readOnlyType0,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
                 child: Container(
@@ -355,7 +360,7 @@ class _InventoryViewState extends State<InventoryView>
                           .updateBienBanKiemKho(type, stores)
                           .then((value) {
                         setState(() {
-                          _readOnly = true;
+                          _readOnlyType0 = true;
                         });
                         FrappeAlert.successAlert(
                           title: "Cập nhật thành công",
@@ -382,6 +387,53 @@ class _InventoryViewState extends State<InventoryView>
                   ),
                 ),
               )),
+          Visibility(
+              visible: type == 1 && !_readOnlyType1,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                child: Container(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    child: Text(
+                      'Xác nhận',
+                      style: TextStyle(
+                        fontSize: 18,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: () {
+                      locator<Api>()
+                          .updateBienBanKiemKho(type, stores)
+                          .then((value) {
+                        setState(() {
+                          _readOnlyType1 = true;
+                        });
+                        FrappeAlert.successAlert(
+                          title: "Cập nhật thành công",
+                          subtitle: "Quy chuẩn thông tin đã được cập nhật.",
+                          context: context,
+                        );
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: hexToColor('#FF0F00'),
+                      // side: BorderSide(
+                      //   width: 1.0,
+                      // ),
+                      // minimumSize: Size(120, 40),
+                      // padding: EdgeInsets.fromLTRB(118, 13, 118, 13),
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                        side: BorderSide(
+                          color: hexToColor('#FF0F00'),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ))
         ],
       ),
     ));
