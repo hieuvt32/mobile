@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ai_barcode/ai_barcode.dart';
 import 'package:flutter/material.dart';
 import 'package:frappe_app/app/locator.dart';
@@ -9,6 +11,7 @@ import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class BarcodeScannerView extends StatefulWidget {
   // final String barcode;
@@ -26,44 +29,66 @@ class BarcodeScannerView extends StatefulWidget {
 class _BarcodeScannerViewState extends State<BarcodeScannerView> {
   late GetQuyChuanThongTinResponse? _response;
 
-  late ScannerController _scannerController;
-  late CreatorController? _creatorController;
+  // late ScannerController _scannerController;
+  // late CreatorController? _creatorController;
 
   late String barcode = "";
   late bool isLoading = false;
+
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  late Barcode result;
+  late QRViewController controller;
+
+  @override
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller.pauseCamera();
+    } else if (Platform.isIOS) {
+      controller.resumeCamera();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _creatorController = CreatorController();
+    // _creatorController = CreatorController();
     _response = GetQuyChuanThongTinResponse();
-    _scannerController = ScannerController(scannerResult: (result) {
-      resultCallback(result);
-    }, scannerViewCreated: () {
-      TargetPlatform platform = Theme.of(context).platform;
-      if (TargetPlatform.iOS == platform) {
-        Future.delayed(Duration(seconds: 2), () {
-          _scannerController.startCamera();
-          _scannerController.startCameraPreview();
-        });
-      } else {
-        _scannerController.startCamera();
-        _scannerController.startCameraPreview();
-      }
-    });
-    onLoad();
+    // _scannerController = ScannerController(scannerResult: (result) {
+    //   resultCallback(result);
+    // }, scannerViewCreated: () {
+    //   TargetPlatform platform = Theme.of(context).platform;
+    //   if (TargetPlatform.iOS == platform) {
+    //     Future.delayed(Duration(seconds: 2), () {
+    //       _scannerController.startCamera();
+    //       _scannerController.startCameraPreview();
+    //     });
+    //   } else {
+    //     _scannerController.startCamera();
+    //     _scannerController.startCameraPreview();
+    //   }
+    // });
+    // onLoad();
   }
 
   @override
   void dispose() {
+    controller.dispose();
     super.dispose();
-    _creatorController = null;
-    _scannerController.stopCameraPreview();
-    _scannerController.stopCamera();
+    // _creatorController = null;
+    // _scannerController.stopCameraPreview();
+    // _scannerController.stopCamera();
   }
 
-  resultCallback(String result) {
-    barcode = result;
-    onLoad();
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      setState(() async {
+        result = scanData;
+        barcode = result.code;
+        await onLoad();
+      });
+    });
   }
 
   Future<void> onLoad() async {
@@ -81,9 +106,8 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
             response.quyChuanThongTin!.countByKG,
             response.quyChuanThongTin!.kg);
       }
-      setState(() {
-        _response = response;
-      });
+
+      _response = response;
     }
   }
 
@@ -167,9 +191,13 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                         Container(
                       // height: 45,
                       child: ["", null, false, 0].contains(barcode)
-                          ? PlatformAiBarcodeScannerWidget(
-                              platformScannerController: _scannerController,
+                          ? QRView(
+                              key: qrKey,
+                              onQRViewCreated: _onQRViewCreated,
                             )
+                          // PlatformAiBarcodeScannerWidget(
+                          //     platformScannerController: _scannerController,
+                          //   )
                           : IconTheme(
                               data: IconThemeData(
                                 size: 56.0,
@@ -266,43 +294,33 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                           children: [
                             ElevatedButton(
                               onPressed: () async {
-                                if (!["", null, false, 0].contains(barcode)) {
-                                  if (_response != null &&
-                                      _response!.quyChuanThongTin != null) {
-                                    var response = await locator<Api>()
-                                        .updateLichSuSanXuat(
-                                            barcode,
-                                            _response!
-                                                .quyChuanThongTin!.company,
-                                            _response!.quyChuanThongTin!
-                                                .productContain,
-                                            _response!
-                                                .quyChuanThongTin!.materialType,
-                                            _response!.quyChuanThongTin!.serial,
-                                            _response!.quyChuanThongTin!.status,
-                                            _response!
-                                                .quyChuanThongTin!.countByKG,
-                                            _response!.quyChuanThongTin!.kg);
+                                setState(() {
+                                  _response = GetQuyChuanThongTinResponse();
+                                  Navigator.pop(context);
+                                });
+                                // if (!["", null, false, 0].contains(barcode)) {
+                                //   if (_response != null &&
+                                //       _response!.quyChuanThongTin != null) {
+                                //     await locator<Api>().updateLichSuSanXuat(
+                                //         barcode,
+                                //         _response!.quyChuanThongTin!.company,
+                                //         _response!
+                                //             .quyChuanThongTin!.productContain,
+                                //         _response!
+                                //             .quyChuanThongTin!.materialType,
+                                //         _response!.quyChuanThongTin!.serial,
+                                //         _response!.quyChuanThongTin!.status,
+                                //         _response!.quyChuanThongTin!.countByKG,
+                                //         _response!.quyChuanThongTin!.kg);
 
-                                    if (response.responseData != null &&
-                                        response.responseData!.code == 200) {
-                                      FrappeAlert.successAlert(
-                                        title: "Cập nhật thành công",
-                                        subtitle:
-                                            "Cập nhật lịch sử sản xuất thành công",
-                                        context: context,
-                                      );
-                                      Navigator.pop(context);
-                                    } else {
-                                      FrappeAlert.errorAlert(
-                                        title: "Cập nhật không thành công",
-                                        subtitle:
-                                            "Cập nhật lịch sử sản xuất không thành công.",
-                                        context: context,
-                                      );
-                                    }
-                                  }
-                                }
+                                //     FrappeAlert.successAlert(
+                                //       title: "Cập nhật thành công",
+                                //       subtitle:
+                                //           "Cập nhật lịch sử sản xuất thành công",
+                                //       context: context,
+                                //     );
+                                //   }
+                                // }
                               },
                               child: Text(
                                 'Kết thúc',
@@ -326,42 +344,31 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                             ),
                             ElevatedButton(
                               onPressed: () async {
-                                if (_response != null &&
-                                    _response!.quyChuanThongTin != null) {
-                                  var response = await locator<Api>()
-                                      .updateLichSuSanXuat(
-                                          barcode,
-                                          _response!.quyChuanThongTin!.company,
-                                          _response!
-                                              .quyChuanThongTin!.productContain,
-                                          _response!
-                                              .quyChuanThongTin!.materialType,
-                                          _response!.quyChuanThongTin!.serial,
-                                          "Hủy",
-                                          _response!
-                                              .quyChuanThongTin!.countByKG,
-                                          _response!.quyChuanThongTin!.kg);
+                                // if (_response != null &&
+                                //     _response!.quyChuanThongTin != null) {
+                                //   await locator<Api>().updateLichSuSanXuat(
+                                //       barcode,
+                                //       _response!.quyChuanThongTin!.company,
+                                //       _response!
+                                //           .quyChuanThongTin!.productContain,
+                                //       _response!.quyChuanThongTin!.materialType,
+                                //       _response!.quyChuanThongTin!.serial,
+                                //       "Hủy",
+                                //       _response!.quyChuanThongTin!.countByKG,
+                                //       _response!.quyChuanThongTin!.kg);
 
-                                  if (response.responseData != null &&
-                                      response.responseData!.code == 200) {
-                                    setState(() {
-                                      barcode = "";
-                                    });
-                                    FrappeAlert.successAlert(
-                                      title: "Cập nhật thành công",
-                                      subtitle:
-                                          "Cập nhật lịch sử sản xuất thành công",
-                                      context: context,
-                                    );
-                                  } else {
-                                    FrappeAlert.errorAlert(
-                                      title: "Cập nhật không thành công",
-                                      subtitle:
-                                          "Cập nhật lịch sử sản xuất không thành công.",
-                                      context: context,
-                                    );
-                                  }
-                                }
+                                //   FrappeAlert.successAlert(
+                                //     title: "Cập nhật thành công",
+                                //     subtitle:
+                                //         "Cập nhật lịch sử sản xuất thành công",
+                                //     context: context,
+                                //   );
+                                // }
+
+                                setState(() {
+                                  barcode = "";
+                                  _response = GetQuyChuanThongTinResponse();
+                                });
                               },
                               child: Text(
                                 'Tiếp tục',
@@ -388,8 +395,7 @@ class _BarcodeScannerViewState extends State<BarcodeScannerView> {
                           ],
                         ),
                       ),
-                      visible: !(_response!.quyChuanThongTin != null &&
-                          _response!.quyChuanThongTin?.status == 'Bình thường'),
+                      visible: !(_response!.quyChuanThongTin != null),
                     ),
                   ),
                 )

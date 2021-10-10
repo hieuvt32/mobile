@@ -309,6 +309,7 @@ abstract class Api {
     String? supportEmployee,
     String? plate,
     String deliverDate,
+    int isDeleted,
   );
 
   Future<GiaoViecResponse> getGiaoViec(String order);

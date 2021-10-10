@@ -125,12 +125,12 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
   _buildProductLocationDetailView() {
     return Column(
       children: [
-        ProductLocationDetailHeader(
-          address: widget.address,
-        ),
-        SizedBox(
-          height: 24,
-        ),
+        // ProductLocationDetailHeader(
+        //   address: widget.address,
+        // ),
+        // SizedBox(
+        //   height: 24,
+        // ),
         ListProductReturnView(
           'Danh sách hoàn trả',
           realOnly: true,
@@ -181,13 +181,16 @@ class _ProductLocationDetailViewState extends State<ProductLocationDetailView> {
         .toList();
 
     return Scaffold(
-        appBar: AppBar(
-          title: Text(products[0].diaChi),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: _buildMainView(products)));
+      appBar: AppBar(
+        title: Text(products[0].diaChi),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: _buildMainView(products),
+      ),
+    );
   }
 }

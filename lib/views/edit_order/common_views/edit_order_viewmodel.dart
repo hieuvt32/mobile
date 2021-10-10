@@ -1273,6 +1273,56 @@ class EditOrderViewModel extends BaseViewModel {
             var code =
                 "CNT-$_customerValue-${DateFormat('MMyy').format(DateTime.now())}";
             await locator<Api>().createCongNoTienHoaDon(code, _name!);
+
+            if (isNhaCungCap) {
+              for (var product in _order!.products) {
+                if (!["", null, false, 0].contains(product.material)) {
+                  await createCongNoTaiSan(product.material!,
+                      product.actualQuantity, 0, product.actualKg);
+                }
+              }
+
+              for (var nhapKho in nhapKhos) {
+                if (!["", null, false, 0].contains(nhapKho.realName)) {
+                  await createCongNoTaiSan(
+                      nhapKho.realName!, 0, nhapKho.amount, 0);
+                }
+              }
+
+              for (var traVe in traVes) {
+                if (!["", null, false, 0].contains(traVe.realName)) {
+                  await createCongNoTaiSan(
+                      traVe.realName!, 0, -traVe.amount, 0);
+                }
+              }
+
+              await locator<Api>().doiTruThongKeKho(_order!.products
+                  .where((element) =>
+                      !["", null, false, 0].contains(element.material))
+                  .map((e) => DoiTruThongKeKho(
+                      product: e.product,
+                      material: e.material,
+                      amount: double.parse("${e.actualQuantity}")))
+                  .toList());
+
+              await locator<Api>().congDonKho(_order!.products
+                  .where((element) =>
+                      ["", null, false, 0].contains(element.material))
+                  .map((e) => CongDonKho(
+                      material: e.product,
+                      amount: -double.parse("${e.actualQuantity}")))
+                  .toList());
+              await locator<Api>().congDonKho(_nhapKhos
+                  .map((e) => CongDonKho(
+                      material: e.realName,
+                      amount: double.parse("${e.amount}")))
+                  .toList());
+              await locator<Api>().congDonKho(_traVes
+                  .map((e) => CongDonKho(
+                      material: e.realName,
+                      amount: -double.parse("${e.amount}")))
+                  .toList());
+            }
             if (!saveTemplate) _isSaved = true;
             changeState();
           } else {
@@ -1298,10 +1348,17 @@ class EditOrderViewModel extends BaseViewModel {
     });
   }
 
-  Future updatePhanCong() async {
-    var response = await locator<Api>().updateGiaoViec(_name, giaoViec.employee,
-        giaoViec.supportEmployee, giaoViec.plate, giaoViec.deliverDate);
-    giaoViec.name = response['message']["name"];
+  Future updatePhanCong({int isDeleted = 0}) async {
+    var response = await locator<Api>().updateGiaoViec(
+        _name,
+        giaoViec.employee,
+        giaoViec.supportEmployee,
+        giaoViec.plate,
+        giaoViec.deliverDate,
+        isDeleted);
+    if (isDeleted == 0) {
+      giaoViec.name = response['message']["name"];
+    }
     changeState();
   }
 
@@ -1623,7 +1680,7 @@ class EditOrderViewModel extends BaseViewModel {
                       ["", null, false, 0].contains(element.material))
                   .map((e) => CongDonKho(
                       material: e.product,
-                      amount: double.parse("${e.actualQuantity}")))
+                      amount: -double.parse("${e.actualQuantity}")))
                   .toList());
               await locator<Api>().congDonKho(_nhapKhos
                   .map((e) => CongDonKho(

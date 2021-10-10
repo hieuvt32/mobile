@@ -2419,6 +2419,7 @@ class DioApi implements Api {
     String supportEmployee,
     String plate,
     String deliverDate,
+    int isDeleted,
   ) async {
     var data = {
       'order': order,
@@ -2426,6 +2427,7 @@ class DioApi implements Api {
       'support_employee': supportEmployee,
       'plate': plate,
       'deliver_date': deliverDate,
+      'is_deleted': isDeleted,
     };
 
     try {

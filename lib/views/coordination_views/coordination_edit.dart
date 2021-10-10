@@ -431,6 +431,50 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                       ),
                     ),
                     Visibility(
+                      visible: checkNullEmpty(model.giaoViec.name) &&
+                          model.orderState == OrderState.Delivering,
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Visibility(
+                          visible: true,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: hexToColor('#0072BC'),
+                              // side: BorderSide(
+                              //   width: 1.0,
+                              // ),
+                              minimumSize: Size(double.infinity, 48),
+                              // padding: EdgeInsets.fromLTRB(60, 12, 60, 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(4.0),
+                                // side: BorderSide(
+                                //   color: hexToColor('#0072BC'),
+                                // ),
+                              ),
+                            ),
+                            onPressed: () async {
+                              // model.updateOrder(context, status: "Đã đặt hàng");
+                              await model.updatePhanCong();
+                              FrappeAlert.successAlert(
+                                title: 'Thành công',
+                                context: context,
+                                subtitle: 'Hủy giao vận thành công!',
+                              );
+                              model.changeState();
+                            },
+                            child: Text(
+                              'Cập nhật giao vận',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Visibility(
                       visible: !checkNullEmpty(model.giaoViec.name),
                       child: Align(
                         alignment: Alignment.bottomCenter,
@@ -453,12 +497,19 @@ class _CoordinationEditViewState extends State<CoordinationEditView> {
                             ),
                             onPressed: () async {
                               model.giaoViec = GiaoViec(
+                                  name: "",
                                   deliverDate: DateTime.now().toString(),
                                   plate: null,
                                   supportEmployee: null,
                                   order: model.giaoViec.order,
                                   employee: null);
-                              model.updateOrder(context, status: "Đã đặt hàng");
+                              // model.updateOrder(context, status: "Đã đặt hàng");
+                              await model.updatePhanCong(isDeleted: 1);
+                              FrappeAlert.successAlert(
+                                title: 'Thành công',
+                                context: context,
+                                subtitle: 'Hủy giao vận thành công!',
+                              );
                               model.changeState();
                             },
                             child: Text(

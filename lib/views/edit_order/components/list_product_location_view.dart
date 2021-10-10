@@ -10,6 +10,7 @@ import 'package:frappe_app/utils/enums.dart';
 import 'package:frappe_app/utils/frappe_alert.dart';
 import 'package:frappe_app/utils/frappe_icon.dart';
 import 'package:frappe_app/utils/helpers.dart';
+import 'package:frappe_app/views/edit_order/common_views/product_location_detail_not_customer_view.dart';
 import 'package:frappe_app/views/edit_order/common_views/product_location_detail_view.dart';
 import 'package:frappe_app/views/edit_order/components/field_data.dart';
 import 'package:frappe_app/views/edit_order/common_views/edit_order_viewmodel.dart';
@@ -289,8 +290,12 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                   height: 10,
                 ),
                 Visibility(
-                    visible: widget.model.isAvailableRoles(
-                            [UserRole.KhachHang, UserRole.DieuPhoi]) &&
+                    visible:
+                        // widget.model.isAvailableRoles(
+                        //         [UserRole.KhachHang, UserRole.DieuPhoi]) &&
+                        //     [OrderState.Delivering, OrderState.Delivered]
+                        //         .contains(widget.model.orderState)
+
                         [OrderState.Delivering, OrderState.Delivered]
                             .contains(widget.model.orderState),
                     child: Container(
@@ -304,13 +309,25 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                           ),
                         ),
                         onPressed: () {
-                          if (!["", null, false, 0]
-                              .contains(widget.model.editAddresses[i].name)) {
-                            Navigator.of(context)
-                                .push(MaterialPageRoute(builder: (context) {
-                              return ProductLocationDetailView(
-                                  address: values[i].name ?? "");
-                            }));
+                          if (widget.model.isAvailableRoles(
+                              [UserRole.KhachHang, UserRole.DieuPhoi])) {
+                            if (!["", null, false, 0]
+                                .contains(widget.model.editAddresses[i].name)) {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) {
+                                return ProductLocationDetailView(
+                                    address: values[i].name ?? "");
+                              }));
+                            }
+                          } else {
+                            if (!["", null, false, 0]
+                                .contains(widget.model.editAddresses[i].name)) {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) {
+                                return ProductLocationDetailNoCustomerView(
+                                    address: values[i].name ?? "");
+                              }));
+                            }
                           }
                         },
                         child: Text(
@@ -393,9 +410,38 @@ class _ListProductLocationViewState extends State<ListProductLocationView> {
                     ],
                   ),
                   visible: !widget.model.readOnlyView,
-                )
+                ),
+                // Visibility(
+                //   visible: widget.model.readOnlyView,
+                //   child: Center(
+                //     child: ElevatedButton(
+                //       style: ElevatedButton.styleFrom(
+                //         primary: hexToColor('#0072BC'),
+                //         minimumSize: Size(120, 32),
+                //         shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(4.0),
+                //         ),
+                //       ),
+                //       onPressed: () {
+                //         // if (!["", null, false, 0]
+                //         //     .contains(widget.model.editAddresses[i].name))
+                //         //   widget.model.addSanPhamByLocation(
+                //         //       widget.model.editAddresses[i].name!,
+                //         //       widget.model.editAddresses[i].diaChi);
+
+                //       },
+                //       child: Text(
+                //         'Xem chi tiết',
+                //         style: TextStyle(
+                //           fontSize: 12,
+                //           fontWeight: FontWeight.w600,
+                //           color: Colors.white,
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // )
               ],
-              // Icon(Icons.image) // iconPic
             ),
           ),
         );
